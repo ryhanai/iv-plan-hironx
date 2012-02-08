@@ -4,8 +4,6 @@
 # set up environment for ROS/RTM
 # RTM nameserver is read from rtc.conf file in the current directory
 
-import sys
-sys.path.insert(0, '/home/leus/prog/hironx/iv_plan_hironx/iv_plan/src')
 from ivenv import *
 ivpkgdir,nameserver = setup_ivenv()
 
