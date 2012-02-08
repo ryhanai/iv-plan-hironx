@@ -1,0 +1,51 @@
+interface CommonCommands {
+
+  struct RETURN_ID {
+    long id;
+    string comment;
+  };
+
+
+  RETURN_ID servoOFF();//共通インタフェースとして、下記servoOffArmとservoOFFHandを同時に実行
+  RETURN_ID servoON();
+
+  //下記は実装する際に必要になると思います。
+  RETURN_ID servoOFFArm();//返り値は常に0コメントは無
+  RETURN_ID servoOFFHand();
+  RETURN_ID servoONArm();
+  RETURN_ID servoONHand();
+
+};
+
+interface MotionCommands {
+
+  typedef double HgMatrix [3][4];
+  typedef sequence<double> DoubleSeq;
+  typedef sequence<double> JointPos;
+  typedef sequence<JointPos> JointPosSeq;
+  typedef unsigned long ULONG;
+
+  struct CarPosWithElbow {
+    HgMatrix carPos; //ここに手先の位置／姿勢を代入
+    double elbow; //HIROの場合は必要無い
+    ULONG structFlag;//必要無し
+  };
+
+  struct RETURN_ID {
+    long id;
+    string comment;
+  };
+
+  RETURN_ID closeGripper(); //実装せず。
+  RETURN_ID moveGripper(in DoubleSeq angle);//実装する。HIROの場合はlength(4), 返り値のidは常に0、commentは無し
+  RETURN_ID moveLinearCartesianAbs(in CarPosWithElbow rArm, in CarPosWithElbow lArm); //とりあえず最初のバージョンでは実装せず。
+  RETURN_ID moveLinearCartesianRel(in CarPosWithElbow rArm, in CarPosWithElbow lArm); //とりあえず最初のバージョンでは実装せず。
+  RETURN_ID movePTPJointAbs(in JointPos jointPoints); //実装する。HIROの場合はlength(29)関節定義の順番はbodyinfo.pyと同じ。deg単位
+  RETURN_ID movePTPJointRel(in JointPos jointPoints); //実装する。関節定義の順番はbodyinfo.pyと同じ。deg単位
+  RETURN_ID movePTPJointAbsSeq(in JointPosSeq jointPointsSeq, in DoubleSeq timeSeq); //実装する。関節定義の順番はbodyinfo.pyと同じ。deg単位
+  RETURN_ID openGripper(); //実装せず。
+  RETURN_ID setSpeedCartesian(in ULONG spdRatio);//実装せず
+  RETURN_ID setSpeedJoint(in ULONG spdRatio); //実装する
+	
+};
+	  

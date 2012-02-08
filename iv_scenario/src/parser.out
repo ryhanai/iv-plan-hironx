@@ -1,0 +1,1402 @@
+Created by PLY version 3.3 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    NEWLINE
+    DOT
+    COMMENT_LINE
+
+Grammar
+
+Rule 0     S' -> toplevel
+Rule 1     toplevel -> proto_nodes nodes
+Rule 2     proto_nodes -> proto_nodes proto_node
+Rule 3     proto_nodes -> empty
+Rule 4     nodes -> node nodes
+Rule 5     nodes -> node COMMA nodes
+Rule 6     nodes -> empty
+Rule 7     proto_node -> PROTO IDENT LBRCKT proto_field_defs RBRCKT LBRC impl_exp RBRC
+Rule 8     proto_field_defs -> proto_field_def proto_field_defs
+Rule 9     proto_field_defs -> empty
+Rule 10    proto_field_def -> FIELD simple_type_exp ident_and_reserved const_exp
+Rule 11    proto_field_def -> EXPOSEDFIELD simple_type_exp ident_and_reserved const_exp
+Rule 12    proto_field_def -> EVENTIN simple_type_exp ident_and_reserved
+Rule 13    ident_and_reserved -> IDENT
+Rule 14    ident_and_reserved -> KEYWORD
+Rule 15    simple_type_exp -> MFNODE
+Rule 16    simple_type_exp -> MFFLOAT
+Rule 17    simple_type_exp -> MFSTRING
+Rule 18    simple_type_exp -> SFNODE
+Rule 19    simple_type_exp -> SFROTATION
+Rule 20    simple_type_exp -> SFVEC3F
+Rule 21    simple_type_exp -> SFFLOAT
+Rule 22    simple_type_exp -> SFSTRING
+Rule 23    simple_type_exp -> SFINT32
+Rule 24    simple_type_exp -> IS
+Rule 25    impl_exps -> impl_exp impl_exps
+Rule 26    impl_exps -> empty
+Rule 27    impl_exp -> IDENT LBRC impl_fields RBRC
+Rule 28    impl_fields -> impl_field impl_fields
+Rule 29    impl_fields -> empty
+Rule 30    impl_field -> IDENT IS IDENT
+Rule 31    impl_field -> IDENT LBRCKT impl_exps RBRCKT
+Rule 32    def_opt -> DEF IDENT
+Rule 33    def_opt -> empty
+Rule 34    node_qualifier_opt -> KEYWORD
+Rule 35    node_qualifier_opt -> empty
+Rule 36    node -> node_qualifier_opt def_opt IDENT LBRC nodes RBRC
+Rule 37    node -> node_qualifier_opt def_opt IDENT const_exp
+Rule 38    node -> node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT
+Rule 39    node -> USE IDENT
+Rule 40    const_exp -> prim_const_exp
+Rule 41    const_exp -> LBRCKT RBRCKT
+Rule 42    const_exp -> LBRCKT const_exps RBRCKT
+Rule 43    const_exps -> const_exp COMMA const_exps
+Rule 44    const_exps -> const_exp COMMA
+Rule 45    const_exps -> const_exp
+Rule 46    prim_const_exp -> STRING
+Rule 47    prim_const_exp -> NULL
+Rule 48    prim_const_exp -> BOOL
+Rule 49    prim_const_exp -> numbers
+Rule 50    numbers -> numbers number
+Rule 51    numbers -> number
+Rule 52    number -> FLOAT
+Rule 53    number -> INT
+Rule 54    empty -> <empty>
+
+Terminals, with rules where they appear
+
+BOOL                 : 48
+COMMA                : 5 43 44
+COMMENT_LINE         : 
+DEF                  : 32
+DOT                  : 
+EVENTIN              : 12
+EXPOSEDFIELD         : 11
+FIELD                : 10
+FLOAT                : 52
+IDENT                : 7 13 27 30 30 31 32 36 37 38 39
+INT                  : 53
+IS                   : 24 30
+KEYWORD              : 14 34
+LBRC                 : 7 27 36
+LBRCKT               : 7 31 38 41 42
+MFFLOAT              : 16
+MFNODE               : 15
+MFSTRING             : 17
+NEWLINE              : 
+NULL                 : 47
+PROTO                : 7
+RBRC                 : 7 27 36
+RBRCKT               : 7 31 38 41 42
+SFFLOAT              : 21
+SFINT32              : 23
+SFNODE               : 18
+SFROTATION           : 19
+SFSTRING             : 22
+SFVEC3F              : 20
+STRING               : 46
+USE                  : 39
+error                : 
+
+Nonterminals, with rules where they appear
+
+const_exp            : 10 11 37 43 44 45
+const_exps           : 42 43
+def_opt              : 36 37 38
+empty                : 3 6 9 26 29 33 35
+ident_and_reserved   : 10 11 12
+impl_exp             : 7 25
+impl_exps            : 25 31
+impl_field           : 28
+impl_fields          : 27 28
+node                 : 4 5
+node_qualifier_opt   : 36 37 38
+nodes                : 1 4 5 36 38
+number               : 50 51
+numbers              : 49 50
+prim_const_exp       : 40
+proto_field_def      : 8
+proto_field_defs     : 7 8
+proto_node           : 2
+proto_nodes          : 1 2
+simple_type_exp      : 10 11 12
+toplevel             : 0
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . toplevel
+    (1) toplevel -> . proto_nodes nodes
+    (2) proto_nodes -> . proto_nodes proto_node
+    (3) proto_nodes -> . empty
+    (54) empty -> .
+
+    PROTO           reduce using rule 54 (empty -> .)
+    USE             reduce using rule 54 (empty -> .)
+    KEYWORD         reduce using rule 54 (empty -> .)
+    DEF             reduce using rule 54 (empty -> .)
+    IDENT           reduce using rule 54 (empty -> .)
+    $end            reduce using rule 54 (empty -> .)
+
+    toplevel                       shift and go to state 1
+    proto_nodes                    shift and go to state 2
+    empty                          shift and go to state 3
+
+state 1
+
+    (0) S' -> toplevel .
+
+
+
+state 2
+
+    (1) toplevel -> proto_nodes . nodes
+    (2) proto_nodes -> proto_nodes . proto_node
+    (4) nodes -> . node nodes
+    (5) nodes -> . node COMMA nodes
+    (6) nodes -> . empty
+    (7) proto_node -> . PROTO IDENT LBRCKT proto_field_defs RBRCKT LBRC impl_exp RBRC
+    (36) node -> . node_qualifier_opt def_opt IDENT LBRC nodes RBRC
+    (37) node -> . node_qualifier_opt def_opt IDENT const_exp
+    (38) node -> . node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT
+    (39) node -> . USE IDENT
+    (54) empty -> .
+    (34) node_qualifier_opt -> . KEYWORD
+    (35) node_qualifier_opt -> . empty
+
+    PROTO           shift and go to state 6
+    USE             shift and go to state 7
+    $end            reduce using rule 54 (empty -> .)
+    DEF             reduce using rule 54 (empty -> .)
+    IDENT           reduce using rule 54 (empty -> .)
+    KEYWORD         shift and go to state 5
+
+    node                           shift and go to state 4
+    proto_node                     shift and go to state 8
+    nodes                          shift and go to state 9
+    node_qualifier_opt             shift and go to state 10
+    empty                          shift and go to state 11
+
+state 3
+
+    (3) proto_nodes -> empty .
+
+    PROTO           reduce using rule 3 (proto_nodes -> empty .)
+    USE             reduce using rule 3 (proto_nodes -> empty .)
+    KEYWORD         reduce using rule 3 (proto_nodes -> empty .)
+    DEF             reduce using rule 3 (proto_nodes -> empty .)
+    IDENT           reduce using rule 3 (proto_nodes -> empty .)
+    $end            reduce using rule 3 (proto_nodes -> empty .)
+
+
+state 4
+
+    (4) nodes -> node . nodes
+    (5) nodes -> node . COMMA nodes
+    (4) nodes -> . node nodes
+    (5) nodes -> . node COMMA nodes
+    (6) nodes -> . empty
+    (36) node -> . node_qualifier_opt def_opt IDENT LBRC nodes RBRC
+    (37) node -> . node_qualifier_opt def_opt IDENT const_exp
+    (38) node -> . node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT
+    (39) node -> . USE IDENT
+    (54) empty -> .
+    (34) node_qualifier_opt -> . KEYWORD
+    (35) node_qualifier_opt -> . empty
+
+    COMMA           shift and go to state 12
+    USE             shift and go to state 7
+    $end            reduce using rule 54 (empty -> .)
+    RBRC            reduce using rule 54 (empty -> .)
+    RBRCKT          reduce using rule 54 (empty -> .)
+    DEF             reduce using rule 54 (empty -> .)
+    IDENT           reduce using rule 54 (empty -> .)
+    KEYWORD         shift and go to state 5
+
+    node                           shift and go to state 4
+    nodes                          shift and go to state 13
+    node_qualifier_opt             shift and go to state 10
+    empty                          shift and go to state 11
+
+state 5
+
+    (34) node_qualifier_opt -> KEYWORD .
+
+    DEF             reduce using rule 34 (node_qualifier_opt -> KEYWORD .)
+    IDENT           reduce using rule 34 (node_qualifier_opt -> KEYWORD .)
+
+
+state 6
+
+    (7) proto_node -> PROTO . IDENT LBRCKT proto_field_defs RBRCKT LBRC impl_exp RBRC
+
+    IDENT           shift and go to state 14
+
+
+state 7
+
+    (39) node -> USE . IDENT
+
+    IDENT           shift and go to state 15
+
+
+state 8
+
+    (2) proto_nodes -> proto_nodes proto_node .
+
+    PROTO           reduce using rule 2 (proto_nodes -> proto_nodes proto_node .)
+    USE             reduce using rule 2 (proto_nodes -> proto_nodes proto_node .)
+    KEYWORD         reduce using rule 2 (proto_nodes -> proto_nodes proto_node .)
+    DEF             reduce using rule 2 (proto_nodes -> proto_nodes proto_node .)
+    IDENT           reduce using rule 2 (proto_nodes -> proto_nodes proto_node .)
+    $end            reduce using rule 2 (proto_nodes -> proto_nodes proto_node .)
+
+
+state 9
+
+    (1) toplevel -> proto_nodes nodes .
+
+    $end            reduce using rule 1 (toplevel -> proto_nodes nodes .)
+
+
+state 10
+
+    (36) node -> node_qualifier_opt . def_opt IDENT LBRC nodes RBRC
+    (37) node -> node_qualifier_opt . def_opt IDENT const_exp
+    (38) node -> node_qualifier_opt . def_opt IDENT LBRCKT nodes RBRCKT
+    (32) def_opt -> . DEF IDENT
+    (33) def_opt -> . empty
+    (54) empty -> .
+
+    DEF             shift and go to state 18
+    IDENT           reduce using rule 54 (empty -> .)
+
+    def_opt                        shift and go to state 16
+    empty                          shift and go to state 17
+
+state 11
+
+    (6) nodes -> empty .
+    (35) node_qualifier_opt -> empty .
+
+    $end            reduce using rule 6 (nodes -> empty .)
+    RBRC            reduce using rule 6 (nodes -> empty .)
+    RBRCKT          reduce using rule 6 (nodes -> empty .)
+    DEF             reduce using rule 35 (node_qualifier_opt -> empty .)
+    IDENT           reduce using rule 35 (node_qualifier_opt -> empty .)
+
+
+state 12
+
+    (5) nodes -> node COMMA . nodes
+    (4) nodes -> . node nodes
+    (5) nodes -> . node COMMA nodes
+    (6) nodes -> . empty
+    (36) node -> . node_qualifier_opt def_opt IDENT LBRC nodes RBRC
+    (37) node -> . node_qualifier_opt def_opt IDENT const_exp
+    (38) node -> . node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT
+    (39) node -> . USE IDENT
+    (54) empty -> .
+    (34) node_qualifier_opt -> . KEYWORD
+    (35) node_qualifier_opt -> . empty
+
+    USE             shift and go to state 7
+    $end            reduce using rule 54 (empty -> .)
+    RBRC            reduce using rule 54 (empty -> .)
+    RBRCKT          reduce using rule 54 (empty -> .)
+    DEF             reduce using rule 54 (empty -> .)
+    IDENT           reduce using rule 54 (empty -> .)
+    KEYWORD         shift and go to state 5
+
+    node                           shift and go to state 4
+    nodes                          shift and go to state 19
+    node_qualifier_opt             shift and go to state 10
+    empty                          shift and go to state 11
+
+state 13
+
+    (4) nodes -> node nodes .
+
+    $end            reduce using rule 4 (nodes -> node nodes .)
+    RBRC            reduce using rule 4 (nodes -> node nodes .)
+    RBRCKT          reduce using rule 4 (nodes -> node nodes .)
+
+
+state 14
+
+    (7) proto_node -> PROTO IDENT . LBRCKT proto_field_defs RBRCKT LBRC impl_exp RBRC
+
+    LBRCKT          shift and go to state 20
+
+
+state 15
+
+    (39) node -> USE IDENT .
+
+    COMMA           reduce using rule 39 (node -> USE IDENT .)
+    USE             reduce using rule 39 (node -> USE IDENT .)
+    KEYWORD         reduce using rule 39 (node -> USE IDENT .)
+    DEF             reduce using rule 39 (node -> USE IDENT .)
+    IDENT           reduce using rule 39 (node -> USE IDENT .)
+    $end            reduce using rule 39 (node -> USE IDENT .)
+    RBRC            reduce using rule 39 (node -> USE IDENT .)
+    RBRCKT          reduce using rule 39 (node -> USE IDENT .)
+
+
+state 16
+
+    (36) node -> node_qualifier_opt def_opt . IDENT LBRC nodes RBRC
+    (37) node -> node_qualifier_opt def_opt . IDENT const_exp
+    (38) node -> node_qualifier_opt def_opt . IDENT LBRCKT nodes RBRCKT
+
+    IDENT           shift and go to state 21
+
+
+state 17
+
+    (33) def_opt -> empty .
+
+    IDENT           reduce using rule 33 (def_opt -> empty .)
+
+
+state 18
+
+    (32) def_opt -> DEF . IDENT
+
+    IDENT           shift and go to state 22
+
+
+state 19
+
+    (5) nodes -> node COMMA nodes .
+
+    $end            reduce using rule 5 (nodes -> node COMMA nodes .)
+    RBRC            reduce using rule 5 (nodes -> node COMMA nodes .)
+    RBRCKT          reduce using rule 5 (nodes -> node COMMA nodes .)
+
+
+state 20
+
+    (7) proto_node -> PROTO IDENT LBRCKT . proto_field_defs RBRCKT LBRC impl_exp RBRC
+    (8) proto_field_defs -> . proto_field_def proto_field_defs
+    (9) proto_field_defs -> . empty
+    (10) proto_field_def -> . FIELD simple_type_exp ident_and_reserved const_exp
+    (11) proto_field_def -> . EXPOSEDFIELD simple_type_exp ident_and_reserved const_exp
+    (12) proto_field_def -> . EVENTIN simple_type_exp ident_and_reserved
+    (54) empty -> .
+
+    FIELD           shift and go to state 26
+    EXPOSEDFIELD    shift and go to state 25
+    EVENTIN         shift and go to state 24
+    RBRCKT          reduce using rule 54 (empty -> .)
+
+    proto_field_defs               shift and go to state 27
+    proto_field_def                shift and go to state 23
+    empty                          shift and go to state 28
+
+state 21
+
+    (36) node -> node_qualifier_opt def_opt IDENT . LBRC nodes RBRC
+    (37) node -> node_qualifier_opt def_opt IDENT . const_exp
+    (38) node -> node_qualifier_opt def_opt IDENT . LBRCKT nodes RBRCKT
+    (40) const_exp -> . prim_const_exp
+    (41) const_exp -> . LBRCKT RBRCKT
+    (42) const_exp -> . LBRCKT const_exps RBRCKT
+    (46) prim_const_exp -> . STRING
+    (47) prim_const_exp -> . NULL
+    (48) prim_const_exp -> . BOOL
+    (49) prim_const_exp -> . numbers
+    (50) numbers -> . numbers number
+    (51) numbers -> . number
+    (52) number -> . FLOAT
+    (53) number -> . INT
+
+    LBRC            shift and go to state 30
+    LBRCKT          shift and go to state 35
+    STRING          shift and go to state 29
+    NULL            shift and go to state 39
+    BOOL            shift and go to state 38
+    FLOAT           shift and go to state 33
+    INT             shift and go to state 31
+
+    number                         shift and go to state 34
+    prim_const_exp                 shift and go to state 32
+    numbers                        shift and go to state 36
+    const_exp                      shift and go to state 37
+
+state 22
+
+    (32) def_opt -> DEF IDENT .
+
+    IDENT           reduce using rule 32 (def_opt -> DEF IDENT .)
+
+
+state 23
+
+    (8) proto_field_defs -> proto_field_def . proto_field_defs
+    (8) proto_field_defs -> . proto_field_def proto_field_defs
+    (9) proto_field_defs -> . empty
+    (10) proto_field_def -> . FIELD simple_type_exp ident_and_reserved const_exp
+    (11) proto_field_def -> . EXPOSEDFIELD simple_type_exp ident_and_reserved const_exp
+    (12) proto_field_def -> . EVENTIN simple_type_exp ident_and_reserved
+    (54) empty -> .
+
+    FIELD           shift and go to state 26
+    EXPOSEDFIELD    shift and go to state 25
+    EVENTIN         shift and go to state 24
+    RBRCKT          reduce using rule 54 (empty -> .)
+
+    proto_field_def                shift and go to state 23
+    proto_field_defs               shift and go to state 40
+    empty                          shift and go to state 28
+
+state 24
+
+    (12) proto_field_def -> EVENTIN . simple_type_exp ident_and_reserved
+    (15) simple_type_exp -> . MFNODE
+    (16) simple_type_exp -> . MFFLOAT
+    (17) simple_type_exp -> . MFSTRING
+    (18) simple_type_exp -> . SFNODE
+    (19) simple_type_exp -> . SFROTATION
+    (20) simple_type_exp -> . SFVEC3F
+    (21) simple_type_exp -> . SFFLOAT
+    (22) simple_type_exp -> . SFSTRING
+    (23) simple_type_exp -> . SFINT32
+    (24) simple_type_exp -> . IS
+
+    MFNODE          shift and go to state 48
+    MFFLOAT         shift and go to state 51
+    MFSTRING        shift and go to state 45
+    SFNODE          shift and go to state 46
+    SFROTATION      shift and go to state 43
+    SFVEC3F         shift and go to state 50
+    SFFLOAT         shift and go to state 44
+    SFSTRING        shift and go to state 49
+    SFINT32         shift and go to state 47
+    IS              shift and go to state 41
+
+    simple_type_exp                shift and go to state 42
+
+state 25
+
+    (11) proto_field_def -> EXPOSEDFIELD . simple_type_exp ident_and_reserved const_exp
+    (15) simple_type_exp -> . MFNODE
+    (16) simple_type_exp -> . MFFLOAT
+    (17) simple_type_exp -> . MFSTRING
+    (18) simple_type_exp -> . SFNODE
+    (19) simple_type_exp -> . SFROTATION
+    (20) simple_type_exp -> . SFVEC3F
+    (21) simple_type_exp -> . SFFLOAT
+    (22) simple_type_exp -> . SFSTRING
+    (23) simple_type_exp -> . SFINT32
+    (24) simple_type_exp -> . IS
+
+    MFNODE          shift and go to state 48
+    MFFLOAT         shift and go to state 51
+    MFSTRING        shift and go to state 45
+    SFNODE          shift and go to state 46
+    SFROTATION      shift and go to state 43
+    SFVEC3F         shift and go to state 50
+    SFFLOAT         shift and go to state 44
+    SFSTRING        shift and go to state 49
+    SFINT32         shift and go to state 47
+    IS              shift and go to state 41
+
+    simple_type_exp                shift and go to state 52
+
+state 26
+
+    (10) proto_field_def -> FIELD . simple_type_exp ident_and_reserved const_exp
+    (15) simple_type_exp -> . MFNODE
+    (16) simple_type_exp -> . MFFLOAT
+    (17) simple_type_exp -> . MFSTRING
+    (18) simple_type_exp -> . SFNODE
+    (19) simple_type_exp -> . SFROTATION
+    (20) simple_type_exp -> . SFVEC3F
+    (21) simple_type_exp -> . SFFLOAT
+    (22) simple_type_exp -> . SFSTRING
+    (23) simple_type_exp -> . SFINT32
+    (24) simple_type_exp -> . IS
+
+    MFNODE          shift and go to state 48
+    MFFLOAT         shift and go to state 51
+    MFSTRING        shift and go to state 45
+    SFNODE          shift and go to state 46
+    SFROTATION      shift and go to state 43
+    SFVEC3F         shift and go to state 50
+    SFFLOAT         shift and go to state 44
+    SFSTRING        shift and go to state 49
+    SFINT32         shift and go to state 47
+    IS              shift and go to state 41
+
+    simple_type_exp                shift and go to state 53
+
+state 27
+
+    (7) proto_node -> PROTO IDENT LBRCKT proto_field_defs . RBRCKT LBRC impl_exp RBRC
+
+    RBRCKT          shift and go to state 54
+
+
+state 28
+
+    (9) proto_field_defs -> empty .
+
+    RBRCKT          reduce using rule 9 (proto_field_defs -> empty .)
+
+
+state 29
+
+    (46) prim_const_exp -> STRING .
+
+    COMMA           reduce using rule 46 (prim_const_exp -> STRING .)
+    RBRCKT          reduce using rule 46 (prim_const_exp -> STRING .)
+    USE             reduce using rule 46 (prim_const_exp -> STRING .)
+    KEYWORD         reduce using rule 46 (prim_const_exp -> STRING .)
+    DEF             reduce using rule 46 (prim_const_exp -> STRING .)
+    IDENT           reduce using rule 46 (prim_const_exp -> STRING .)
+    $end            reduce using rule 46 (prim_const_exp -> STRING .)
+    RBRC            reduce using rule 46 (prim_const_exp -> STRING .)
+    FIELD           reduce using rule 46 (prim_const_exp -> STRING .)
+    EXPOSEDFIELD    reduce using rule 46 (prim_const_exp -> STRING .)
+    EVENTIN         reduce using rule 46 (prim_const_exp -> STRING .)
+
+
+state 30
+
+    (36) node -> node_qualifier_opt def_opt IDENT LBRC . nodes RBRC
+    (4) nodes -> . node nodes
+    (5) nodes -> . node COMMA nodes
+    (6) nodes -> . empty
+    (36) node -> . node_qualifier_opt def_opt IDENT LBRC nodes RBRC
+    (37) node -> . node_qualifier_opt def_opt IDENT const_exp
+    (38) node -> . node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT
+    (39) node -> . USE IDENT
+    (54) empty -> .
+    (34) node_qualifier_opt -> . KEYWORD
+    (35) node_qualifier_opt -> . empty
+
+    USE             shift and go to state 7
+    RBRC            reduce using rule 54 (empty -> .)
+    DEF             reduce using rule 54 (empty -> .)
+    IDENT           reduce using rule 54 (empty -> .)
+    KEYWORD         shift and go to state 5
+
+    node                           shift and go to state 4
+    nodes                          shift and go to state 55
+    node_qualifier_opt             shift and go to state 10
+    empty                          shift and go to state 11
+
+state 31
+
+    (53) number -> INT .
+
+    FLOAT           reduce using rule 53 (number -> INT .)
+    INT             reduce using rule 53 (number -> INT .)
+    FIELD           reduce using rule 53 (number -> INT .)
+    EXPOSEDFIELD    reduce using rule 53 (number -> INT .)
+    EVENTIN         reduce using rule 53 (number -> INT .)
+    RBRCKT          reduce using rule 53 (number -> INT .)
+    COMMA           reduce using rule 53 (number -> INT .)
+    USE             reduce using rule 53 (number -> INT .)
+    KEYWORD         reduce using rule 53 (number -> INT .)
+    DEF             reduce using rule 53 (number -> INT .)
+    IDENT           reduce using rule 53 (number -> INT .)
+    $end            reduce using rule 53 (number -> INT .)
+    RBRC            reduce using rule 53 (number -> INT .)
+
+
+state 32
+
+    (40) const_exp -> prim_const_exp .
+
+    FIELD           reduce using rule 40 (const_exp -> prim_const_exp .)
+    EXPOSEDFIELD    reduce using rule 40 (const_exp -> prim_const_exp .)
+    EVENTIN         reduce using rule 40 (const_exp -> prim_const_exp .)
+    RBRCKT          reduce using rule 40 (const_exp -> prim_const_exp .)
+    COMMA           reduce using rule 40 (const_exp -> prim_const_exp .)
+    USE             reduce using rule 40 (const_exp -> prim_const_exp .)
+    KEYWORD         reduce using rule 40 (const_exp -> prim_const_exp .)
+    DEF             reduce using rule 40 (const_exp -> prim_const_exp .)
+    IDENT           reduce using rule 40 (const_exp -> prim_const_exp .)
+    $end            reduce using rule 40 (const_exp -> prim_const_exp .)
+    RBRC            reduce using rule 40 (const_exp -> prim_const_exp .)
+
+
+state 33
+
+    (52) number -> FLOAT .
+
+    FLOAT           reduce using rule 52 (number -> FLOAT .)
+    INT             reduce using rule 52 (number -> FLOAT .)
+    FIELD           reduce using rule 52 (number -> FLOAT .)
+    EXPOSEDFIELD    reduce using rule 52 (number -> FLOAT .)
+    EVENTIN         reduce using rule 52 (number -> FLOAT .)
+    RBRCKT          reduce using rule 52 (number -> FLOAT .)
+    COMMA           reduce using rule 52 (number -> FLOAT .)
+    USE             reduce using rule 52 (number -> FLOAT .)
+    KEYWORD         reduce using rule 52 (number -> FLOAT .)
+    DEF             reduce using rule 52 (number -> FLOAT .)
+    IDENT           reduce using rule 52 (number -> FLOAT .)
+    $end            reduce using rule 52 (number -> FLOAT .)
+    RBRC            reduce using rule 52 (number -> FLOAT .)
+
+
+state 34
+
+    (51) numbers -> number .
+
+    FLOAT           reduce using rule 51 (numbers -> number .)
+    INT             reduce using rule 51 (numbers -> number .)
+    COMMA           reduce using rule 51 (numbers -> number .)
+    USE             reduce using rule 51 (numbers -> number .)
+    KEYWORD         reduce using rule 51 (numbers -> number .)
+    DEF             reduce using rule 51 (numbers -> number .)
+    IDENT           reduce using rule 51 (numbers -> number .)
+    $end            reduce using rule 51 (numbers -> number .)
+    RBRC            reduce using rule 51 (numbers -> number .)
+    RBRCKT          reduce using rule 51 (numbers -> number .)
+    FIELD           reduce using rule 51 (numbers -> number .)
+    EXPOSEDFIELD    reduce using rule 51 (numbers -> number .)
+    EVENTIN         reduce using rule 51 (numbers -> number .)
+
+
+state 35
+
+    (38) node -> node_qualifier_opt def_opt IDENT LBRCKT . nodes RBRCKT
+    (41) const_exp -> LBRCKT . RBRCKT
+    (42) const_exp -> LBRCKT . const_exps RBRCKT
+    (4) nodes -> . node nodes
+    (5) nodes -> . node COMMA nodes
+    (6) nodes -> . empty
+    (43) const_exps -> . const_exp COMMA const_exps
+    (44) const_exps -> . const_exp COMMA
+    (45) const_exps -> . const_exp
+    (36) node -> . node_qualifier_opt def_opt IDENT LBRC nodes RBRC
+    (37) node -> . node_qualifier_opt def_opt IDENT const_exp
+    (38) node -> . node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT
+    (39) node -> . USE IDENT
+    (54) empty -> .
+    (40) const_exp -> . prim_const_exp
+    (41) const_exp -> . LBRCKT RBRCKT
+    (42) const_exp -> . LBRCKT const_exps RBRCKT
+    (34) node_qualifier_opt -> . KEYWORD
+    (35) node_qualifier_opt -> . empty
+    (46) prim_const_exp -> . STRING
+    (47) prim_const_exp -> . NULL
+    (48) prim_const_exp -> . BOOL
+    (49) prim_const_exp -> . numbers
+    (50) numbers -> . numbers number
+    (51) numbers -> . number
+    (52) number -> . FLOAT
+    (53) number -> . INT
+
+  ! shift/reduce conflict for RBRCKT resolved as shift
+    RBRCKT          shift and go to state 56
+    USE             shift and go to state 7
+    DEF             reduce using rule 54 (empty -> .)
+    IDENT           reduce using rule 54 (empty -> .)
+    LBRCKT          shift and go to state 59
+    KEYWORD         shift and go to state 5
+    STRING          shift and go to state 29
+    NULL            shift and go to state 39
+    BOOL            shift and go to state 38
+    FLOAT           shift and go to state 33
+    INT             shift and go to state 31
+
+  ! RBRCKT          [ reduce using rule 54 (empty -> .) ]
+
+    node                           shift and go to state 4
+    const_exps                     shift and go to state 57
+    number                         shift and go to state 34
+    prim_const_exp                 shift and go to state 32
+    numbers                        shift and go to state 36
+    const_exp                      shift and go to state 58
+    nodes                          shift and go to state 60
+    node_qualifier_opt             shift and go to state 10
+    empty                          shift and go to state 11
+
+state 36
+
+    (49) prim_const_exp -> numbers .
+    (50) numbers -> numbers . number
+    (52) number -> . FLOAT
+    (53) number -> . INT
+
+    COMMA           reduce using rule 49 (prim_const_exp -> numbers .)
+    RBRCKT          reduce using rule 49 (prim_const_exp -> numbers .)
+    USE             reduce using rule 49 (prim_const_exp -> numbers .)
+    KEYWORD         reduce using rule 49 (prim_const_exp -> numbers .)
+    DEF             reduce using rule 49 (prim_const_exp -> numbers .)
+    IDENT           reduce using rule 49 (prim_const_exp -> numbers .)
+    $end            reduce using rule 49 (prim_const_exp -> numbers .)
+    RBRC            reduce using rule 49 (prim_const_exp -> numbers .)
+    FIELD           reduce using rule 49 (prim_const_exp -> numbers .)
+    EXPOSEDFIELD    reduce using rule 49 (prim_const_exp -> numbers .)
+    EVENTIN         reduce using rule 49 (prim_const_exp -> numbers .)
+    FLOAT           shift and go to state 33
+    INT             shift and go to state 31
+
+    number                         shift and go to state 61
+
+state 37
+
+    (37) node -> node_qualifier_opt def_opt IDENT const_exp .
+
+    COMMA           reduce using rule 37 (node -> node_qualifier_opt def_opt IDENT const_exp .)
+    USE             reduce using rule 37 (node -> node_qualifier_opt def_opt IDENT const_exp .)
+    KEYWORD         reduce using rule 37 (node -> node_qualifier_opt def_opt IDENT const_exp .)
+    DEF             reduce using rule 37 (node -> node_qualifier_opt def_opt IDENT const_exp .)
+    IDENT           reduce using rule 37 (node -> node_qualifier_opt def_opt IDENT const_exp .)
+    $end            reduce using rule 37 (node -> node_qualifier_opt def_opt IDENT const_exp .)
+    RBRC            reduce using rule 37 (node -> node_qualifier_opt def_opt IDENT const_exp .)
+    RBRCKT          reduce using rule 37 (node -> node_qualifier_opt def_opt IDENT const_exp .)
+
+
+state 38
+
+    (48) prim_const_exp -> BOOL .
+
+    COMMA           reduce using rule 48 (prim_const_exp -> BOOL .)
+    RBRCKT          reduce using rule 48 (prim_const_exp -> BOOL .)
+    USE             reduce using rule 48 (prim_const_exp -> BOOL .)
+    KEYWORD         reduce using rule 48 (prim_const_exp -> BOOL .)
+    DEF             reduce using rule 48 (prim_const_exp -> BOOL .)
+    IDENT           reduce using rule 48 (prim_const_exp -> BOOL .)
+    $end            reduce using rule 48 (prim_const_exp -> BOOL .)
+    RBRC            reduce using rule 48 (prim_const_exp -> BOOL .)
+    FIELD           reduce using rule 48 (prim_const_exp -> BOOL .)
+    EXPOSEDFIELD    reduce using rule 48 (prim_const_exp -> BOOL .)
+    EVENTIN         reduce using rule 48 (prim_const_exp -> BOOL .)
+
+
+state 39
+
+    (47) prim_const_exp -> NULL .
+
+    COMMA           reduce using rule 47 (prim_const_exp -> NULL .)
+    RBRCKT          reduce using rule 47 (prim_const_exp -> NULL .)
+    USE             reduce using rule 47 (prim_const_exp -> NULL .)
+    KEYWORD         reduce using rule 47 (prim_const_exp -> NULL .)
+    DEF             reduce using rule 47 (prim_const_exp -> NULL .)
+    IDENT           reduce using rule 47 (prim_const_exp -> NULL .)
+    $end            reduce using rule 47 (prim_const_exp -> NULL .)
+    RBRC            reduce using rule 47 (prim_const_exp -> NULL .)
+    FIELD           reduce using rule 47 (prim_const_exp -> NULL .)
+    EXPOSEDFIELD    reduce using rule 47 (prim_const_exp -> NULL .)
+    EVENTIN         reduce using rule 47 (prim_const_exp -> NULL .)
+
+
+state 40
+
+    (8) proto_field_defs -> proto_field_def proto_field_defs .
+
+    RBRCKT          reduce using rule 8 (proto_field_defs -> proto_field_def proto_field_defs .)
+
+
+state 41
+
+    (24) simple_type_exp -> IS .
+
+    IDENT           reduce using rule 24 (simple_type_exp -> IS .)
+    KEYWORD         reduce using rule 24 (simple_type_exp -> IS .)
+
+
+state 42
+
+    (12) proto_field_def -> EVENTIN simple_type_exp . ident_and_reserved
+    (13) ident_and_reserved -> . IDENT
+    (14) ident_and_reserved -> . KEYWORD
+
+    IDENT           shift and go to state 62
+    KEYWORD         shift and go to state 63
+
+    ident_and_reserved             shift and go to state 64
+
+state 43
+
+    (19) simple_type_exp -> SFROTATION .
+
+    IDENT           reduce using rule 19 (simple_type_exp -> SFROTATION .)
+    KEYWORD         reduce using rule 19 (simple_type_exp -> SFROTATION .)
+
+
+state 44
+
+    (21) simple_type_exp -> SFFLOAT .
+
+    IDENT           reduce using rule 21 (simple_type_exp -> SFFLOAT .)
+    KEYWORD         reduce using rule 21 (simple_type_exp -> SFFLOAT .)
+
+
+state 45
+
+    (17) simple_type_exp -> MFSTRING .
+
+    IDENT           reduce using rule 17 (simple_type_exp -> MFSTRING .)
+    KEYWORD         reduce using rule 17 (simple_type_exp -> MFSTRING .)
+
+
+state 46
+
+    (18) simple_type_exp -> SFNODE .
+
+    IDENT           reduce using rule 18 (simple_type_exp -> SFNODE .)
+    KEYWORD         reduce using rule 18 (simple_type_exp -> SFNODE .)
+
+
+state 47
+
+    (23) simple_type_exp -> SFINT32 .
+
+    IDENT           reduce using rule 23 (simple_type_exp -> SFINT32 .)
+    KEYWORD         reduce using rule 23 (simple_type_exp -> SFINT32 .)
+
+
+state 48
+
+    (15) simple_type_exp -> MFNODE .
+
+    IDENT           reduce using rule 15 (simple_type_exp -> MFNODE .)
+    KEYWORD         reduce using rule 15 (simple_type_exp -> MFNODE .)
+
+
+state 49
+
+    (22) simple_type_exp -> SFSTRING .
+
+    IDENT           reduce using rule 22 (simple_type_exp -> SFSTRING .)
+    KEYWORD         reduce using rule 22 (simple_type_exp -> SFSTRING .)
+
+
+state 50
+
+    (20) simple_type_exp -> SFVEC3F .
+
+    IDENT           reduce using rule 20 (simple_type_exp -> SFVEC3F .)
+    KEYWORD         reduce using rule 20 (simple_type_exp -> SFVEC3F .)
+
+
+state 51
+
+    (16) simple_type_exp -> MFFLOAT .
+
+    IDENT           reduce using rule 16 (simple_type_exp -> MFFLOAT .)
+    KEYWORD         reduce using rule 16 (simple_type_exp -> MFFLOAT .)
+
+
+state 52
+
+    (11) proto_field_def -> EXPOSEDFIELD simple_type_exp . ident_and_reserved const_exp
+    (13) ident_and_reserved -> . IDENT
+    (14) ident_and_reserved -> . KEYWORD
+
+    IDENT           shift and go to state 62
+    KEYWORD         shift and go to state 63
+
+    ident_and_reserved             shift and go to state 65
+
+state 53
+
+    (10) proto_field_def -> FIELD simple_type_exp . ident_and_reserved const_exp
+    (13) ident_and_reserved -> . IDENT
+    (14) ident_and_reserved -> . KEYWORD
+
+    IDENT           shift and go to state 62
+    KEYWORD         shift and go to state 63
+
+    ident_and_reserved             shift and go to state 66
+
+state 54
+
+    (7) proto_node -> PROTO IDENT LBRCKT proto_field_defs RBRCKT . LBRC impl_exp RBRC
+
+    LBRC            shift and go to state 67
+
+
+state 55
+
+    (36) node -> node_qualifier_opt def_opt IDENT LBRC nodes . RBRC
+
+    RBRC            shift and go to state 68
+
+
+state 56
+
+    (41) const_exp -> LBRCKT RBRCKT .
+
+    FIELD           reduce using rule 41 (const_exp -> LBRCKT RBRCKT .)
+    EXPOSEDFIELD    reduce using rule 41 (const_exp -> LBRCKT RBRCKT .)
+    EVENTIN         reduce using rule 41 (const_exp -> LBRCKT RBRCKT .)
+    RBRCKT          reduce using rule 41 (const_exp -> LBRCKT RBRCKT .)
+    COMMA           reduce using rule 41 (const_exp -> LBRCKT RBRCKT .)
+    USE             reduce using rule 41 (const_exp -> LBRCKT RBRCKT .)
+    KEYWORD         reduce using rule 41 (const_exp -> LBRCKT RBRCKT .)
+    DEF             reduce using rule 41 (const_exp -> LBRCKT RBRCKT .)
+    IDENT           reduce using rule 41 (const_exp -> LBRCKT RBRCKT .)
+    $end            reduce using rule 41 (const_exp -> LBRCKT RBRCKT .)
+    RBRC            reduce using rule 41 (const_exp -> LBRCKT RBRCKT .)
+
+
+state 57
+
+    (42) const_exp -> LBRCKT const_exps . RBRCKT
+
+    RBRCKT          shift and go to state 69
+
+
+state 58
+
+    (43) const_exps -> const_exp . COMMA const_exps
+    (44) const_exps -> const_exp . COMMA
+    (45) const_exps -> const_exp .
+
+    COMMA           shift and go to state 70
+    RBRCKT          reduce using rule 45 (const_exps -> const_exp .)
+
+
+state 59
+
+    (41) const_exp -> LBRCKT . RBRCKT
+    (42) const_exp -> LBRCKT . const_exps RBRCKT
+    (43) const_exps -> . const_exp COMMA const_exps
+    (44) const_exps -> . const_exp COMMA
+    (45) const_exps -> . const_exp
+    (40) const_exp -> . prim_const_exp
+    (41) const_exp -> . LBRCKT RBRCKT
+    (42) const_exp -> . LBRCKT const_exps RBRCKT
+    (46) prim_const_exp -> . STRING
+    (47) prim_const_exp -> . NULL
+    (48) prim_const_exp -> . BOOL
+    (49) prim_const_exp -> . numbers
+    (50) numbers -> . numbers number
+    (51) numbers -> . number
+    (52) number -> . FLOAT
+    (53) number -> . INT
+
+    RBRCKT          shift and go to state 56
+    LBRCKT          shift and go to state 59
+    STRING          shift and go to state 29
+    NULL            shift and go to state 39
+    BOOL            shift and go to state 38
+    FLOAT           shift and go to state 33
+    INT             shift and go to state 31
+
+    const_exp                      shift and go to state 58
+    const_exps                     shift and go to state 57
+    number                         shift and go to state 34
+    prim_const_exp                 shift and go to state 32
+    numbers                        shift and go to state 36
+
+state 60
+
+    (38) node -> node_qualifier_opt def_opt IDENT LBRCKT nodes . RBRCKT
+
+    RBRCKT          shift and go to state 71
+
+
+state 61
+
+    (50) numbers -> numbers number .
+
+    FLOAT           reduce using rule 50 (numbers -> numbers number .)
+    INT             reduce using rule 50 (numbers -> numbers number .)
+    COMMA           reduce using rule 50 (numbers -> numbers number .)
+    USE             reduce using rule 50 (numbers -> numbers number .)
+    KEYWORD         reduce using rule 50 (numbers -> numbers number .)
+    DEF             reduce using rule 50 (numbers -> numbers number .)
+    IDENT           reduce using rule 50 (numbers -> numbers number .)
+    $end            reduce using rule 50 (numbers -> numbers number .)
+    RBRC            reduce using rule 50 (numbers -> numbers number .)
+    RBRCKT          reduce using rule 50 (numbers -> numbers number .)
+    FIELD           reduce using rule 50 (numbers -> numbers number .)
+    EXPOSEDFIELD    reduce using rule 50 (numbers -> numbers number .)
+    EVENTIN         reduce using rule 50 (numbers -> numbers number .)
+
+
+state 62
+
+    (13) ident_and_reserved -> IDENT .
+
+    FIELD           reduce using rule 13 (ident_and_reserved -> IDENT .)
+    EXPOSEDFIELD    reduce using rule 13 (ident_and_reserved -> IDENT .)
+    EVENTIN         reduce using rule 13 (ident_and_reserved -> IDENT .)
+    RBRCKT          reduce using rule 13 (ident_and_reserved -> IDENT .)
+    LBRCKT          reduce using rule 13 (ident_and_reserved -> IDENT .)
+    STRING          reduce using rule 13 (ident_and_reserved -> IDENT .)
+    NULL            reduce using rule 13 (ident_and_reserved -> IDENT .)
+    BOOL            reduce using rule 13 (ident_and_reserved -> IDENT .)
+    FLOAT           reduce using rule 13 (ident_and_reserved -> IDENT .)
+    INT             reduce using rule 13 (ident_and_reserved -> IDENT .)
+
+
+state 63
+
+    (14) ident_and_reserved -> KEYWORD .
+
+    FIELD           reduce using rule 14 (ident_and_reserved -> KEYWORD .)
+    EXPOSEDFIELD    reduce using rule 14 (ident_and_reserved -> KEYWORD .)
+    EVENTIN         reduce using rule 14 (ident_and_reserved -> KEYWORD .)
+    RBRCKT          reduce using rule 14 (ident_and_reserved -> KEYWORD .)
+    LBRCKT          reduce using rule 14 (ident_and_reserved -> KEYWORD .)
+    STRING          reduce using rule 14 (ident_and_reserved -> KEYWORD .)
+    NULL            reduce using rule 14 (ident_and_reserved -> KEYWORD .)
+    BOOL            reduce using rule 14 (ident_and_reserved -> KEYWORD .)
+    FLOAT           reduce using rule 14 (ident_and_reserved -> KEYWORD .)
+    INT             reduce using rule 14 (ident_and_reserved -> KEYWORD .)
+
+
+state 64
+
+    (12) proto_field_def -> EVENTIN simple_type_exp ident_and_reserved .
+
+    FIELD           reduce using rule 12 (proto_field_def -> EVENTIN simple_type_exp ident_and_reserved .)
+    EXPOSEDFIELD    reduce using rule 12 (proto_field_def -> EVENTIN simple_type_exp ident_and_reserved .)
+    EVENTIN         reduce using rule 12 (proto_field_def -> EVENTIN simple_type_exp ident_and_reserved .)
+    RBRCKT          reduce using rule 12 (proto_field_def -> EVENTIN simple_type_exp ident_and_reserved .)
+
+
+state 65
+
+    (11) proto_field_def -> EXPOSEDFIELD simple_type_exp ident_and_reserved . const_exp
+    (40) const_exp -> . prim_const_exp
+    (41) const_exp -> . LBRCKT RBRCKT
+    (42) const_exp -> . LBRCKT const_exps RBRCKT
+    (46) prim_const_exp -> . STRING
+    (47) prim_const_exp -> . NULL
+    (48) prim_const_exp -> . BOOL
+    (49) prim_const_exp -> . numbers
+    (50) numbers -> . numbers number
+    (51) numbers -> . number
+    (52) number -> . FLOAT
+    (53) number -> . INT
+
+    LBRCKT          shift and go to state 59
+    STRING          shift and go to state 29
+    NULL            shift and go to state 39
+    BOOL            shift and go to state 38
+    FLOAT           shift and go to state 33
+    INT             shift and go to state 31
+
+    number                         shift and go to state 34
+    numbers                        shift and go to state 36
+    const_exp                      shift and go to state 72
+    prim_const_exp                 shift and go to state 32
+
+state 66
+
+    (10) proto_field_def -> FIELD simple_type_exp ident_and_reserved . const_exp
+    (40) const_exp -> . prim_const_exp
+    (41) const_exp -> . LBRCKT RBRCKT
+    (42) const_exp -> . LBRCKT const_exps RBRCKT
+    (46) prim_const_exp -> . STRING
+    (47) prim_const_exp -> . NULL
+    (48) prim_const_exp -> . BOOL
+    (49) prim_const_exp -> . numbers
+    (50) numbers -> . numbers number
+    (51) numbers -> . number
+    (52) number -> . FLOAT
+    (53) number -> . INT
+
+    LBRCKT          shift and go to state 59
+    STRING          shift and go to state 29
+    NULL            shift and go to state 39
+    BOOL            shift and go to state 38
+    FLOAT           shift and go to state 33
+    INT             shift and go to state 31
+
+    number                         shift and go to state 34
+    numbers                        shift and go to state 36
+    const_exp                      shift and go to state 73
+    prim_const_exp                 shift and go to state 32
+
+state 67
+
+    (7) proto_node -> PROTO IDENT LBRCKT proto_field_defs RBRCKT LBRC . impl_exp RBRC
+    (27) impl_exp -> . IDENT LBRC impl_fields RBRC
+
+    IDENT           shift and go to state 74
+
+    impl_exp                       shift and go to state 75
+
+state 68
+
+    (36) node -> node_qualifier_opt def_opt IDENT LBRC nodes RBRC .
+
+    COMMA           reduce using rule 36 (node -> node_qualifier_opt def_opt IDENT LBRC nodes RBRC .)
+    USE             reduce using rule 36 (node -> node_qualifier_opt def_opt IDENT LBRC nodes RBRC .)
+    KEYWORD         reduce using rule 36 (node -> node_qualifier_opt def_opt IDENT LBRC nodes RBRC .)
+    DEF             reduce using rule 36 (node -> node_qualifier_opt def_opt IDENT LBRC nodes RBRC .)
+    IDENT           reduce using rule 36 (node -> node_qualifier_opt def_opt IDENT LBRC nodes RBRC .)
+    $end            reduce using rule 36 (node -> node_qualifier_opt def_opt IDENT LBRC nodes RBRC .)
+    RBRC            reduce using rule 36 (node -> node_qualifier_opt def_opt IDENT LBRC nodes RBRC .)
+    RBRCKT          reduce using rule 36 (node -> node_qualifier_opt def_opt IDENT LBRC nodes RBRC .)
+
+
+state 69
+
+    (42) const_exp -> LBRCKT const_exps RBRCKT .
+
+    FIELD           reduce using rule 42 (const_exp -> LBRCKT const_exps RBRCKT .)
+    EXPOSEDFIELD    reduce using rule 42 (const_exp -> LBRCKT const_exps RBRCKT .)
+    EVENTIN         reduce using rule 42 (const_exp -> LBRCKT const_exps RBRCKT .)
+    RBRCKT          reduce using rule 42 (const_exp -> LBRCKT const_exps RBRCKT .)
+    COMMA           reduce using rule 42 (const_exp -> LBRCKT const_exps RBRCKT .)
+    USE             reduce using rule 42 (const_exp -> LBRCKT const_exps RBRCKT .)
+    KEYWORD         reduce using rule 42 (const_exp -> LBRCKT const_exps RBRCKT .)
+    DEF             reduce using rule 42 (const_exp -> LBRCKT const_exps RBRCKT .)
+    IDENT           reduce using rule 42 (const_exp -> LBRCKT const_exps RBRCKT .)
+    $end            reduce using rule 42 (const_exp -> LBRCKT const_exps RBRCKT .)
+    RBRC            reduce using rule 42 (const_exp -> LBRCKT const_exps RBRCKT .)
+
+
+state 70
+
+    (43) const_exps -> const_exp COMMA . const_exps
+    (44) const_exps -> const_exp COMMA .
+    (43) const_exps -> . const_exp COMMA const_exps
+    (44) const_exps -> . const_exp COMMA
+    (45) const_exps -> . const_exp
+    (40) const_exp -> . prim_const_exp
+    (41) const_exp -> . LBRCKT RBRCKT
+    (42) const_exp -> . LBRCKT const_exps RBRCKT
+    (46) prim_const_exp -> . STRING
+    (47) prim_const_exp -> . NULL
+    (48) prim_const_exp -> . BOOL
+    (49) prim_const_exp -> . numbers
+    (50) numbers -> . numbers number
+    (51) numbers -> . number
+    (52) number -> . FLOAT
+    (53) number -> . INT
+
+    RBRCKT          reduce using rule 44 (const_exps -> const_exp COMMA .)
+    LBRCKT          shift and go to state 59
+    STRING          shift and go to state 29
+    NULL            shift and go to state 39
+    BOOL            shift and go to state 38
+    FLOAT           shift and go to state 33
+    INT             shift and go to state 31
+
+    const_exp                      shift and go to state 58
+    const_exps                     shift and go to state 76
+    number                         shift and go to state 34
+    prim_const_exp                 shift and go to state 32
+    numbers                        shift and go to state 36
+
+state 71
+
+    (38) node -> node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT .
+
+    COMMA           reduce using rule 38 (node -> node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT .)
+    USE             reduce using rule 38 (node -> node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT .)
+    KEYWORD         reduce using rule 38 (node -> node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT .)
+    DEF             reduce using rule 38 (node -> node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT .)
+    IDENT           reduce using rule 38 (node -> node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT .)
+    $end            reduce using rule 38 (node -> node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT .)
+    RBRC            reduce using rule 38 (node -> node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT .)
+    RBRCKT          reduce using rule 38 (node -> node_qualifier_opt def_opt IDENT LBRCKT nodes RBRCKT .)
+
+
+state 72
+
+    (11) proto_field_def -> EXPOSEDFIELD simple_type_exp ident_and_reserved const_exp .
+
+    FIELD           reduce using rule 11 (proto_field_def -> EXPOSEDFIELD simple_type_exp ident_and_reserved const_exp .)
+    EXPOSEDFIELD    reduce using rule 11 (proto_field_def -> EXPOSEDFIELD simple_type_exp ident_and_reserved const_exp .)
+    EVENTIN         reduce using rule 11 (proto_field_def -> EXPOSEDFIELD simple_type_exp ident_and_reserved const_exp .)
+    RBRCKT          reduce using rule 11 (proto_field_def -> EXPOSEDFIELD simple_type_exp ident_and_reserved const_exp .)
+
+
+state 73
+
+    (10) proto_field_def -> FIELD simple_type_exp ident_and_reserved const_exp .
+
+    FIELD           reduce using rule 10 (proto_field_def -> FIELD simple_type_exp ident_and_reserved const_exp .)
+    EXPOSEDFIELD    reduce using rule 10 (proto_field_def -> FIELD simple_type_exp ident_and_reserved const_exp .)
+    EVENTIN         reduce using rule 10 (proto_field_def -> FIELD simple_type_exp ident_and_reserved const_exp .)
+    RBRCKT          reduce using rule 10 (proto_field_def -> FIELD simple_type_exp ident_and_reserved const_exp .)
+
+
+state 74
+
+    (27) impl_exp -> IDENT . LBRC impl_fields RBRC
+
+    LBRC            shift and go to state 77
+
+
+state 75
+
+    (7) proto_node -> PROTO IDENT LBRCKT proto_field_defs RBRCKT LBRC impl_exp . RBRC
+
+    RBRC            shift and go to state 78
+
+
+state 76
+
+    (43) const_exps -> const_exp COMMA const_exps .
+
+    RBRCKT          reduce using rule 43 (const_exps -> const_exp COMMA const_exps .)
+
+
+state 77
+
+    (27) impl_exp -> IDENT LBRC . impl_fields RBRC
+    (28) impl_fields -> . impl_field impl_fields
+    (29) impl_fields -> . empty
+    (30) impl_field -> . IDENT IS IDENT
+    (31) impl_field -> . IDENT LBRCKT impl_exps RBRCKT
+    (54) empty -> .
+
+    IDENT           shift and go to state 79
+    RBRC            reduce using rule 54 (empty -> .)
+
+    impl_fields                    shift and go to state 81
+    empty                          shift and go to state 82
+    impl_field                     shift and go to state 80
+
+state 78
+
+    (7) proto_node -> PROTO IDENT LBRCKT proto_field_defs RBRCKT LBRC impl_exp RBRC .
+
+    PROTO           reduce using rule 7 (proto_node -> PROTO IDENT LBRCKT proto_field_defs RBRCKT LBRC impl_exp RBRC .)
+    USE             reduce using rule 7 (proto_node -> PROTO IDENT LBRCKT proto_field_defs RBRCKT LBRC impl_exp RBRC .)
+    KEYWORD         reduce using rule 7 (proto_node -> PROTO IDENT LBRCKT proto_field_defs RBRCKT LBRC impl_exp RBRC .)
+    DEF             reduce using rule 7 (proto_node -> PROTO IDENT LBRCKT proto_field_defs RBRCKT LBRC impl_exp RBRC .)
+    IDENT           reduce using rule 7 (proto_node -> PROTO IDENT LBRCKT proto_field_defs RBRCKT LBRC impl_exp RBRC .)
+    $end            reduce using rule 7 (proto_node -> PROTO IDENT LBRCKT proto_field_defs RBRCKT LBRC impl_exp RBRC .)
+
+
+state 79
+
+    (30) impl_field -> IDENT . IS IDENT
+    (31) impl_field -> IDENT . LBRCKT impl_exps RBRCKT
+
+    IS              shift and go to state 83
+    LBRCKT          shift and go to state 84
+
+
+state 80
+
+    (28) impl_fields -> impl_field . impl_fields
+    (28) impl_fields -> . impl_field impl_fields
+    (29) impl_fields -> . empty
+    (30) impl_field -> . IDENT IS IDENT
+    (31) impl_field -> . IDENT LBRCKT impl_exps RBRCKT
+    (54) empty -> .
+
+    IDENT           shift and go to state 79
+    RBRC            reduce using rule 54 (empty -> .)
+
+    impl_field                     shift and go to state 80
+    empty                          shift and go to state 82
+    impl_fields                    shift and go to state 85
+
+state 81
+
+    (27) impl_exp -> IDENT LBRC impl_fields . RBRC
+
+    RBRC            shift and go to state 86
+
+
+state 82
+
+    (29) impl_fields -> empty .
+
+    RBRC            reduce using rule 29 (impl_fields -> empty .)
+
+
+state 83
+
+    (30) impl_field -> IDENT IS . IDENT
+
+    IDENT           shift and go to state 87
+
+
+state 84
+
+    (31) impl_field -> IDENT LBRCKT . impl_exps RBRCKT
+    (25) impl_exps -> . impl_exp impl_exps
+    (26) impl_exps -> . empty
+    (27) impl_exp -> . IDENT LBRC impl_fields RBRC
+    (54) empty -> .
+
+    IDENT           shift and go to state 74
+    RBRCKT          reduce using rule 54 (empty -> .)
+
+    impl_exps                      shift and go to state 88
+    empty                          shift and go to state 90
+    impl_exp                       shift and go to state 89
+
+state 85
+
+    (28) impl_fields -> impl_field impl_fields .
+
+    RBRC            reduce using rule 28 (impl_fields -> impl_field impl_fields .)
+
+
+state 86
+
+    (27) impl_exp -> IDENT LBRC impl_fields RBRC .
+
+    IDENT           reduce using rule 27 (impl_exp -> IDENT LBRC impl_fields RBRC .)
+    RBRCKT          reduce using rule 27 (impl_exp -> IDENT LBRC impl_fields RBRC .)
+    RBRC            reduce using rule 27 (impl_exp -> IDENT LBRC impl_fields RBRC .)
+
+
+state 87
+
+    (30) impl_field -> IDENT IS IDENT .
+
+    IDENT           reduce using rule 30 (impl_field -> IDENT IS IDENT .)
+    RBRC            reduce using rule 30 (impl_field -> IDENT IS IDENT .)
+
+
+state 88
+
+    (31) impl_field -> IDENT LBRCKT impl_exps . RBRCKT
+
+    RBRCKT          shift and go to state 91
+
+
+state 89
+
+    (25) impl_exps -> impl_exp . impl_exps
+    (25) impl_exps -> . impl_exp impl_exps
+    (26) impl_exps -> . empty
+    (27) impl_exp -> . IDENT LBRC impl_fields RBRC
+    (54) empty -> .
+
+    IDENT           shift and go to state 74
+    RBRCKT          reduce using rule 54 (empty -> .)
+
+    impl_exps                      shift and go to state 92
+    empty                          shift and go to state 90
+    impl_exp                       shift and go to state 89
+
+state 90
+
+    (26) impl_exps -> empty .
+
+    RBRCKT          reduce using rule 26 (impl_exps -> empty .)
+
+
+state 91
+
+    (31) impl_field -> IDENT LBRCKT impl_exps RBRCKT .
+
+    IDENT           reduce using rule 31 (impl_field -> IDENT LBRCKT impl_exps RBRCKT .)
+    RBRC            reduce using rule 31 (impl_field -> IDENT LBRCKT impl_exps RBRCKT .)
+
+
+state 92
+
+    (25) impl_exps -> impl_exp impl_exps .
+
+    RBRCKT          reduce using rule 25 (impl_exps -> impl_exp impl_exps .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for RBRCKT in state 35 resolved as shift

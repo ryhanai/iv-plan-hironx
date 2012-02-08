@@ -1,0 +1,8 @@
+<stack>
+  <description brief="iv_plan_hironx">A module of Python scripts for motion generation of HiroNX</description>
+  <author>Ryo Hanai</author>
+  <license>BSD</license>  
+  <review status="unreviewed" notes=""/>
+  <depend stack="ros" />
+
+</stack>
