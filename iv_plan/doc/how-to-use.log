@@ -1,4 +1,4 @@
-This is pTeXk, Version 3.141592-p3.1.11 (euc) (Web2C 7.5.4) (format=platex 2011.4.10)  8 FEB 2012 23:09
+This is pTeXk, Version 3.141592-p3.1.11 (euc) (Web2C 7.5.4) (format=platex 2011.4.10)  9 FEB 2012 01:56
  %&-line parsing enabled.
 **how-to-use.tex
 (./how-to-use.tex
@@ -287,4 +287,4 @@ Here is how much of TeX's memory you used:
  14 hyphenation exceptions out of 8191
  27i,6n,32p,209b,915s stack positions out of 5000i,500n,6000p,200000b,40000s
 
-Output written on how-to-use.dvi (10 pages, 20224 bytes).
+Output written on how-to-use.dvi (10 pages, 20308 bytes).
