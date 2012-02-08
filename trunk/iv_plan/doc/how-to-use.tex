@@ -1,0 +1,338 @@
+\documentclass[11pt]{jreport}
+\setlength{\topmargin}{-15mm}
+\setlength{\evensidemargin}{-2mm}
+\setlength{\oddsidemargin}{3mm}
+\setlength{\textheight}{24.5cm}
+\setlength{\textwidth}{15cm}
+%%
+\usepackage[dvipdfm]{graphicx}
+\usepackage{enumerate}
+
+\usepackage{subfigure}
+
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{bm} % 数式の中のBold (\bm{})
+\usepackage{amsmath} % 数式の中の改行 (\begin{gather} \\ )
+
+\usepackage{listings,jlisting}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+\newcommand {\figref}[1] {図\ref{#1}}
+\newcommand{\tabref}[1] {表\ref{#1}}
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+
+\renewcommand{\subfigtopskip}{1pt}
+\renewcommand{\subfigbottomskip}{1pt}
+\renewcommand{\subfigcapskip}{1pt}
+\setlength{\floatsep}{6pt}           % 図表と図表の間のマージン
+\setlength{\dblfloatsep}{6pt}        % ↑の二段組 version
+\setlength{\textfloatsep}{6pt}       % 図表と本文の間のマージン
+\setlength{\abovecaptionskip}{-2pt}   % 図表の caption と図表本体の間のマージン
+\setlength{\belowcaptionskip}{2pt}   % 図表の caption 下部のマージン
+
+\input amssym.def
+
+\author{東京大学　情報理工学系研究科　稲葉研究室}
+\title{手先カメラを用いた双腕ロボットによる\\
+マニピュレーションシステム\\
+操作手順書}
+%\date{2010/4/10}
+
+\begin{document}
+\setlength{\baselineskip}{1.5zw}
+
+\maketitle
+
+\tableofcontents
+
+
+\chapter{システム概要}
+
+本サービスは，工場での部品整理をイメージしたものである．
+具体的には手先のカメラを用いて作業台上の部品を認識し,
+両手で箱に整理して入れる機能を実現する．
+手を動かすことで複数の対象物を認識，両手の干渉を考慮して
+同時にアプローチできる対象物を選択する．
+
+ \section{全体のモジュール構成}
+
+ 以下に，本システムで利用するモジュールの一覧を示す．
+\begin{itemize}
+ \item app-recog
+ \item CameraComp
+ \item LoadPictureComp
+ \item iv\_plan\_hironx
+ \item HiroNXInterface
+\end{itemize}
+ファイルシステム上の場所は必ずしも重要ではないが，
+ディレクトリ構成は揃えておくと
+本ドキュメントとあわせて理解しやすい．
+
+\begin{figure}[htb]
+ \begin{center}
+  \includegraphics[width=0.8\linewidth]{figure/system.png}
+  \caption{サービスイメージ}
+  \label{fig:system}
+ \end{center}
+\end{figure}
+\begin{figure}[htb]
+ \begin{center}
+  \includegraphics[width=1.0\linewidth]{figure/rtc_diagram.png}
+  \caption{全体のモジュール構成}
+  \label{fig:rtc_diagram}
+ \end{center}
+\end{figure}
+
+
+\section{認識部}
+
+\subsection{エッジベース二次元対象物認識モジュール(AppRecog)}
+
+http://openrtm.org/openrtm/ja/project/NEDO\_Intelligent\_PRJ\_HiroAccPrj\_5002
+
+HiroNXの手先に取り付けられたUSBカメラで対象物を認識するためのモジュール
+である．カメラパラメータはデータポートを通して画像と一緒に送られてくるも
+のを利用する．正しいカメラパラメータが入っていなくても対象物の認識はでき
+るが，位置および姿勢は正しく推定されない．
+
+\subsubsection{ダウンロードとコンパイル}
+
+\begin{itemize}
+ \item 現状ではgoogle code(SVN)から開発版をチェックアウト
+ \item どこかのバージョンのtarを作る予定
+\end{itemize}
+
+\begin{lstlisting}
+ $ cd app-recog
+ $ make
+\end{lstlisting}
+
+\subsubsection{カスタマイズ}
+
+連続的に送られてくる画像に対して認識を行うが，認識結果の時間方向の連続性
+は考慮せず，各フレームで一番尤度が高い位置を計算し，その尤度が閾値以上で
+あれば検出結果を返す．
+
+\begin{itemize}
+ \item 認識手法の簡単な説明
+ \item 閾値の変更方法，閾値の意味について
+ \item 状態空間の範囲指定について
+ \item サービスによる認識対象の切り替え
+ \item 認識モジュールにおける対象物モデルの定義の仕方
+\end{itemize}
+
+\begin{figure}[tb]
+ \begin{center}
+  \includegraphics[width=0.8\linewidth]{figure/apprecog.png}
+  \caption{認識例}
+  \label{fig:apprecog}
+ \end{center}
+\end{figure}
+
+\subsection{カメラ共通I/F準拠の画像キャプチャモジュール(CameraComp)}
+
+http://www-arailab.sys.es.osaka-u.ac.jp/CameraIF/
+
+大阪大学により開発され画像キャプチャモジュールCameraCompをダウンロード，
+コンパイルする．ログ画像によるテストを行うため，LoadPictureCompモジュー
+ルも同様にダウンロードするとよい．
+
+
+\subsection{認識部の動作確認}
+
+実際にカメラモジュールと接続し，オンラインでテストを行う．
+このときのモジュール接続は\figref{fig:test_by_camera}のようになり，
+実行手順は，以下の通りである．
+\begin{enumerate}
+ \item 認識モジュールAppRecogとキャプチャモジュールをそれぞれ実行する．
+ \item rtshellで画像の入出力を接続する(system editor上で操作してもよい)．
+ \item 2つのRTCをactivateする．
+\end{enumerate}
+
+\begin{lstlisting}
+ $ cd CameraComp
+ $ ./CaptureCameraComp
+ 別端末で
+ $ cd app-recog/
+ $ build/bin/AppRecogComp
+ 別端末で（rtctreeでのパスは適当に補完する）
+ $ rtcon CaptureCamera0.rtc:CameraImage AppRecog0.rtc:InputImage
+ $ rtact CaptureCamera0.rtc AppRecog0.rtc
+\end{lstlisting}
+
+初期設定で認識範囲のスケールを絞ってあるため，認識できない場合は
+対象物までの距離をいろいろ変えてみる．
+また，背景に模様がなく，対象物と異なる色のものを置くと認識しやすくなる．
+
+テストとして，カメラモジュールをLoadPictureCompモジュールに差し替え，
+あらかじめ撮っておいた画像を用いてテストを行う場合，
+CaptureCameraCompをLoadPictureCompに置き換えた接続となる．
+ログ画像の指定は，LoadPictureCompモジュールのLoadPicture.confで
+行う．AppRecogモジュール付属の画像data/parts4.jpgを用いて確認を行うとよ
+い．
+状態空間における探索範囲は別途指定が可能である．
+
+% \begin{figure}[tb]
+%  \begin{center}
+%   %\includegraphics[width=0.5\linewidth]{figure/recog_test_log.png}
+%   \caption{ログ画像を用いたテスト}
+%   \label{fig:test_by_image}
+%  \end{center}
+% \end{figure}
+
+\begin{figure}[tb]
+ \begin{center}
+  \includegraphics[width=0.8\linewidth]{figure/recog_test_cam.png}
+  \caption{USBカメラを用いたテスト}
+  \label{fig:test_by_camera}
+ \end{center}
+\end{figure}
+
+
+\section{動作生成部}
+
+\subsection{(VPython版)HiroNX動作生成モジュール}
+
+http://openrtm.org/openrtm/ja/project/NEDO\_Intelligent\_PRJ\_HiroAccPrj\_5003
+
+Python対話環境において、幾何モデルを用いた動作生成システムを柔軟に構築するための
+スクリプト群です．RtcHandleを用いて対話環境からRTC構成によるシステムの
+各モジュールと通信を行うことで，システムの統合を行います．
+RRT-connectによる双腕の干渉を考慮した動作計画機能を提供し，人手に
+よる動作記述とプランナによる動作生成をスムーズに統合できます．
+また，RTCとして，作業共通インタフェースを実装する動作生成モジュールとし
+て利用することもできます．
+
+\subsubsection{ダウンロードとコンパイル}
+
+install.sh
+(or rosmake --rosdep-install)
+
+\begin{lstlisting}
+ $ cd iv_plan/src
+ $ make
+\end{lstlisting}
+
+VPythonはUbuntu 10.04LTCの標準パッケージより新しいものにパッチを当て，コ
+ンパイル済みのものを利用する．したがって，標準のpython-visualパッケージ
+をインストールしている場合は，それがpython上で先にロードされることがない
+ように注意する必要があります．
+
+\subsubsection{基本的な使い方}
+
+シミュレーションによるパーツの箱詰め
+
+基本的に，ロボットクラス，ロボットインスタンスごとのカスタマイズは
+既存クラスを拡張することで行います．
+
+\begin{itemize}
+ \item robot.pyからhironx.py
+ \item hironx\_params.py
+       個体差がある各種transformと，利用する外部モジュール定義
+ \item 他の機能として，VRMLのローダ，センサ取り付け位置の推定機能があります
+\end{itemize}
+
+\begin{figure}[tb]
+ \begin{center}
+  \includegraphics[width=0.8\linewidth]{figure/planner_scripts.png}
+  \caption{動作生成モジュール}
+  \label{fig:planner_scripts}
+ \end{center}
+\end{figure}
+
+\subsection{HiroNXInterface}
+
+http://www.openrtm.org/openrtm/en/node/4645
+
+双腕ロボットの制御コマンドの共通インタフェースに準拠する
+HiroNX用制御モジュールである．
+詳細については，開発元である産業技術総合研究所のドキュメントを参照．
+
+\subsection{動作生成部の動作確認}
+
+HiroNXの起動は完了しているとする．
+
+%\begin{lstlisting}[label=src:branch, caption=サンプル]
+\begin{lstlisting}[label=src:branch]
+ $ 起動スクリプト
+ IP/ホスト名の違いはどこを直せばよいか？
+ $ cd iv_scenario/src
+ $ ipython demo_wexpo.py
+\end{lstlisting}
+
+\subsection{動作生成を対話環境で行う場合}
+
+\subsection{動作生成を動作計画モジュールとして分離する場合}
+
+シミュレーション環境
+外部モジュールとの通信
+動作コマンド送信，状態読み込み
+
+\chapter{準備}
+
+必要に応じて行うロボットごとに以下の作業を行う．
+
+\section{モデルファイルの修正（力センサありとなし）}
+
+
+\section{キャリブレーション}
+
+ロボットの個体差を修正する作業である．
+デフォルト値はHiroNX16号機のものであり，
+精度を出すには各機体ごとに行う必要がある．
+
+\subsection{カメラキャリブレーション}
+
+RT-middlewareのコンポーネントでもROSのノードでも何でもよいので
+単眼カメラのキャリブレーションを行い，CameraCompが読み込めるように
+する．
+
+その後，エッジベース二次元対象物認識モジュールにおいて，対象物の位置，距
+離が正しく出力されているかどうか確認しておくとよい．
+
+\subsection{カメラ取り付け位置のキャリブレーション}
+
+現状では，チェッカーボードの認識にROSのノードを使用している．
+原理について．
+
+\begin{itemize}
+ \item hironx\_calib.pyをimport
+ \item record...
+       手先を動かして画像とそのときの関節角度値を取得する.
+       すべての姿勢でチェッカーボードが視野に入り，
+       安定して認識できているかどうかを確認する．
+ \item calibrate
+       キャリブレーションの計算
+ \item play
+       結果の確認
+ \item 値の反映
+\end{itemize}
+
+\chapter{デモの実行}
+
+\section{認識部のモジュール起動と接続}
+
+\begin{itemize}
+ \item run.shを実行
+       rtc.conf,左右カメラのデバイス等の設定はできているものとする．
+       左右のカメラが逆になっていないかどうか確認する．
+ \item 動作生成プログラムの起動
+ \item look\_for
+       手先を動かして机上の対象物を認識する
+ \item 画像中で対象物が正しく認識されているか，認識結果がシミュレータ中
+       に正しく表示されているかどうかを確認する
+ \item 動作の実行
+\end{itemize}
+
+
+% \addcontentsline{toc}{chapter}{参考文献}
+% \markboth{参考文献}{参考文献}
+% \bibliographystyle{junsrt}
+% \bibliography{p2009}
+
+
+\end{document}

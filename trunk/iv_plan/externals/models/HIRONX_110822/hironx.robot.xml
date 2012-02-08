@@ -1,0 +1,50 @@
+<robot file="hironx.dae">
+  <manipulator name="rightarm">
+    <base>CHEST_JOINT0</base>
+    <effector>RARM_JOINT5</effector>
+  </manipulator>
+  <gripper_joint joint="RHAND_JOINT0">
+    <closing_direction axis="axis0">
+      <float>1</float>
+    </closing_direction>
+  </gripper_joint>
+  <gripper_joint joint="RHAND_JOINT1">
+    <closing_direction axis="axis0">
+      <float>1</float>
+    </closing_direction>
+  </gripper_joint>
+  <gripper_joint joint="RHAND_JOINT2">
+    <closing_direction axis="axis0">
+      <float>1</float>
+    </closing_direction>
+  </gripper_joint>
+  <gripper_joint joint="RHAND_JOINT3">
+    <closing_direction axis="axis0">
+      <float>1</float>
+    </closing_direction>
+  </gripper_joint>
+  <manipulator name="leftarm">
+    <base>CHEST_JOINT0</base>
+    <effector>LARM_JOINT5</effector>
+  </manipulator>
+  <gripper_joint joint="LHAND_JOINT0">
+    <closing_direction axis="axis0">
+      <float>1</float>
+    </closing_direction>
+  </gripper_joint>
+  <gripper_joint joint="LHAND_JOINT1">
+    <closing_direction axis="axis0">
+      <float>1</float>
+    </closing_direction>
+  </gripper_joint>
+  <gripper_joint joint="LHAND_JOINT2">
+    <closing_direction axis="axis0">
+      <float>1</float>
+    </closing_direction>
+  </gripper_joint>
+  <gripper_joint joint="LHAND_JOINT3">
+    <closing_direction axis="axis0">
+      <float>1</float>
+    </closing_direction>
+  </gripper_joint>
+</robot>

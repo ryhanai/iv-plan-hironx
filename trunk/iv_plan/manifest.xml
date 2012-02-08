@@ -1,0 +1,26 @@
+<package>
+  <description brief="iv_plan">
+    iv_plan
+  </description>
+
+  <author>Ryo Hanai</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  <depend package="tf"/>
+  <depend package="sensor_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="ar_pose"/> 
+  <depend package="iv_idl"/>
+  <depend package="rtc_handle"/>
+  <depend package="rmrc_geo_model"/>
+  <depend package="tfpy"/>
+
+  <rosdep name="ply"/>
+  <rosdep name="gtkglextmm"/>
+
+</package>
+
+
