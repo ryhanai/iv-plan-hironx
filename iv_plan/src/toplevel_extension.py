@@ -2,6 +2,8 @@
 
 import re
 from viewer import *
+from robot import *
+
 
 # utils with no free variables
 def objtype(obj):
@@ -19,14 +21,68 @@ def objtype(obj):
 # which is dependent on r, rr, pl, env.
 #
 def setup_toplevel_extension(r, env, rr=None, pl=None):
-    global sync, affix, unfix, move_arm_plan, move_arm
+    global sync, sync_main, affix, unfix, move_arm_plan, move_arm
     global move_arm2, go_prepare_pose
     global show_frame, show_traj, show_tree, exec_traj
     global obj_in_hand, grab, release
 
-    def sync_():
-        rr.set_joint_angles(r.get_joint_angles())
+    def sync_main_(duration=4.0, joints='all', wait=True, waitkey=True):
+        '''synchronize the real robot with the model in "duration" [sec]'''
+        if rr:
+            js = r.get_joint_angles()
+            rr.send_goal(js, duration, wait=wait)
+            return
+
+            if joints == 'torso':
+                rr.send_goal([js[0:3],[],[],[],[]], duration, wait=wait)
+            elif joints == 'rarm':
+                rr.send_goal([[],js[3:9],[],[],[]], duration, wait=wait)
+            elif joints == 'larm':
+                rr.send_goal([[],[],js[9:15],[],[]], duration, wait=wait)
+            elif joints == 'rhand':
+                rr.send_goal([[],[],[],js[15:19],[]], duration, wait=wait)
+            elif joints == 'lhand':
+                rr.send_goal([[],[],[],[],js[19:23]], duration, wait=wait)
+            elif joints == 'torso_rarm':
+                rr.send_goal([js[0:3],js[3:9],[],[],[]], duration, wait=wait)
+            elif joints == 'torso_larm':
+                rr.send_goal([js[0:3],[],js[9:15],[],[]], duration, wait=wait)
+            elif joints == 'rarm_rhand':
+                rr.send_goal([[],js[3:9],[],js[15:19],[]], duration, wait=wait)
+            elif joints == 'torso_rarm_rhand':
+                rr.send_goal([js[0:3],js[3:9],[],js[15:19],[]], duration, wait=wait)
+            elif joints == 'larm_lhand':
+                rr.send_goal([[],[],js[9:15],[],js[19:23]], duration, wait=wait)
+            elif joints == 'torso_larm_lhand':
+                rr.send_goal([js[0:3],[],js[9:15],[],js[19:23]], duration, wait=wait)
+            elif joints == 'torso_arms':
+                rr.send_goal([js[0:3],js[3:9],js[9:15],[],[]], duration, wait=wait)
+            elif joints=='all':
+                rr.send_goal([js[0:3],js[3:9],js[9:15],js[15:19],js[19:23]], duration, wait=wait)
+            else:
+                warn('unknown joints parameter: ' + joints)
+        else:
+            if waitkey:
+                raw_input('type any key to continue')
+            else:
+                time.sleep(duration)
+
+    sync_main = sync_main_
+
+    def sync_(duration=4.0, joints='all', wait=True, waitkey=True, goalthresh=0.2):
+        sync_main(duration=duration, joints=joints, wait=wait, waitkey=waitkey)
+
     sync = sync_
+
+# def sync(duration=4.0, joints='all', wait=True, waitkey=True, goalthresh=0.2):
+#     while True:
+#         sync_main(duration=duration, joints=joints, wait=wait, waitkey=waitkey)
+#         qs = r.get_joint_angles(joints='all')
+#         qr = rr.get_joint_angles()
+#         if numpy.linalg.norm(array(qr) - array(qs)) < goalthresh:
+#             return
+#         else:
+#             time.sleep(1)
     
     def affix_(obj, hand='right'):
         if hand == 'right':
@@ -176,6 +232,7 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
             if obj.name != obj2.name:
                 r.add_collision_pair(obj2, obj)
         return True
+    grab = grab_
 
     def release_(hand='right'):
         obj = r.grabbed_obj[hand]

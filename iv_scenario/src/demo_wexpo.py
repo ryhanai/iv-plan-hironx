@@ -4,17 +4,50 @@ from numpy import *
 import sys
 import time
 
-from demo_common import *
-from setup_rtchandle import *
+from ivenv import *
+ivpkgdir,nameserver = setup_ivenv()
 
+import scene_objects
+from hironx import *
+from mplan_env import *
+from csplan import *
+import hironx_params
+import hironxsys
 
-#tblheight = 700 # tuniv
-tblheight = 735 # aist
+################################################################################
+#
+# Initialization Process:
+#
+# First instantiate 4 main instances, rtc-interface, planning environment,
+# robot and planner.
+# Then get useful top-level functions operating on these objects
+# by calling setup_toplevel_extension().
+
+#rr = hironxsys.HiroNxSystem(nameserver, hironx_params.portdefs)
+rr = None
+
+env = PlanningEnvironment()
+env.load_scene(scene_objects.table_scene())
+
+r = HiroNx(ivenv.ivpkgdir+'/iv_plan/externals/models/HIRONX_110822/')
+env.insert_robot(r)
+r.go_pos(-150, 0, 0)
+r.prepare()
+
+pl = CSPlanner(env)
+
+import toplevel_extension
+toplevel_extension.setup_toplevel_extension(r,env,rr,pl)
+from toplevel_extension import *
+
+################################################################################
+
 fsoffset = 59
-rubberheight = 19
-holeheight = 11
-
 init_frames = {}
+
+
+tbltop = env.get_object('table top')
+tblheight = tbltop.where().vec[2] + tbltop.vbody.size[2]/2
 
 def reset_parts():
     for p in env.get_objects('^A'):
@@ -26,20 +59,22 @@ def reset_parts_randomly():
             if numpy.linalg.norm(f.vec - o.where().vec) < 70:
                 return True
         return False
+
     objs = env.get_objects('^A')
     for p in objs:
         while True:
             x = 150*random.random()+140
             y = 300*random.random()-80
-            z = tblheight + 15
-            c = 2*pi*random.random()
+            z = tblheight + p.vbody.size[2]/2
+            c = 2*pi * random.random()
             f = FRAME(xyzabc=[x,y,z,0,0,c])
             if not is_occupied(f, objs): 
                 p.locate(f)
                 break
 
-
 def init_palletizing_scene():
+    global holeheight
+    
     tbl = env.get_object('table')
 
     def put_on_table(objdef, name, xyzabc):
@@ -47,19 +82,16 @@ def init_palletizing_scene():
         env.insert_object(obj, FRAME(xyzabc=xyzabc), tbl)
 
     # put_on_table(scene_objects.pallete, 'pallete0', [-270,-250,tblheight-2,0,0,-pi/4])
-    # choreonoid
+    # copied from choreonoid settings
     # robot: [0, 159.900, 1059.800]
     # W: [296.980,-137.080,1041.640]
     # robot=>W: [296.980, -296.980, -18.160]
+
     put_on_table(scene_objects.pallete, 'pallete0', [-203.02,-296.98,tblheight-2,0,0,-pi/4])
     put_on_table(scene_objects.partsA, 'A0', [-180,-10,tblheight+15,0,0,pi/6])
     put_on_table(scene_objects.partsA, 'A1', [-130,100,tblheight+15,0,0,-pi/6])
     put_on_table(scene_objects.partsA, 'A2', [-160,190,tblheight+15,0,0,0])
     put_on_table(scene_objects.partsA, 'A3', [-100,-10,tblheight+15,0,0,pi/4])
-
-    # put_on_table(scene_objects.partsB, 'B0', [-160,210,700,0,0,0])
-    # put_on_table(scene_objects.partsB, 'B1', [-120,-70,700,0,0,0])
-
     plt  = env.get_object('pallete0')
 
     def put_on_pallete(objdef, name, xyzabc):
@@ -70,6 +102,7 @@ def init_palletizing_scene():
     put_on_pallete(scene_objects.rect_pocket, 'P1', [-40,40,20,0,0,0])
     put_on_pallete(scene_objects.rect_pocket, 'P2', [40,-40,20,0,0,0])
     put_on_pallete(scene_objects.rect_pocket, 'P3', [-40,-40,20,0,0,0])
+    holeheight = 19 - 11 + env.get_object('A0').vbody.size[2] # rubber thickness - hole height
 
     # remember the initial positions of the pieces in world frame
     for p in env.get_objects('^A'):
@@ -79,9 +112,6 @@ def init_palletizing_scene():
         r.add_collision_object(o)
     for o in env.get_objects('A'):
         env.add_collidable_object(o)
-
-
-init_palletizing_scene()
 
 
 try:
@@ -121,34 +151,18 @@ tms = {'preapproach1': 1.2,
 #        'pregrasp': 0.7,
 #        'look_for': 0.8}
 
-detectposs = [(190,-60),(260,-60),
-              (180, 10),(250, 10)]
-
 
 detectposs_dual = [[(180,-35),(180,150)],
                    [(230,-35),(230,150)],
                    [(280,-35),(280,150)]]
 
-# pocketposs = [(200,-300),(120,-300),
-#               (200,-380),(120,-380)]
-# pocketposs = [(190,-240),(110,-240),
-#               (190,-330),(110,-330)]
 pocketposs = [(107,-287),(27,-287),
               (107,-377),(27,-377)]
 
-def preapproach(n = 0, height=tblheight+fsoffset+290):
-    print 'PRE:', n
-    f = r.fk()
-    f.vec[2] += 60
-    sol = r.ik(f)[0]
-    r.set_arm_joint_angles(sol)
-    sync(joints='rarm', duration=tms['preapproach1'])
 
-    r.prepare(width=80)
-    x,y = detectposs[n]
-    f = FRAME(xyzabc=[x, y, height, 0,-pi/2,0])
-    r.set_arm_joint_angles(r.ik(f)[0])
-    sync(duration=tms['preapproach2'])
+################################################################################
+# Recognition
+################################################################################
 
 def detect_pose3d(scl=1.0, hand='right'):
     def read_stable_result(hrecog):
@@ -208,54 +222,6 @@ def detect_pose3d(scl=1.0, hand='right'):
 
     return Twld_obj
 
-def pick(obj, hand='right', height=tblheight+12):
-    f = obj.where()
-    if hand == 'right':
-        Twrist_ef = r.Trwrist_ef
-        jts = 'rarm'
-        hjts = 'rhand'
-    else:
-        Twrist_ef = r.Tlwrist_ef
-        jts = 'larm'
-        hjts = 'lhand'
-
-    f.vec[2] = height
-
-    f2 = f * (-Twrist_ef)
-    sols = r.ik(f2, joints=jts)
-    if sols == []:
-        f2 = f * FRAME(xyzabc=[0,0,0,0,0,pi]) * (-Twrist_ef)
-        sols = r.ik(f2, joints=jts)
-    r.set_joint_angles(sols[0], joints=jts)
-    sync(joints=jts, duration=tms['pick'])
-    for w in [80,60,50,44,39,34]:
-        r.grasp(w, hand=hand)
-        sync(duration=0.2, joints=hjts)
-
-def transport(n = 0):
-    f = r.fk()
-    f.vec[2] += 150
-    sol = r.ik(f)[0]
-    r.set_arm_joint_angles(sol)
-    sync(joints='rarm', duration=tms['transport'])
-    x,y = pocketposs[n]
-    f = FRAME(xyzabc=[x, y, tblheight+300, 0,-pi/2,0])
-    r.set_arm_joint_angles(r.ik(f)[0])
-    sync(joints='rarm', duration=tms['transport'])
-
-def place(f, h = tblheight+38+fsoffset, dosync=True):
-    f.vec[2] = h
-    f2 = f * (-r.Twrist_ef)
-    sols = r.ik(f2)
-    if sols == []:
-        f2 = f * FRAME(xyzabc=[0,0,0,0,0,pi]) * (-r.Twrist_ef)
-        sols = r.ik(f2)
-    r.set_arm_joint_angles(sols[0])
-    if dosync:
-        sync(joints='rarm', duration=tms['place'])
-        for w in [38,40,46,80]:
-            r.grasp(w)
-            sync(duration=0.2)
 
 def detect(timeout=0, zmin=tblheight, zmax=tblheight+250,
            constraint=None, hand='right'):
@@ -312,6 +278,11 @@ def look_for():
     else:
         return True
 
+
+################################################################################
+# Motion Generation
+################################################################################
+
 def choose_objs(n=0):
     def aux(o1, o2):
         x = o1.where()
@@ -332,7 +303,6 @@ def choose_objs(n=0):
             return o1,o0
 
     return None
-
 
 def try_IK(o, jts='rarm', long_side=False):
     s1, s2 = grasp_plan(o, long_side=long_side)
@@ -462,31 +432,33 @@ def choose_and_pick():
         return False
         
 
-def grasp_plan(o, long_side=False, hand='right'):
+def grasp_plan(o, long_side=False, hand='right', inner_offset=3):
+    appvec_length = 40
     objfrm = o.where()
 
     if long_side:
         objfrm = objfrm * FRAME(xyzabc=[0,0,0,0,0,pi/2])
-        gwidth = 45
+        gwidth = o.vbody.size[0] - inner_offset
     else:
-        gwidth = 35
+        gwidth = o.vbody.size[1] - inner_offset
 
     if hand == 'right':
         Twrist_ef = r.Trwrist_ef
     else:
         Twrist_ef = r.Tlwrist_ef
 
-    awidth = 80.0
+    awidth = gwidth + 35
 
     gfrm = objfrm*(-Twrist_ef)
     afrm = FRAME(gfrm)
     afrm2 = objfrm*FRAME(xyzabc=[0,0,0,0,0,pi])*(-Twrist_ef)
     gfrm2 = objfrm*FRAME(xyzabc=[0,0,0,0,0,pi])*(-Twrist_ef)
-    afrm.vec[2] += 40
-    afrm2.vec[2] += 40
+    afrm.vec[2] += appvec_length
+    afrm2.vec[2] += appvec_length
     return (afrm,gfrm,awidth,gwidth),(afrm2,gfrm2,awidth,gwidth)
 
 def place_plan(p, hand='right'):
+    plcvec_length = 60
     plcfrm = p.where()
 
     if hand == 'right':
@@ -495,17 +467,18 @@ def place_plan(p, hand='right'):
         Twrist_ef = r.Tlwrist_ef
 
     gfrm = plcfrm*(-Twrist_ef)
-    gfrm.vec[2] += ((rubberheight-holeheight) + 30/2)
+    gfrm.vec[2] += holeheight
     afrm = FRAME(gfrm)
-    afrm.vec[2] += 60
+    afrm.vec[2] += plcvec_length
 
     gfrm2 = plcfrm*FRAME(xyzabc=[0,0,0,0,0,pi])*(-Twrist_ef)
-    gfrm2.vec[2] += ((rubberheight-holeheight) + 30/2)
+    gfrm2.vec[2] += holeheight
     afrm2 = FRAME(gfrm2)
-    afrm2.vec[2] += 60
+    afrm2.vec[2] += plcvec_length
 
     rwidth = 80
     return (afrm,gfrm,rwidth),(afrm2,gfrm2,rwidth)
+
 
 rwp = FRAME(xyzabc=[200,-110,1049,0,-pi/2,0])
 lwp = FRAME(xyzabc=[240,90,1049,0,-pi/2,0])
@@ -747,6 +720,7 @@ def demo(recognition=True):
 
     preapproach_dual()
 
+# observation plan
 
 def pocket_detection_pose(n):
     pocketpos = [(-30,45),(-110,45),
@@ -773,5 +747,7 @@ def preapproach_dual():
     sync(duration=tms['preapproach2'])
     
 
-if rr:
-    rr.connect()
+init_palletizing_scene()
+
+# if rr:
+#     rr.connect()
