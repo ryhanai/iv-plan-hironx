@@ -111,19 +111,61 @@ HiroNX$B$N<j@h$K<h$jIU$1$i$l$?(BUSB$B%+%a%i$GBP>]J*$rG'<1$9$k$?$a$N%b%8%e!<%k
  $ make
 \end{lstlisting}
 
-\subsubsection{$B%+%9%?%^%$%:(B}
-
-$BO"B3E*$KAw$i$l$F$/$k2hA|$KBP$7$FG'<1$r9T$&$,!$G'<17k2L$N;~4VJ}8~$NO"B3@-(B
-$B$O9MN8$;$:!$3F%U%l!<%`$G0lHVL`EY$,9b$$0LCV$r7W;;$7!$$=$NL`EY$,ogCM0J>e$G(B
-$B$"$l$P8!=P7k2L$rJV$9!%(B
+\subsubsection{$B3+H/!&F0:n4D6-(B}
 
 \begin{itemize}
- \item $BG'<1<jK!$N4JC1$J@bL@(B
- \item $BogCM$NJQ99J}K!!$ogCM$N0UL#$K$D$$$F(B
- \item $B>uBV6u4V$NHO0O;XDj$K$D$$$F(B
- \item $B%5!<%S%9$K$h$kG'<1BP>]$N@Z$jBX$((B
- \item $BG'<1%b%8%e!<%k$K$*$1$kBP>]J*%b%G%k$NDj5A$N;EJ}(B
+ \item Ubuntu Linux 10.04 LTS
+ \item OpenRTM-aist 1.0.0-RELEASE C++$BHG(B
+ \item OpenCV 2.3
 \end{itemize}
+
+\subsubsection{$B%$%s%?%U%'!<%9(B}
+
+\begin{itemize}
+ \item $B%G!<%?%]!<%H(B
+       \begin{itemize}
+	\item $BF~NO(B: Img::TimedCameraImage (Img.idl) \\
+	      $B2hA|=PNO6&DL%$%s%?%U%'!<%9=`5r$N%+%a%i%b%8%e!<%k$+$i!$(B
+	      $B2hA|5Z$S!$%+%a%i%Q%i%a!<%?$r<u<h$j$^$9!%(B
+	\item $B=PNO(B: TimedRecognitionResult (Vision.idl) \\
+	      $BG'<17k2L6&DL%$%s%?%U%'!<%9$K$7$?$,$$!$BP>]J*BN$N0LCV;Q@*$r=PNO$7$^$9!%(B
+	      Img::TimedCameraImage $B=hM}7k2L$r2hA|$H$7$F=PNO$7$^$9!%(B
+       \end{itemize}
+ \item $B%5!<%S%9%]!<%H(B \\
+       $BG'<1BP>]$N%b%G%k$r@_Dj$9$k$?$a$K;H$$$^$9!%(B
+       $B$"$i$+$8$a!%(BModelFiles/ModelList.txt$B$K%b%G%k(BID$B$H%b%G%kDj5A%U%!%$(B
+       $B%kL>$r5-=R$7!$%b%G%k(BID$B$r0z?t$H$7$F%5!<%S%9%3!<%k$r9T$$$^$9!%(B
+       setModelID(i)$B$O!$(Bi$BHV$N%b%G%k$r;HMQ$9$k$3$H$r0UL#$7$^$9!%(B
+\end{itemize}
+ $BG'<17k2L$O(BTimedRecognitionResult$B$K$h$C$F=PNO$5$l$^$9!%(B
+ $B6qBNE*$J=PNOFbMF$O0J2<$NDL$j$G$9!%8=:_!$BP>]J*$N;Q@*0J30$OF~$C$F$$$^(B
+ $B$;$s!%(B
+\begin{verbatim}
+  0: 0, 1: 0, 2: 0, 3: 0, 4: 0
+  5: 0, 6: 0, 7: 0, 
+  8: R00,  9: R01, 10: R02, 11: Tx
+ 12: R10, 13: R11, 14: R12, 15: Ty
+ 16: R20, 17: R21, 18: R22, 19: Tz
+\end{verbatim}
+
+\subsubsection{$B%+%9%?%^%$%:(B}
+
+$BO"B3E*$KAw$i$l$F$/$k2hA|$KBP$7$FG'<1$r9T$$$^$9$,!$G'<17k2L$N;~4VJ}8~$NO"B3@-(B
+$B$O9MN8$;$:!$3F%U%l!<%`$G0lHVL`EY$,9b$$0LCV$r7W;;$7!$$=$NL`EY$,ogCM0J>e$G(B
+$B$"$l$P8!=P7k2L$rJV$7$^$9!%(B
+
+% $BG'<1<jK!$N4JC1$J@bL@(B
+% $BogCM$N0UL#$K$D$$$F(B
+% $B%5!<%S%9$K$h$kG'<1BP>]$N@Z$jBX$((B
+% $BG'<1%b%8%e!<%k$K$*$1$kBP>]J*%b%G%k$NDj5A$N;EJ}(B
+
+$B%b%G%k$H<B2hA|$N%^%C%A%s%0$O!$$O2hA|:BI87O$G9T$o$l$^$9!%8!=P$7$?0LCV!$;Q(B
+$B@*!$%9%1!<%k$+$i%+%a%i%Q%i%a!<%?$rMQ$$$F!$%+%a%i:BI87O$K$*$1$kBP>]J*$N0L(B
+$BCV!$;Q@*$,7W;;$5$l$^$9!%(B
+$B$7$?$,$C$F!$2hA|:BI8$G$N(B$(x,y,\theta)$$B$NC5:wHO0O!$8!=P$NogCM$r%3%s%U%#%0(B
+$B%U%!%$%k(BAppRecog.conf$B$G;XDj$7$^$9!%(B
+$B$^$?!$%b%G%kDj5A%U%!%$%k$O(B./ModelFile$B$NCf$KCV$-!$%U%!%$%k$OD:E@$HJU$K$h$C(B
+$B$F9=@.$5$l$F$$$^$9!%(B
 
 \begin{figure}[tb]
  \begin{center}
@@ -224,19 +266,37 @@ VPython$B$O(BUbuntu 10.04LTC$B$NI8=`%Q%C%1!<%8$h$j?7$7$$$b$N$K%Q%C%A$rEv$F!$%
 $B$r%$%s%9%H!<%k$7$F$$$k>l9g$O!$$=$l$,(Bpython$B>e$G@h$K%m!<%I$5$l$k$3$H$,$J$$(B
 $B$h$&$KCm0U$9$kI,MW$,$"$j$^$9!%(B
 
+\subsubsection{$B3+H/!&F0:n4D6-(B}
+
+\begin{itemize}
+ \item Ubuntu Linux 10.04 LTS 32bit/64bit
+ \item OpenRTM-aist 1.0.0 (Python$BHG(B)
+\end{itemize}
+
 \subsubsection{$B4pK\E*$J;H$$J}(B}
 
-$B%7%_%e%l!<%7%g%s$K$h$k%Q!<%D$NH"5M$a(B
+$B$^$:!$%?%9%/5-=R!$F0:n7W2h!$G'<1$*$h$S@)8f%b%8%e!<%k$H$N@\B3$r(B
+$B#1$D$N(BPython$B%7%'%k>e$G9T$&J}K!$r@bL@$7$^$9!%(B
+$B30It(BRTC$B$H$NDL?.$K$O(BRtcHandle$B$rMxMQ$7$F$$$^$9!%(B
+
+$B0J2<$N%3%^%s%I$G%G%b%W%m%0%i%`$r5/F0$7$^$9!%(B
+
+\begin{lstlisting}[label=src:branch]
+ $ cd iv_scenario/src
+ $ ipython demo_wexpo.py
+\end{lstlisting}
+
 
 $B4pK\E*$K!$%m%\%C%H%/%i%9!$%m%\%C%H%$%s%9%?%s%9$4$H$N%+%9%?%^%$%:$O(B
 $B4{B8%/%i%9$r3HD%$9$k$3$H$G9T$$$^$9!%(B
-
 \begin{itemize}
  \item robot.py$B$+$i(Bhironx.py
  \item hironx\_params.py
        $B8DBN:9$,$"$k3F<o(Btransform$B$H!$MxMQ$9$k30It%b%8%e!<%kDj5A(B
  \item $BB>$N5!G=$H$7$F!$(BVRML$B$N%m!<%@!$%;%s%5<h$jIU$10LCV$N?dDj5!G=$,$"$j$^$9(B
 \end{itemize}
+
+$B%7%_%e%l!<%7%g%s$K$h$kItIJ$NH"5M$a(B
 
 \begin{figure}[tb]
  \begin{center}
@@ -245,6 +305,9 @@ VPython$B$O(BUbuntu 10.04LTC$B$NI8=`%Q%C%1!<%8$h$j?7$7$$$b$N$K%Q%C%A$rEv$F!$%
   \label{fig:planner_scripts}
  \end{center}
 \end{figure}
+
+\subsubsection{$B%$%s%?%U%'!<%9(B}
+
 
 \subsection{HiroNXInterface}
 
@@ -299,19 +362,46 @@ RT-middleware$B$N%3%s%]!<%M%s%H$G$b(BROS$B$N%N!<%I$G$b2?$G$b$h$$$N$G(B
 \subsection{$B%+%a%i<h$jIU$10LCV$N%-%c%j%V%l!<%7%g%s(B}
 
 $B8=>u$G$O!$%A%'%C%+!<%\!<%I$NG'<1$K(BROS$B$N%N!<%I$r;HMQ$7$F$$$k!%(B
-$B86M}$K$D$$$F!%(B
+$B%-%c%j%V%l!<%7%g%s%W%m%0%i%`$O!$3X=,%G!<%?$H$7$F%m%\%C%H$N3F;Q@*$K$*$1$k(B
+$B%A%'%C%+!<%\!<%I$N;Q@*$rF~NO$H$7$^$9!%%A%'%C%+!<%\!<%I$N;Q@*$O(Btf$B$H$7$F(B
+publish$B$5$l$?%a%C%;!<%8$r(Bpython$B%W%m%0%i%`$G<u?.$7$^$9!%(B
+$B$7$,$C$F!$=`Hw$H$7$F!$(B
+\begin{itemize}
+ \item ROS$B$N%+%a%i%N!<%I$K$h$j2hA|$*$h$S>e5-%+%a%i%Q%i%a!<%?$,%H%T%C%/$H(B
+       $B$7$F(Bpublish
+ \item checkerboard detection$B%N!<%I$G$=$l$i$r(Bsubscribe$B$7!$?dDj$7$?(Btf$B$,(Bpublish
+\end{itemize}
+$B$5$l$k>uBV$K$7$F$*$/I,MW$,$"$j$^$9!%(B
+
+\subsubsection{$B<j=g(B}
+
+\begin{lstlisting}
+ 1, $B4y$N>e$K%A%'%C%+!<%\!<%I$rCV$/(B
+
+ 2, $B<s$rF0$+$7$F3X=,%G!<%?$r$H$k(B
+ $ ipython hironx_calib.py
+ >>> res = record_data()  
+ # $B<j@h$rF0$+$7$F2hA|$H$=$N$H$-$N4X@a3QEYCM$r<hF@$9$k(B.
+ # $B$9$Y$F$N;Q@*$G%A%'%C%+!<%\!<%I$,;kLn$KF~$j!$(B
+ # $B0BDj$7$FG'<1$G$-$F$$$k$+$I$&$+$r3NG'$9$k!%(B
+
+ 3, $BF,%j%s%/$+$i(Bkinect$B%+%a%i$X$N(Btransform$B$r7W;;$9$k(B
+ >>> f = calibrate(res, height=960.0)
+
+ 4, transform$B$N=q$-49$((B
+ >>> r.Thd_kinectrgb = f
+
+ 5, $B3NG'!J@5$7$$0LCV$G%-%c%j%V%\!<%I$N%U%l!<%`$,;_$^$C$F$$$l$P@.8y!K(B
+ >>> play_data(res)
+
+ 6, $B%G%U%)%k%HCM$N99?7(B
+ hironx_params.py$B$N(BThd_kinectdepth$B$r=q$-49$($k(B
+\end{lstlisting}
 
 \begin{itemize}
- \item hironx\_calib.py$B$r(Bimport
- \item record...
-       $B<j@h$rF0$+$7$F2hA|$H$=$N$H$-$N4X@a3QEYCM$r<hF@$9$k(B.
-       $B$9$Y$F$N;Q@*$G%A%'%C%+!<%\!<%I$,;kLn$KF~$j!$(B
-       $B0BDj$7$FG'<1$G$-$F$$$k$+$I$&$+$r3NG'$9$k!%(B
- \item calibrate
-       $B%-%c%j%V%l!<%7%g%s$N7W;;(B
- \item play
-       $B7k2L$N3NG'(B
- \item $BCM$NH?1G(B
+ \item $B>e$N%3%^%s%I$OF,It(Bkinect$B$N>l9g$J$N$G!$%O%s%I%+%a%i$N>l9g$KJQ99$9(B
+       $B$k(B
+ \item $B86M}$K$D$$$F(B
 \end{itemize}
 
 \chapter{$B%G%b$N<B9T(B}
@@ -330,6 +420,384 @@ RT-middleware$B$N%3%s%]!<%M%s%H$G$b(BROS$B$N%N!<%I$G$b2?$G$b$h$$$N$G(B
  \item $BF0:n$N<B9T(B
 \end{itemize}
 
+
+\appendix
+\chapter{VPython$B4D6-$G$N%W%m%0%i%_%s%0(B}
+
+$B%U%l!<%`$d%m%\%C%H!$4D6-Cf$NJ*BNA`:nEy$r(Bpython$B>e$G9T$&J}K!$K$D$$$F@bL@$7(B
+$B$^$9!%(B
+
+\begin{verbatim}
+
+# 0, $B$O$8$a$K(B
+
+$ roscd MotionPlan/src
+$ ipython demo.py
+
+
+# 1, python$B$r;H$&(B
+
+dir(r) # $B4X?t$d%a%=%C%I$N0lMw(B
+r. [TAB] # $B%a%=%C%IL>Ey$NJd4V!J(Bipython$B$N5!G=!K(B
+help(r) # $B0z?t$d@bL@(B
+
+# $B$H$j$"$($:%G%b(B
+
+putbox() # $BH"$rG'<1$7$FDO$_!"CV$-D>$9(B
+putbox(name='box1')
+demo()
+
+demo2() # $B:8<j$G$N%"%W%m!<%A(B
+
+qs = gen_traj() # $B<j@h$G(Bsin$B%+!<%V$rIA$/$?$a$N4X@a3Q50F;$r:n$k(B
+play_traj(qs) # $B:n$C$?50F;$r<B9T$9$k(B
+
+# $B%3%^%s%I%i%$%s(B
+# Ctrl+c
+# Ctrl+p / Ctrl+n
+# Ctrl+r
+
+
+# 2, $B4D6-Cf$NJ*BNA`:n(B
+
+env
+env.get_objects() # $B4D6-Cf$NJ*BN0lMw(B
+[x.name for x in env.get_objects()] # $BJ*BNL>0lMw(B
+
+# $BJ*BN$OL>A0$G4IM}$5$l$F$$$k!#(B
+# $BF1$8L>A0$NJ*BN$ODI2C$G$-$J$$$N$G!"0lEY:o=|$9$k$+!"L>A0$rJQ$($FDI2C$9$k!#(B
+putbox() # $B%F!<%V%k>e$KH"$rCV$/(B
+b = env.get_object('box') # $BL>A0$GJ*BN<hF@(B
+put_box(name='box2') # $BL>A0$rJQ$($k$H0c$&J*BN(B
+env.delete_object('box2')
+
+frm = b.where() # $BJ*BN$N0LCV$H;Q@*$r<hF@(B
+
+# $B%m%\%C%H$N0\F0!"2sE>(B ( world=>basejoint$B$N:BI8JQ49$NJQ99(B )
+r.go_pos(-150,500,0) # 2D$B:BI8(B, (x,y,theta)
+r.go_pos(-150,0,pi/2) # $B2#$r8~$/(B
+
+
+# 3, $B<+:n%5%s%W%k$N=q$-J}(B
+emacs mysample.py
+
+== mysample.py ==
+from demo import *
+
+... $BE,Ev$J%3!<%I(B ...
+== ==
+
+ipython mysample.py
+
+# $B%5%s%W%k$r=$@58e$O!"0J2<$r<B9T$9$k$H(B
+# mysample.py$B$N=$@5$,H?1G$5$l$k(B
+
+import mysample # $B:G=i$N0l2s$@$1(B
+
+reload(mysample)
+from mysample import *
+
+
+# 4, $B%m%\%C%H$N;Q@*$NA`:n(B
+
+# joint, link$B$N<hF@(B
+r
+r.get_joints()
+r.get_links()
+
+# $B%8%g%$%s%HL>$N<hF@(B
+j0 = r.get_joints()[0]
+dir(j0)
+j0.angle
+j0.name
+map(lambda x: x.name, r.get_joints())
+[x.name for x in r.get_joints()]
+
+# $B4X@a3QEY$NI=<((B
+r.get_joint_angles()
+# $B$3$l$O2<$N%3!<%I$HF1$8(B
+[x.angle for x in r.get_joi
+
+# $BOS$@$1(B
+r.get_arm_joint_angles()
+r.get_arm_joint_angles(arm='left')
+r.set_arm_joint_angles(angles)
+r.set_arm_joint_angles(angles, arm='left')
+
+# $B%O%s%I$@$1(B
+r.get_hand_joint_angles()
+r.get_hand_joint_angles(hand='left')
+r.set_hand_joint_angles(angles)
+r.set_hand_joint_angles(angles, hand='left')
+
+# $B4X@a#1$D$rJQ$($k(B
+r.get_joint_angle(0) # ID
+r.set_joint_angle(0, 0.5) # ID$B$H3QEY(B[rad]
+
+# $B=i4|;Q@*$KLa$9(B
+r.reset_pose()
+
+# $B$"$i$+$8$a$$$/$D$+$N;Q@*$,Dj5A$5$l$F$$$k(B
+r.poses
+r.poses.keys()
+
+# r.reset_pose()$B$O0J2<$HF1$8(B
+r.set_joint_angles(r.poses['init'])
+
+# $B<j$N%]!<%:(B
+r.hand_poses
+r.hand_poses['open']
+r.set_hand_joint_angles(r.hand_poses['open']) # $B<j$r3+$/(B
+r.set_hand_joint_angles(r.hand_poses['close']) # $B<j$rJD$8$k(B
+
+# $B%"%K%a!<%7%g%s!J<s$r?6$C$F$_$k!K(B
+arange(0, 1, 0.2)
+for th in arange(0,1,0.2):
+        r.set_joint_angle(1, th)
+        time.sleep(0.5)
+
+# $B$A$J$_$K:81&$NOS$N4X@a=q$/<hF@$O0J2<$N%3!<%I$HF1$8(B
+r.get_joint_angles()[3:9]
+r.get_joint_angles()[15:19]
+
+## $BN}=,!'(B
+##   $B$$$m$s$J;Q@*$r:n$C$F$_$h$&(B
+##   $B$$$m$s$JF0:nNs$r:n$C$F!"%"%K%a!<%7%g%s$r$7$F$_$h$&(B
+
+
+# 5, $B:BI87O(B(frame)$B$K$D$$$F(B
+# 3x3$B2sE>9TNs$H(B3$B<!85%Y%/%H%k(B = 4x4$B$NF1<!?t9TNs(B
+# euler$B3Q(B, $B<+M3<42sE>(B, quaternion
+
+help(VECTOR)
+help(MATRIX)
+help(FRAME)
+
+# $BCM$N@8@.(B(constructor)
+VECTOR()
+MATRIX()
+FRAME()
+v=VECTOR(vec=[100,0,0])
+MATRIX(angle=pi/2, axis=VECTOR(vec=[0,0,1]))
+MATRIX(c=pi/2) # a,b,c$B$rF1;~$K;XDj$G$-$J$$$N$GCm0U(B
+m=MATRIX([[1,0,0],[0,1,0],[0,0,1]])
+FRAME()
+
+frm.mat # $B;Q@*ItJ,(B
+frm.vec # $B0LCVItJ,(B
+
+# $B1i;;(B
+v*v # $B%Y%/%H%k@Q(B
+dot(v,v) # $BFb@Q(B
+v+v # $BOB(B
+2*v # $B%9%+%i!<G\(B
+# $B9TNs$O;Q@*I=8=@lMQ!JD>9T9TNs!K(B
+m*m # $B@Q(B
+-m # $B5U9TNs(B
+# -m$B$O$8<BAu$OE>CV9TNs(B
+# $B%9%+%i!<G\!"9TNsOB$ODj5A$5$l$J$$(B($BG[Ns$N7k9g2r<a$5$l$k(B)
+
+# $B;Q@*I=8=4V$NJQ49(B
+m.abc() # $B9TNs(B=>euler
+m.rot_axis() # $B9TNs(B=>$B<+M3<42sE>(B
+# euler=>$B2sE>9TNs!"<+M3<42sE>(B=>$B2sE>9TNs$O>e5-$N(BMATRIX$B$N%3%s%9%H%i%/%?(B
+
+# $B0LCV$H;Q@*$r9g$o$;$?I=8=!JF1;~9TNs!K(B
+FRAME(mat=m, vec=v)
+FRAME(xyzabc=[x,y,z,a,b,c])
+
+f=FRAME(vec=[500,0,1000])
+show_frame(f)
+f.mat = MATRIX(a=pi/4)
+show_frame(f)
+
+f.mat = MATRIX(a=pi/4)*MATRIX(b=pi/4)
+show_frame(f)
+
+# $B:BI87O$N?F;R9=B$(B
+FRAME.affix() # $B:BI87O$N?F;R4X78$NDj5A(B
+FRAME.unfix() # $B:BI87O$N?F;R4X78$N:o=|(B
+FRAME.set_trans() # $B?F;R4V$N:BI8JQ49$N@_Dj(B
+f.rel_trans # $B?F;R4V$N:BI8JQ49$N<hF@(B
+
+# $BJ*BNDI2C(B
+# putbox()$B$N5-=R$r;2>H(B
+# $BI=<(MQ7A>u$H(BFRAME$B$r:n$j!"E,Ev$J?F:BI87O$N;R(BFRAME$B$H$7$F!":BI87O%D%j!<$KA^F~$9$k(B
+
+env.insert_object('box2') # $BJ*BNDI2C(B
+env.delete_object('box2') # $BJ*BN:o=|(B($B;R%U%l!<%`$NJ*BN$b:o=|$5$l$k(B)
+
+## $BN}=,!'(B
+##  $BJ*BN$N0LCV$rJQ$($F$_$h$&(B
+##  $B%F!<%V%k$r(B20[cm]$BA0$K=P$7$F$_$h$&(B
+##  $B%m%\%C%H$r0\F0$5$;$F$_$h$&(B
+##  $BE,Ev$JJ*BN$r:n@.$7$?$j!":o=|$7$F$_$h$&(B
+
+
+# 6, $B5U1?F03X(B(Inverse Kinematics, IK)$B$NMxMQ(B
+
+# $B<j<s0LCV!$;Q@*$N<hF@(B
+r.fk() # $B=g1?F03X7W;;!$8=:_$N<j@h(BFRAME$B$rJV$9!%%G%U%)%k%H$O1&<j!%(B
+r.fk(arm='left') # $B:8<j$OL@<(E*$K0z?t$G;XDj$9$k(B
+
+# $BL\E*0LCV$X$N%"%W%m!<%A(B
+
+putbox() # $B<j$,FO$-$=$&$J$H$3$m$KCV$/(B
+objfrm = detect()
+
+# $B%"%W%m!<%A;Q@*!$GD;};Q@*$N7W;;!J(B2$B$D$:$D5a$^$k!K(B
+afrms, gfrms = pl.grasp_plan(objfrm)
+
+# $B%"%W%m!<%A;Q@*$rI=<((B
+# (FRAME$B$+$i(BCoordinateObject$B$r:n$C$F!"4D6-$K(Binsert_object$B$9$k(B)
+show_frame(afrms[0])
+show_frame(afrms[1])
+
+# $BL\I80LCV$X<j$r?-$P$9$?$a$N4X@a3QEY$r7W;;$9$k(B
+r.ik(afrms)
+help(r.ik)
+# - IK$B$OL\I8<j@h(BFRAME$B$N=89g$r0z?t$K$H$j!"(B
+#   $B=i4|;Q@*$+$i4X@a6u4V$G$N=E$_IU$-5wN%=g$KJB$Y$?2r$NNs$rJV$9(B
+#   $BL\I8<j@h%U%l!<%`#1$D$r0z?t$K;XDj$7$F$b$h$$(B
+# - $B2r$,B8:_$7$J$1$l$P(BNone
+# - $B$[$H$s$I$N>l9g!":G=i$N2r$r:NMQ$9$l$P$h$$(B
+
+asols = r.ik(afrms)
+r.set_arm_joint_angles(asols[0]) # $BOS$N3QEY$N$_(B
+
+gsols = r.ik(gfrms)
+r.set_arm_joint_angles(gsols[0]) # $BOS$N3QEY$N$_(B
+
+# $B9x$r;H$&(B
+# $B9x(Byaw$B<4$r;H$&$H<j$NFO$/HO0O$,Bg$-$/9-$,$k(B
+
+asols = r.ik(afrms, use_waist=True) # $BJVCM$N7A<0$,0c$&$N$GCm0U(B (waist_yaw, arm_angles)
+th,js = asols[0]
+r.set_joint_angle(0,th) # $B9x$r2s$9(B
+r.set_arm_joint_angles(js) # $BOS$N;Q@*$rJQ$($k(B
+
+# $BB>$N2r$bI=<($7$F$_$k(B
+for th,js in asols:
+        r.set_joint_angle(0,th)
+        r.set_arm_joint_angles(js)
+        time.sleep(0.5)
+
+# $BJ*BN$r%O%s%I$K8GDj$9$k(B
+tgtobj = env.get_object('box0')
+handjnt = r.get_joint('RARM_JOINT5')
+reltf = (-handjnt.where())*tgtobj.where()
+tgtobj.unfix()
+tgtobj.affix(handjnt, reltf)
+
+# $B<j@h50F;$G$NF0:n@8@.(B ($B<}B+(BIK$B$G$O$J$/!"=i4|;Q@*$K6a$$2r$rL@<(E*$KA*Br$7$F$$$k(B)
+
+# $B50F;$N:n@.(B
+traj = CoordinateObjects('trajectory')
+traj.append( ... ) # $BE,Ev$J%U%l!<%`$rDI2C$9$k(B
+env.insert_object(traj, FRAME(), env.get_world()) # $B@$3&:BI8AjBP$G50F;$rDj5A(B
+traj.coords
+
+# $B:o=|$7$?$$$H$-$O(B
+env.delete_object('trajectory')
+
+# 7, $B<B5!$rF0$+$9(B
+
+# $B<B5!$H$N%$%s%?%U%'!<%9(B
+
+rr = RealHIRO()
+rr.connect() # $BG'<1=hM}$,;O$^$C$F$$$J$1$l$P3+;O;XNa$rAw$k(B
+rr.get_joint_angles() # tf and joint state by ROS
+js = r.get_joint_angles()
+# socket(+pickle) to jython script
+# scequencer, wait
+duration = 4.0
+rr.send_goal(js, 4.0) # blocking
+rr.send_goal(js, 4.0, wait=False) # non-blocking
+# blocking$B$J8F=P$7$b:GBg(B10[sec]$B$G(Btimeout$B$9$k;EMM(B
+
+# $B<B:]$K$O!"%b%G%k$G;Q@*$r3NG'$7$F$+$i0J2<$r<B9T$9$k$N$,JXMx(B
+sync() # $B%G%U%)%k%H$O(B4[sec]$B$G<B5!$r%b%G%k$KF14|$5$;$k(B
+sync(duration=3.0) # $B;~4V$rJQ$($k(B
+
+# $B%A%'%C%+!<%\!<%I$NG'<1(B
+detect() # $BG'<17k2L$,(Bbox$B$H$7$FI=<($5$l$k(B
+objfrm = detect() # $B<B5!$N>l9g$O(BROS$B$N<1JL4o$+$i(Btf$B$r<u?.(B
+                  # simulation$B$N>l9g$OD>@\!"J*BN0LCV$rFI$`(B
+
+# Link$B$K1h$C$?:BI8JQ49(B
+# $BG'<17k2L$O!"%+%a%i(B=>$BBP>]J*$N:BI8JQ49$G$"$k$N$G!"(B
+# $B@$3&:BI8(B=>$BBP>]J*$N:BI8JQ49$KD>$9(B
+# detect()$B4X?t$NCf$G9T$C$F$$$k=hM}(B
+r.Thd_leye # $BF,%j%s%/(B => $B:8L\%+%a%i$X$NJQ49(B
+Tleye_obj = rr.detect()
+Twld_hd = r.get_link('HEAD_JOINT1_Link').where()
+Twld_obj = Twld_hd * r.Thd_leye * Tleye_obj
+
+# $B%O%s%I%+%a%i$NMxMQ(B
+# $B1&<j%O%s%I%+%a%i$G(B2$B8D$NH"$rC5$7!"(B
+# $B%^!<%+(B1$BHV(B($B6y$,7g$1$F$$$kJ}(B)$B$NH"$r(B2$BHV$NH"$N>e$KCV$/(B
+
+# $B<B5!$N>l9g(B
+hand_cam_demo()
+
+# $B%7%_%e%l!<%?$G<B9T$9$k$H$-$O!$@h$K<j$,FO$/>l=j$KH"$rCV$$$F$*$/(B
+# 'box0' => marker 0, 'box1' => marker 1 $B$KBP1~(B
+putbox(name='box0', vaxis='y')
+putbox(name='box1', vaxis='y')
+hand_cam_demo()
+
+# $B$b$&0lEY<B9T$7$?$$$H$-(B
+env.delete_object('box0')
+putbox(name='box0', vaxis='y')
+
+
+# $B%O%s%I%+%a%i$O(BAR-toolkit$B$K$h$k(Bmarker$BG'<1(B($BJ#?tJ*BNBP1~(B)
+# $BJV$jCM$O(B ($B%^!<%+HV9f!"%+%a%i(B=>$B%^!<%+$N:BI8JQ49(B)$B$N%j%9%H(B
+# non-blocking$B$G:G?7$NG'<17k2L$rJV$9(B
+# $B2a5n(B thre [sec]$B0JFb$KG'<1$K@.8y$7$F$$$J$$%^!<%+$OJV$5$J$$(B
+# $B%G%U%)%k%H$O(B thre = 0.5[sec]
+
+# Linux$B$N%I%i%$%P$NLdBj$G(B1$BBf$N(BPC$B$G(B2$B$D$N%O%s%I%+%a%i%G%P%$%9$r3+$1$J$$(B
+# 2$BBf$N(BPC$B$K(B1$B$D$:$D$D$J$$$G$$$k(B
+# $B:8<j%+%a%i$r;H$&$H$-$K$O!"$^$::8<j%+%a%i$N%-%c%W%A%c$HG'<1%W%m%0%i%`$rAv$i$;$kI,MW$,$"$k(B
+lupus@ roslaunch Sense sense_lhand_ar.launch
+rr.detect(camera='lhand') # $B:8<j%+%a%i$K$h$kG'<1(B
+
+# $BJ?9T%0%j%C%Q$N4V3V;XDjGD;}(B
+r.grasp(width=65, hand='right') # $B;X$N4V3V$,(Bwidth[mm]$B$K$J$k$h$&$K;X$rF0$+$9(B
+r.grasp(65) # $B$3$l$G$bF1$8(B
+
+# $B%"%W%m!<%A5wN%$N;XDj(B
+pl.reaching_plan(objfrm, approach_distance=80) # $B>/$71s$/$+$i%"%W%m!<%A(B
+
+
+# $BN}=,!'(B
+#  $B<j$d<s$rF0$+$7$F!"L\$NA00J30$KCV$+$l$?H"$rDO$`(B
+#  $BJL$NH"$r@Q$`(B
+#  $B0c$&$b$N(B($BNc$($PBg$-$5$,0[$J$kH"!"%Z%C%H%\%H%k(B)$B$rDO$s$G$_$k(B
+#    $BBP>]J*0LCV$O4{CN$H$9$k(B
+#    $B%"%W%m!<%A!"GD;};Q@*$N7W;;(B
+#    $B%O%s%I$NGD;}3QEY(B or $B;X@h4V3V$N@_Dj(B
+#    $B<B5!$G$NF0:n<B83(B ($B4y$KEv$?$i$J$$$h$&$KCm0U(B)
+#  $BH"$rJB$Y$k(B($B2!$9!"3j$i$;$k(B)
+#  $B%O%N%$$NEc$r$d$C$F$_$k(B
+
+
+# $BF0:n7W2h(B($B;EMM$,JQ$o$k2DG=@-Bg(B)
+traj = test_plan() # RRT-connect$B$K$h$kF0:n7W2h(B
+show_traj(traj) # $B50F;$NI=<((B
+opttraj = pl.optimize_trajectory(traj) # $B50F;$N:GE,2=(B
+show_traj(opttraj)
+opttraj = pl.optimize_trajectory(opttraj) # $B$5$i$K%9%`!<%8%s%0(B
+
+# $B43>D%A%'%C%/$K$O(BPQP$B$rMxMQ(B
+# $B%m%\%C%H$N%b%G%k(BVRML$B$=$N$^$^(B
+# $B4D6-$O(Bbox, AABB$B$N$_(B (AABB=>triangular mesh=>PQP)
+
+# $B43>D%A%'%C%/BP>]J*$NDI2CNc(B
+r.add_collision_object(env.get_object('table top'))
+
+\end{verbatim}
 
 % \addcontentsline{toc}{chapter}{$B;29MJ88%(B}
 % \markboth{$B;29MJ88%(B}{$B;29MJ88%(B}
