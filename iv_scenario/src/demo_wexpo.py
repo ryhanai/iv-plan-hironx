@@ -42,7 +42,7 @@ from toplevel_extension import *
 
 ################################################################################
 
-fsoffset = 59
+#fsoffset = 59
 init_frames = {}
 
 
@@ -483,10 +483,21 @@ def place_plan(p, hand='right'):
 rwp = FRAME(xyzabc=[200,-110,1049,0,-pi/2,0])
 lwp = FRAME(xyzabc=[240,90,1049,0,-pi/2,0])
 
+# preapproach := move_q()
+# move_lr := ik(),r.set_joint_angles(),move_q()
+# look_for := move_lr(detect_poss[0]); detect(); repeat
+# choose_and_pick := try: move_lr(candidates_for_lr()) repeat
+# 
+
+# Task primitives:
+#  move_q(q)
+#  move_lr(l,r)
+
+
 def demo(recognition=True):
     pltaxis = array(env.get_object('pallete0').where().mat)[0:2,0]
 
-    preapproach_dual()
+    preapproach()
 
     if recognition:
         if not look_for():
@@ -718,7 +729,7 @@ def demo(recognition=True):
     r.set_joint_angles(rasol, joints='rarm')
     sync(joints='rarm', duration=tms['pregrasp'])
 
-    preapproach_dual()
+    preapproach()
 
 # observation plan
 
@@ -731,17 +742,17 @@ def pocket_detection_pose(n):
     return plt.where() * FRAME(xyzabc=[x,y,z,0,-pi/2,0])
 
 
-def preapproach_dual():
+def preapproach():
     r.prepare(width=80)
 
     jts = 'rarm'
     x,y = detectposs_dual[0][0]
-    f = FRAME(xyzabc=[x, y, tblheight+fsoffset+290,0,-pi/2,0])
+    f = FRAME(xyzabc=[x, y, tblheight+350,0,-pi/2,0])
     r.set_joint_angles(r.ik(f, jts)[0], joints=jts)
 
     jts = 'larm'
     x,y = detectposs_dual[0][1]
-    f = FRAME(xyzabc=[x, y, tblheight+fsoffset+290,0,-pi/2,0])
+    f = FRAME(xyzabc=[x, y, tblheight+350,0,-pi/2,0])
     r.set_joint_angles(r.ik(f, jts)[0], joints=jts)
 
     sync(duration=tms['preapproach2'])
