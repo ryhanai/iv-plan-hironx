@@ -94,7 +94,7 @@ class HiroNx(VRobot):
             js = self.joints
         return [j.angle for j in js]
 
-    def set_joint_angles(self, ths, joints='all', flush=True, check_collision=True):
+    def set_joint_angles(self, ths, joints='all', flush=True, check_collision=False):
         if joints == 'rarm':
             js = self.joints[3:9]
         elif joints == 'larm':

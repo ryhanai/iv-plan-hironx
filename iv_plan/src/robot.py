@@ -254,7 +254,7 @@ class VRobot(JointObject):
         for lnk in self.get_links():
             lnk.cb = gen_collision_body(lnk)
 
-    def set_joint_angle(self, id, th, flush=True, check_collision=True):
+    def set_joint_angle(self, id, th, flush=True, check_collision=False):
         self.joints[id].angle = th
 
         if check_collision:
