@@ -13,7 +13,7 @@ import wrl_loader
 from pqp_if import *
 import libik_hiro as ikfast
 
-def get_AABB(vs, padding=4.0):
+def get_AABB(vs, padding=0.0):
     xlb = ylb = zlb = inf
     xub = yub = zub = -inf
 

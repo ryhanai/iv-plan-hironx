@@ -26,7 +26,7 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
     global show_frame, show_traj, show_tree, exec_traj
     global obj_in_hand, grab, release
 
-    def sync_main_(duration=4.0, joints='all', wait=True, waitkey=True):
+    def sync_main_(duration=4.0, joints='all', wait=True, waitkey=False):
         '''synchronize the real robot with the model in "duration" [sec]'''
         if rr:
             js = r.get_joint_angles()
@@ -65,11 +65,11 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
             if waitkey:
                 raw_input('type any key to continue')
             else:
-                time.sleep(duration)
+                time.sleep(duration/4.0) # 4 times faster
 
     sync_main = sync_main_
 
-    def sync_(duration=4.0, joints='all', wait=True, waitkey=True, goalthresh=0.2):
+    def sync_(duration=4.0, joints='all', wait=True, waitkey=False, goalthresh=0.2):
         sync_main(duration=duration, joints=joints, wait=wait, waitkey=waitkey)
 
     sync = sync_

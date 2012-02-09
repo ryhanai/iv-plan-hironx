@@ -251,20 +251,23 @@ RRT-connect$B$K$h$kAPOS$N43>D$r9MN8$7$?F0:n7W2h5!G=$rDs6!$7!$?M<j$K(B
 
 \subsubsection{$B%@%&%s%m!<%I$H%3%s%Q%$%k(B}
 
-install.sh
-(or rosmake --rosdep-install)
 
-\begin{lstlisting}
- $ cd iv_plan/; make
+\begin{lstlisting};
+ $ cd iv-plan-hironx/iv_plan/scripts; ./install-debs.sh
+ $ cd iv-plan-hironx/iv_plan/; make
+ $B4D6-JQ?t(BPYTHONPATH$B$K(B iv-plan-hironx/iv_plan/src$B$rDI2C(B
 \end{lstlisting}
 
-$B4D6-JQ?t(BPYTHONPATH$B$K(B iv-plan-hironx/iv\_plan/src
-$B$rDI2C$9$k!%(B
-
+$B4D6-$K$h$C$F(BVPython$B$,@5$7$/F0:n$7$J$$>l9g$,$"$k$?$a!$$^$?!$(Bdeb$B%Q%C%1!<%8(B
+$B$G%$%s%9%H!<%k$5$l$k%P!<%8%g%s$G$O%5%]!<%H$5$l$F$$$J$$5!G=$rMxMQ$9$k$?$a!$(B
 VPython$B$O(BUbuntu 10.04LTC$B$NI8=`%Q%C%1!<%8$h$j?7$7$$$b$N$K%Q%C%A$rEv$F!$%3(B
-$B%s%Q%$%k:Q$_$N$b$N$rMxMQ$9$k!%$7$?$,$C$F!$I8=`$N(Bpython-visual$B%Q%C%1!<%8(B
+$B%s%Q%$%k:Q$_$N$b$N$rMxMQ$7$^$9!%$3$l$O!$(Bmake$B;~$K%@%&%s%m!<%I$7$^$9!%(B
+$B$7$?$,$C$F!$I8=`$N(Bpython-visual$B%Q%C%1!<%8(B
 $B$r%$%s%9%H!<%k$7$F$$$k>l9g$O!$$=$l$,(Bpython$B>e$G@h$K%m!<%I$5$l$k$3$H$,$J$$(B
 $B$h$&$KCm0U$9$kI,MW$,$"$j$^$9!%(B
+ikfast$B$K$h$j@8@.$5$l$?(BHIRO-NX$BMQ5U1?F03X7W;;$N%=!<%9$OF1:-$5$l$F$*$j!$(BPQP
+$B$N%=!<%9$O(Bmake$B;~$K%@%&%s%m!<%I$7!$$=$l$>$l%3%s%Q%$%k$5$l$^$9!%(B
+$B$=$l0J30$KI,MW$J$b$N$O(Bapt$B%3%^%s%I$G%$%s%9%H!<%k$7$^$9(B(install-deb.sh).
 
 \subsubsection{$B3+H/!&F0:n4D6-(B}
 
@@ -277,15 +280,30 @@ VPython$B$O(BUbuntu 10.04LTC$B$NI8=`%Q%C%1!<%8$h$j?7$7$$$b$N$K%Q%C%A$rEv$F!$%
 
 $B$^$:!$%?%9%/5-=R!$F0:n7W2h!$G'<1$*$h$S@)8f%b%8%e!<%k$H$N@\B3$r(B
 $B#1$D$N(BPython$B%7%'%k>e$G9T$&J}K!$r@bL@$7$^$9!%(B
-$B30It(BRTC$B$H$NDL?.$K$O(BRtcHandle$B$rMxMQ$7$F$$$^$9!%(B
-
-$B0J2<$N%3%^%s%I$G%G%b%W%m%0%i%`$r5/F0$7$^$9!%(B
 
 \begin{lstlisting}[label=src:branch]
  $ cd iv_scenario/src
- $ ipython demo_wexpo.py
+ $ ipython test.py
+ >>> test1()
+
+ $BN)BN%Q%:%k%G%b(B
+ $ ipython puzzle.py
+ >>> demo() # $B%Q%:%kG[CV$r85$KLa$9$N$O(B reset_puzzle()
+
+ $B%7%_%e%l!<%7%g%s$K$h$kItIJ$NH"5M$a(B
+ >>> $BJQ99Cf(B
 \end{lstlisting}
 
+$B%&%#%s%I%&A`:n$O!$1&%I%i%C%0$G2sE>!$Cf%I%i%C%0$G%:!<%`$G$9!%(B
+$B%W%m%0%i%`$N=*N;$O(BCtrl+d$B$G%$%s%?!<%W%j%?$rH4$1$?8e!$(BGUI$B$NJD$8$k%\%?%s$r(B
+$B2!$7$^$9!%(BCtrl+c$B$O%H%i%C%W$5$l$F$$$^$9!%(BGUI$B$NJD$8$k%\%?%s$r2!$9$N$,LLE](B
+$B$J>l9g$O(BCtrl+\textbackslash $B$G(BSIGQUIT$B$rAw$k$3$H$G=*N;$5$;$k$3$H$,$G$-$^$9!%(B
+
+Python$B%7%'%k>e$G%m%\%C%H$N;Q@*$rJQ99$7$?$j!$4D6-Cf$NJ*BN$r0\F0$5$;$?$j!$(B
+$BF0:n7W2h$r9T$&>l9g$NA`:n$K4X$7$F$OIUO?$r;2>H$7$F$/$@$5$$!%(B
+
+$B30It(BRTC$B$H$NDL?.$K$O(BRtcHandle$B$rMxMQ$7$F$$$^$9!%(B
+(http://staff.aist.go.jp/t.suehiro/rtm/rtc\_handle.html)
 
 $B4pK\E*$K!$%m%\%C%H%/%i%9!$%m%\%C%H%$%s%9%?%s%9$4$H$N%+%9%?%^%$%:$O(B
 $B4{B8%/%i%9$r3HD%$9$k$3$H$G9T$$$^$9!%(B
@@ -293,10 +311,12 @@ VPython$B$O(BUbuntu 10.04LTC$B$NI8=`%Q%C%1!<%8$h$j?7$7$$$b$N$K%Q%C%A$rEv$F!$%
  \item robot.py$B$+$i(Bhironx.py
  \item hironx\_params.py
        $B8DBN:9$,$"$k3F<o(Btransform$B$H!$MxMQ$9$k30It%b%8%e!<%kDj5A(B
- \item $BB>$N5!G=$H$7$F!$(BVRML$B$N%m!<%@!$%;%s%5<h$jIU$10LCV$N?dDj5!G=$,$"$j$^$9(B
+ \item $B4D6-%b%G%k$NDj5A(B \\
+       (python$B$N%G!<%?9=B$$GM?$($k!%(Bscene\_object.py)
+ \item $BB>$N5!G=$H$7$F!$(BVRML$B$N%m!<%@!$%;%s%5<h$jIU$10LCV$N?dDj5!G=$,$"$j(B
+       $B$^$9(B.
 \end{itemize}
 
-$B%7%_%e%l!<%7%g%s$K$h$kItIJ$NH"5M$a(B
 
 \begin{figure}[tb]
  \begin{center}
@@ -314,20 +334,36 @@ VPython$B$O(BUbuntu 10.04LTC$B$NI8=`%Q%C%1!<%8$h$j?7$7$$$b$N$K%Q%C%A$rEv$F!$%
 http://www.openrtm.org/openrtm/en/node/4645
 
 $BAPOS%m%\%C%H$N@)8f%3%^%s%I$N6&DL%$%s%?%U%'!<%9$K=`5r$9$k(B
-HiroNX$BMQ@)8f%b%8%e!<%k$G$"$k!%(B
-$B>\:Y$K$D$$$F$O!$3+H/85$G$"$k;:6H5;=QAm9g8&5f=j$N%I%-%e%a%s%H$r;2>H!%(B
+HiroNX$BMQ@)8f%b%8%e!<%k$G$9!%(B
+$B>\:Y$K$D$$$F$O!$3+H/85$G$"$k;:6H5;=QAm9g8&5f=j$N%I%-%e%a%s%H$r;2>H$7$F$/(B
+$B$@$5$$!%(B
 
 \subsection{$BF0:n@8@.It$NF0:n3NG'(B}
 
-HiroNX$B$N5/F0$O40N;$7$F$$$k$H$9$k!%(B
+ % $ $B5/F0%9%/%j%W%H(B
+ % IP/$B%[%9%HL>$N0c$$$O$I$3$rD>$;$P$h$$$+!)(B
 
-%\begin{lstlisting}[label=src:branch, caption=$B%5%s%W%k(B]
+$B0J2<$N%3%^%s%I$G%G%b%W%m%0%i%`$r5/F0$7$^$9!%(B
+
 \begin{lstlisting}[label=src:branch]
- $ $B5/F0%9%/%j%W%H(B
- IP/$B%[%9%HL>$N0c$$$O$I$3$rD>$;$P$h$$$+!)(B
  $ cd iv_scenario/src
  $ ipython demo_wexpo.py
+
+ $B%7%_%e%l!<%7%g%s$G$N%G%bF0:n$N<B9T(B
+ >>> demo(False)
+
+ $B30It%b%8%e!<%k$H$NDL?.(B
+ (AppRecog$B%b%8%e!<%k$r<B9T$7$F$*$/(B)
+ >>> rr.detect(sensor='rhandcam') # $B1&<j%O%s%I%+%a%i$G$NG'<1(B
+
+ $B0J2<$O!$(BHiroNX$B$N5/F0$,40N;$7!$(BHiroNX$BBNFb$N%b%8%e!<%k$HDL?.2DG=$J>uBV$G(B
+ $B$"$k$H$9$k!%(B
+ >>> detect(sensor='rhandcam') # $BG'<17k2L$r@$3&:BI8$KD>$7$?$b$N(B
+ >>> rr.get_joint_angles() # $B<B5!$N4X@a3QEYNs(B
+ >>> r.prepare() # $B%7%_%e%l!<%?Fb$G;Q@*$rJQ99(B
+ >>> sync() # $B<B5!$N;Q@*$r%7%_%e%l!<%?$K$"$o$;$k(B
 \end{lstlisting}
+
 
 \subsection{$BF0:n@8@.$rBPOC4D6-$G9T$&>l9g(B}
 
@@ -408,16 +444,27 @@ publish$B$5$l$?%a%C%;!<%8$r(Bpython$B%W%m%0%i%`$G<u?.$7$^$9!%(B
 
 \section{$BG'<1It$N%b%8%e!<%k5/F0$H@\B3(B}
 
+VisionPC$B$K$F!$(Brun.sh$B$r<B9T$9$k!%(B
+$B$3$l$K$h$j!$N><j$KBP1~$9$k%+%a%i!$G'<1%b%8%e!<%k!$(BHiroNXInterface$B@)8f%b(B
+$B%8%e!<%k$,5/F0!$@\B3$5$l!$$5$i$K3F%b%8%e!<%k$,(Bactivate$B$5$l$^$9!%(B
+HiroNXInterface$B%b%8%e!<%k$O5/F08e(BGUI$B>e$N!V(BRTC Status$B!W$,NP$K$J$C$?>uBV$G(B
+$B!V(BSet up Robot$B!W%\%?%s$r2!$7(BRTC$B$^$o$j$N=i4|2=$r9T$&I,MW$,$"$kE@$KCm0U$7(B
+$B$F$/$@$5$$!%(B
+
+$B$3$3$G!$(Brtc.conf,$B:81&%+%a%i$N:81&$N%+%a%i$,5U$K$J$C$F$$$J$$$+$I$&$+3NG'(B
+$B$7$F$/$@$5$$!%(B
+
+\section{$BF0:n@8@.%W%m%0%i%`$N5/F0(B(1$B$D$N(Bpython$B%W%m%;%9>e$G$N<B9T(B)}
+
 \begin{itemize}
- \item run.sh$B$r<B9T(B
-       rtc.conf,$B:81&%+%a%i$N%G%P%$%9Ey$N@_Dj$O$G$-$F$$$k$b$N$H$9$k!%(B
-       $B:81&$N%+%a%i$,5U$K$J$C$F$$$J$$$+$I$&$+3NG'$9$k!%(B
- \item $BF0:n@8@.%W%m%0%i%`$N5/F0(B
- \item look\_for
-       $B<j@h$rF0$+$7$F4y>e$NBP>]J*$rG'<1$9$k(B
- \item $B2hA|Cf$GBP>]J*$,@5$7$/G'<1$5$l$F$$$k$+!$G'<17k2L$,%7%_%e%l!<%?Cf(B
-       $B$K@5$7$/I=<($5$l$F$$$k$+$I$&$+$r3NG'$9$k(B
- \item $BF0:n$N<B9T(B
+ \item $B%F!<%V%k>e$KBP>]J*$r(B4$B$DG[CV$7!$(B
+       look\_for()$B4X?t$r<B9T$7$^$9!%(B
+       $B<j@h$rF0$+$7$F4y>e$NBP>]J*$rG'<1$7$F$_$^$9!%(B
+ \item $B$3$N$H$-!$2hA|Cf$GBP>]J*$,@5$7$/G'<1$5$l$F$$$k$+!$G'<17k2L$,%7%_%e(B
+       $B%l!<%?Cf$K@5$7$/I=<($5$l$F$$$k$+$I$&$+$r3NG'$7$^$9!%(B
+ \item $B$3$l$G=`Hw$,@0$C$?$N$G!$<B:]$K%G%b$r<B9T$7$^$9!%(B
+       $B<B9T8e!$%m%\%C%H$O%F!<%V%k$r%9%-%c%s$7!$BP>]J*$rG'<1(B
+       demo()
 \end{itemize}
 
 
@@ -426,6 +473,8 @@ publish$B$5$l$?%a%C%;!<%8$r(Bpython$B%W%m%0%i%`$G<u?.$7$^$9!%(B
 
 $B%U%l!<%`$d%m%\%C%H!$4D6-Cf$NJ*BNA`:nEy$r(Bpython$B>e$G9T$&J}K!$K$D$$$F@bL@$7(B
 $B$^$9!%(B
+
+$B0J2<$N>pJs$O8E$$$b$N$G!$99?7M=Dj$G$9!%(B
 
 \begin{verbatim}
 
@@ -560,9 +609,6 @@ for th in arange(0,1,0.2):
 r.get_joint_angles()[3:9]
 r.get_joint_angles()[15:19]
 
-## $BN}=,!'(B
-##   $B$$$m$s$J;Q@*$r:n$C$F$_$h$&(B
-##   $B$$$m$s$JF0:nNs$r:n$C$F!"%"%K%a!<%7%g%s$r$7$F$_$h$&(B
 
 
 # 5, $B:BI87O(B(frame)$B$K$D$$$F(B
@@ -626,12 +672,6 @@ f.rel_trans # $B?F;R4V$N:BI8JQ49$N<hF@(B
 
 env.insert_object('box2') # $BJ*BNDI2C(B
 env.delete_object('box2') # $BJ*BN:o=|(B($B;R%U%l!<%`$NJ*BN$b:o=|$5$l$k(B)
-
-## $BN}=,!'(B
-##  $BJ*BN$N0LCV$rJQ$($F$_$h$&(B
-##  $B%F!<%V%k$r(B20[cm]$BA0$K=P$7$F$_$h$&(B
-##  $B%m%\%C%H$r0\F0$5$;$F$_$h$&(B
-##  $BE,Ev$JJ*BN$r:n@.$7$?$j!":o=|$7$F$_$h$&(B
 
 
 # 6, $B5U1?F03X(B(Inverse Kinematics, IK)$B$NMxMQ(B
@@ -733,9 +773,6 @@ Tleye_obj = rr.detect()
 Twld_hd = r.get_link('HEAD_JOINT1_Link').where()
 Twld_obj = Twld_hd * r.Thd_leye * Tleye_obj
 
-# $B%O%s%I%+%a%i$NMxMQ(B
-# $B1&<j%O%s%I%+%a%i$G(B2$B8D$NH"$rC5$7!"(B
-# $B%^!<%+(B1$BHV(B($B6y$,7g$1$F$$$kJ}(B)$B$NH"$r(B2$BHV$NH"$N>e$KCV$/(B
 
 # $B<B5!$N>l9g(B
 hand_cam_demo()
@@ -757,9 +794,6 @@ putbox(name='box0', vaxis='y')
 # $B2a5n(B thre [sec]$B0JFb$KG'<1$K@.8y$7$F$$$J$$%^!<%+$OJV$5$J$$(B
 # $B%G%U%)%k%H$O(B thre = 0.5[sec]
 
-# Linux$B$N%I%i%$%P$NLdBj$G(B1$BBf$N(BPC$B$G(B2$B$D$N%O%s%I%+%a%i%G%P%$%9$r3+$1$J$$(B
-# 2$BBf$N(BPC$B$K(B1$B$D$:$D$D$J$$$G$$$k(B
-# $B:8<j%+%a%i$r;H$&$H$-$K$O!"$^$::8<j%+%a%i$N%-%c%W%A%c$HG'<1%W%m%0%i%`$rAv$i$;$kI,MW$,$"$k(B
 lupus@ roslaunch Sense sense_lhand_ar.launch
 rr.detect(camera='lhand') # $B:8<j%+%a%i$K$h$kG'<1(B
 
@@ -771,18 +805,6 @@ r.grasp(65) # $B$3$l$G$bF1$8(B
 pl.reaching_plan(objfrm, approach_distance=80) # $B>/$71s$/$+$i%"%W%m!<%A(B
 
 
-# $BN}=,!'(B
-#  $B<j$d<s$rF0$+$7$F!"L\$NA00J30$KCV$+$l$?H"$rDO$`(B
-#  $BJL$NH"$r@Q$`(B
-#  $B0c$&$b$N(B($BNc$($PBg$-$5$,0[$J$kH"!"%Z%C%H%\%H%k(B)$B$rDO$s$G$_$k(B
-#    $BBP>]J*0LCV$O4{CN$H$9$k(B
-#    $B%"%W%m!<%A!"GD;};Q@*$N7W;;(B
-#    $B%O%s%I$NGD;}3QEY(B or $B;X@h4V3V$N@_Dj(B
-#    $B<B5!$G$NF0:n<B83(B ($B4y$KEv$?$i$J$$$h$&$KCm0U(B)
-#  $BH"$rJB$Y$k(B($B2!$9!"3j$i$;$k(B)
-#  $B%O%N%$$NEc$r$d$C$F$_$k(B
-
-
 # $BF0:n7W2h(B($B;EMM$,JQ$o$k2DG=@-Bg(B)
 traj = test_plan() # RRT-connect$B$K$h$kF0:n7W2h(B
 show_traj(traj) # $B50F;$NI=<((B
@@ -792,7 +814,6 @@ opttraj = pl.optimize_trajectory(opttraj) # $B$5$i$K%9%`!<%8%s%0(B
 
 # $B43>D%A%'%C%/$K$O(BPQP$B$rMxMQ(B
 # $B%m%\%C%H$N%b%G%k(BVRML$B$=$N$^$^(B
-# $B4D6-$O(Bbox, AABB$B$N$_(B (AABB=>triangular mesh=>PQP)
 
 # $B43>D%A%'%C%/BP>]J*$NDI2CNc(B
 r.add_collision_object(env.get_object('table top'))
