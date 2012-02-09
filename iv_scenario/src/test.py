@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # set up environment for ROS/RTM
@@ -14,7 +13,12 @@ from csplan import *
 
 import hironx_params
 import hironxsys
-rr = hironxsys.HiroNxSystem(nameserver, hironx_params.portdefs)
+
+real_robot = False
+if real_robot:
+    rr = hironxsys.HiroNxSystem(nameserver, hironx_params.portdefs)
+else:
+    rr = None
 
 env = PlanningEnvironment()
 env.load_scene(scene_objects.table_scene())
@@ -32,17 +36,24 @@ from toplevel_extension import *
 
 
 def test1():
-    js = 'rarm'
-    f1 = FRAME(xyzabc=[200,120,800,0,-pi/2,0])
-    traj1 = move_arm_plan(f1, joints=js)
-    show_traj(traj1, joints=js)
-    js = 'larm'
+    traj = []
+    r.reset_pose()
+    jts = 'rarm'
+    f1 = FRAME(xyzabc=[220,120,800,0,-pi/2,0])
+    traj.append((move_arm_plan(f1, joints=jts), jts))
+    jts = 'larm'
     f2 = FRAME(xyzabc=[250,-120,1000,0,-pi/2,0])
-    traj2 = move_arm_plan(f2, joints=js)
-    show_traj(traj2, joints=js)
-    js = 'all'
-    q0 = r.get_joint_angles(joints=js)
+    traj.append((move_arm_plan(f2, joints=jts), jts))
+    f3 = FRAME(xyzabc=[100,400,800,0,-pi/2,0])
+    traj.append((move_arm_plan(f3, joints=jts), jts))
+    jts = 'torso_arms'
+    q0 = r.get_joint_angles(joints=jts)
     r.prepare()
-    q1 = r.get_joint_angles(joints=js)
-    traj3 = pl.make_plan(q0, q1, joints=js)
-    show_traj(traj3, joints=js)
+    q1 = r.get_joint_angles(joints=jts)
+    traj.append((pl.make_plan(q0, q1, joints=jts), jts))
+
+    for seg,jts in traj:
+        show_traj(seg, joints=jts)
+        time.sleep(0.5)
+
+    return traj
