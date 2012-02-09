@@ -46,7 +46,7 @@ def test1():
     traj.append((move_arm_plan(f2, joints=jts), jts))
     f3 = FRAME(xyzabc=[100,400,800,0,-pi/2,0])
     traj.append((move_arm_plan(f3, joints=jts), jts))
-    jts = 'torso_arms'
+    jts = 'all'
     q0 = r.get_joint_angles(joints=jts)
     r.prepare()
     q1 = r.get_joint_angles(joints=jts)
