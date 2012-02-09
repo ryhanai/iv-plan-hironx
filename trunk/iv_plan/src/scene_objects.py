@@ -33,8 +33,8 @@ def floor():
 #             'children' : []}
 
 # Table with 4 legs
-def high_table():
-    w,d,h,r = 1400, 700, 700, 16
+def high_table(h=700):
+    w,d,r = 1400, 700, 16
     #w,d,h,r = 1400, 700, 735, 16
     thickness = 40
     l = h - thickness
@@ -319,6 +319,16 @@ def table_scene():
     fl = floor()
     bs = hirobase()
     tbl = high_table()
+    w['children'].append((tbl, [350,0,0,0,0,0]))
+    w['children'].append((fl, [0,0,0,0,0,0]))
+    w['children'].append((bs, [-40.0-150.0,0,400.0,0,0,0]))
+    return w
+
+def table_scene_aist():
+    w = world()
+    fl = floor()
+    bs = hirobase()
+    tbl = high_table(h=735)
     w['children'].append((tbl, [350,0,0,0,0,0]))
     w['children'].append((fl, [0,0,0,0,0,0]))
     w['children'].append((bs, [-40.0-150.0,0,400.0,0,0,0]))
