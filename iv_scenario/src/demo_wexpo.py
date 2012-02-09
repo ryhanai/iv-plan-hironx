@@ -489,10 +489,14 @@ lwp = FRAME(xyzabc=[240,90,1049,0,-pi/2,0])
 # choose_and_pick := try: move_lr(candidates_for_lr()) repeat
 # 
 
-# Task primitives:
-#  move_q(q)
-#  move_lr(l,r)
+# Motion primitives:
+#  move_q([(q,t)])
+#  move_lr([(l,r,t)], |torso|) # the system determines the best torso angle
 
+# Recognition primitive:
+#  detect(sensor)
+# Exception handling
+#  throw(message)
 
 def demo(recognition=True):
     pltaxis = array(env.get_object('pallete0').where().mat)[0:2,0]
