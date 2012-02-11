@@ -157,37 +157,37 @@ class CSPlanner():
                 q_rand = self.ws_sample_state()
             else:
                 q_rand = self.random_state()
-            if i < 3 and self.joints != 'all' and self.joints != 'torso_arms':
-                l = 150.0
-                if i == 0:
-                    T_from = self.T_init
-                    q_to = self.T_goal[0]
-                    if self.connect(T_from, q_to) == 'reached':
-                        return True, True
 
-                elif i == 1:
-                    T_from = self.T_goal
-                    T_to = self.T_init
-                    q = self.T_goal[0]
-                    self.robot.set_joint_angles(q.avec, joints=self.joints)
-                    l_or_r,use_waist = parse_joints_flag(self.joints)
-                    f = self.robot.fk(l_or_r) * FRAME(vec=[l,0,0])
-                    q_to = State(avec = self.robot.ik(f, joints=self.joints)[0])
-                    if self.connect(T_from, q_to) == 'reached':
-                        if self.connect(T_to, q_to) == 'reached':
-                            return True, False
-                    
-                else:
-                    T_from = self.T_init
-                    T_to = self.T_goal
-                    q = self.T_init[0]
-                    self.robot.set_joint_angles(q.avec, joints=self.joints)
-                    l_or_r,use_waist = parse_joints_flag(self.joints)
-                    f = self.robot.fk(l_or_r) * FRAME(vec=[l,0,0])
-                    q_to = State(avec = self.robot.ik(f, joints=self.joints)[0])
-                    if self.connect(T_from, q_to) == 'reached':
-                        if self.connect(T_to, q_to) == 'reached':
-                            return True, False
+            if i == 0:
+                T_from = self.T_init
+                q_to = self.T_goal[0]
+                if self.connect(T_from, q_to) == 'reached':
+                    return True, True
+            elif i < 3:
+                if self.joints != 'all' and self.joints != 'torso_arms':
+                    l = 150
+                    if i == 1:
+                        T_from = self.T_goal
+                        T_to = self.T_init
+                        q = self.T_goal[0]
+                        self.robot.set_joint_angles(q.avec, joints=self.joints)
+                        l_or_r,use_waist = parse_joints_flag(self.joints)
+                        f = self.robot.fk(l_or_r) * FRAME(vec=[l,0,0])
+                        q_to = State(avec = self.robot.ik(f, joints=self.joints)[0])
+                        if self.connect(T_from, q_to) == 'reached':
+                            if self.connect(T_to, q_to) == 'reached':
+                                return True, False
+                    else:
+                        T_from = self.T_init
+                        T_to = self.T_goal
+                        q = self.T_init[0]
+                        self.robot.set_joint_angles(q.avec, joints=self.joints)
+                        l_or_r,use_waist = parse_joints_flag(self.joints)
+                        f = self.robot.fk(l_or_r) * FRAME(vec=[l,0,0])
+                        q_to = State(avec = self.robot.ik(f, joints=self.joints)[0])
+                        if self.connect(T_from, q_to) == 'reached':
+                            if self.connect(T_to, q_to) == 'reached':
+                                return True, False
 
             else:
                 if self.extend(T_a, q_rand) != 'trapped':

@@ -90,6 +90,10 @@ class HiroNx(VRobot):
             js = [self.joints[0]]+self.joints[9:15]
         elif joints == 'torso_arms':
             js = [self.joints[0]]+self.joints[3:15]
+        elif joints == 'rhand':
+            js = self.joints[15:19]
+        elif joints == 'lhand':
+            js = self.joints[19:23]
         else:
             js = self.joints
         return [j.angle for j in js]
@@ -105,6 +109,10 @@ class HiroNx(VRobot):
             js = [self.joints[0]]+self.joints[9:15]
         elif joints == 'torso_arms':
             js = [self.joints[0]]+self.joints[3:15]
+        elif joints == 'rhand':
+            js = self.joints[15:19]
+        elif joints == 'lhand':
+            js = self.joints[19:23]
         else:
             js = self.joints
 
