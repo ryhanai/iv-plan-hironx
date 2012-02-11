@@ -340,7 +340,7 @@ class CSPlanner():
                         q_to = q_from
                         q_from = q
                         trajlen += 1
-                    print 'new length = %d'%trajlen
+                    # print 'new length = %d'%trajlen
                     return trajlen
                 else:
                     q_new.parent = q_from
