@@ -161,10 +161,10 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
         traj = CoordinateObjects(name)
         for st in sts:
             r.set_joint_angles(st.avec, joints=joints)
-            if re.match('.*rarm$', joints) or joints == 'all':
+            if re.match('.*rarm$', joints) or joints == 'all' or joints == 'torso_arms':
                 f = r.fk('right')
                 traj.append(f)
-            if re.match('.*larm$', joints) or joints == 'all':
+            if re.match('.*larm$', joints) or joints == 'all' or joints == 'torso_arms':
                 f = r.fk('left')
                 traj.append(f)
         env.insert_object(traj, FRAME(), env.get_world())
@@ -175,38 +175,40 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
         show_traj(pl.T_goal, name='traj1')
     show_tree = show_tree_
 
-    def exec_traj_(traj, duration=0.05, joints='rarm', use_armcontrol=False, draw_trajectory=True):
-        def robot_relative_traj(traj):
-            T = -r.get_link('WAIST_Link').where()
-            qs = [x.avec for x in traj]
-            ps = []
-            for q in qs:
-                r.set_joint_angles(q, joints=joints)
-                ps.append(T*r.get_link('RARM_JOINT5_Link').where())
-            return ps
+    def exec_traj_(sts, joints='rarm', name='traj0'):
+        show_traj(sts, joints=joints, name=name)
+    # def exec_traj_(traj, duration=0.05, joints='rarm', use_armcontrol=False, draw_trajectory=True):
+    #     def robot_relative_traj(traj):
+    #         T = -r.get_link('WAIST_Link').where()
+    #         qs = [x.avec for x in traj]
+    #         ps = []
+    #         for q in qs:
+    #             r.set_joint_angles(q, joints=joints)
+    #             ps.append(T*r.get_link('RARM_JOINT5_Link').where())
+    #         return ps
 
-        name = 'last_trajectory'
-        env.delete_object(name)
-        frames = CoordinateObjects(name)
+    #     name = 'last_trajectory'
+    #     env.delete_object(name)
+    #     frames = CoordinateObjects(name)
 
-        if rr:
-            duration = 0.15
+    #     if rr:
+    #         duration = 0.15
 
-        if use_armcontrol:
-            rr.send_trajectory(robot_relative_traj(traj), duration=duration)
-        else:
-            for st in traj:
-                r.set_joint_angles(st.avec, joints=joints)
-                sync(duration=duration, joints=joints, waitkey=False)
+    #     if use_armcontrol:
+    #         rr.send_trajectory(robot_relative_traj(traj), duration=duration)
+    #     else:
+    #         for st in traj:
+    #             r.set_joint_angles(st.avec, joints=joints)
+    #             sync(duration=duration, joints=joints, waitkey=False)
 
-                if draw_trajectory:
-                    if re.match('.*rarm$', joints) or joints == 'torso_arms' or joints == 'all':
-                        f = r.fk('right')
-                        frames.append(f)
-                    if re.match('.*larm$', joints) or joints == 'torso_arms' or joints == 'all':
-                        f = r.fk('left')
-                        frames.append(f)
-            env.insert_object(frames, FRAME(), env.get_world())
+    #             if draw_trajectory:
+    #                 if re.match('.*rarm$', joints) or joints == 'torso_arms' or joints == 'all':
+    #                     f = r.fk('right')
+    #                     frames.append(f)
+    #                 if re.match('.*larm$', joints) or joints == 'torso_arms' or joints == 'all':
+    #                     f = r.fk('left')
+    #                     frames.append(f)
+    #         env.insert_object(frames, FRAME(), env.get_world())
     exec_traj = exec_traj_
 
     def obj_in_hand_(hand='right'):
