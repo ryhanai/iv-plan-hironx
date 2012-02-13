@@ -6,8 +6,7 @@ func_act ()
     comppath=`./compath2.sh $1 AppRecog0.rtc`
     echo $comppath
     rtcwd $comppath
-    rtact CaptureCamera0.rtc AppRecog0.rtc
+    rtact LoadPicture0.rtc AppRecog0.rtc
 }
 
-func_act rhand_cxt
-func_act lhand_cxt
+func_act loadpicture_cxt

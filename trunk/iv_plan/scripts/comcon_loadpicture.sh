@@ -1,13 +1,11 @@
 #!/bin/bash
 source /usr/local/share/rtshell/shell_support
 
-func_act ()
+func_con ()
 {
     comppath=`./compath2.sh $1 AppRecog0.rtc`
-    echo $comppath
     rtcwd $comppath
-    rtact CaptureCamera0.rtc AppRecog0.rtc
+    rtcon LoadPicture0.rtc:OutImage AppRecog0.rtc:InputImage
 }
 
-func_act rhand_cxt
-func_act lhand_cxt
+func_con loadpicture_cxt
