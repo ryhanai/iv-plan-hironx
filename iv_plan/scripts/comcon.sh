@@ -5,8 +5,8 @@ func_con ()
 {
     comppath=`./compath2.sh $1 AppRecog0.rtc`
     rtcwd $comppath
-    rtcon LoadPicture0.rtc:OutImage AppRecog0.rtc:InputImage
+    rtcon CaptureCamera0.rtc:CameraImage AppRecog0.rtc:InputImage
 }
 
-# func_con rhand_cxt
+func_con rhand_cxt
 func_con lhand_cxt
