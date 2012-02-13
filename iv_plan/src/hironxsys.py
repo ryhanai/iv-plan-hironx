@@ -9,17 +9,17 @@ from ivutils import *
 import rtc_helper
 
 class HiroNxSystem:
-    def __init__(self, nameserver, portdefs):
+    def __init__(self, portdefs):
         self.joint_states = zeros(23)
-        self.rtccon = rtc_helper.RtcConnectionHelper(nameserver)
+        self.portdefs = portdefs
+        self.connect()
 
     def connect(self):
-        portdef = hironx_params.portdefs['controller']
-        h_hiroif = self.rtccon.get_handle(portdef.target, ns)
-        self.motionsvc = h_hiroif.services[portdef.port].provided[portdef.service]
+        portdef = self.portdefs['controller']
+        self.motionsvc = rtc_helper.get_service(portdef)
 
-        h_rh = self.rtccon.get_handle('RobotHardware0.rtc', ns)
-        self.jstt_port = h_rh.outports['jointDatOut']
+        portdef = self.portdefs['jointstat']
+        self.jstt_port = rtc_helper.get_port(portdef)
 
         #h_fc = get_handle('force.rtc', ns)
         #self.force_port = h_fc.outports['dataout']

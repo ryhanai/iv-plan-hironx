@@ -175,8 +175,14 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
         show_traj(pl.T_goal, name='traj1')
     show_tree = show_tree_
 
-    def exec_traj_(sts, joints='rarm', name='traj0'):
-        show_traj(sts, joints=joints, name=name)
+    def exec_traj_(sts, joints='rarm', name='traj0', duration=4.0):
+        if rr == None:
+            show_traj(sts, joints=joints, name=name)
+        else:
+            q = sts[-1].avec
+            r.set_joint_angles(q, joints=joints)
+            sync(duration=duration)
+
     # def exec_traj_(traj, duration=0.05, joints='rarm', use_armcontrol=False, draw_trajectory=True):
     #     def robot_relative_traj(traj):
     #         T = -r.get_link('WAIST_Link').where()

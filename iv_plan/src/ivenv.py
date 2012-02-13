@@ -4,27 +4,6 @@ import os
 import sys
 from os import path
 
-def getNameServerFromConf(argv):
-    import OpenRTM_aist
-    mc = OpenRTM_aist.ManagerConfig(argv)
-    prop = OpenRTM_aist.Properties()
-    mc.configure(prop)
-    nameserver = prop.findNode('corba.nameservers').getValue()
-    print 'config file = %s' % mc._configFile
-    print 'nameserver = %s' % nameserver
-    return nameserver
-
-def setup_rtc_components(nameserver):
-    pass
-
-def setup_ros_callbackd():
-    pass
-
-# environment definition file & robot model definition file
-# calibrated parameters files
-# outer module interface, sensor extension
-# toplevel extension functions
-
 
 def setup_ivenv(use_ros=False):
     global ivpkgdir
@@ -48,6 +27,17 @@ def setup_ivenv(use_ros=False):
             load_manifest(pkg)
 
     sys.path.insert(0, ivpkgdir+'/iv_plan/externals/visual/site-packages/')
+    return ivpkgdir
 
-    nameserver = getNameServerFromConf(sys.argv)
-    return ivpkgdir,nameserver
+def getNameServerFromConf(argv):
+    import OpenRTM_aist
+    mc = OpenRTM_aist.ManagerConfig(argv)
+    prop = OpenRTM_aist.Properties()
+    mc.configure(prop)
+    nameserver = prop.findNode('corba.nameservers').getValue()
+    print 'config file = %s' % mc._configFile
+    print 'nameserver = %s' % nameserver
+    return nameserver
+
+ivpkgdir = setup_ivenv()
+nameserver = getNameServerFromConf(sys.argv)
