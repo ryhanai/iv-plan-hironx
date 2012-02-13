@@ -5,14 +5,11 @@ import sys
 import time
 
 from ivenv import *
-ivpkgdir,nameserver = setup_ivenv()
-
 import scene_objects
 from hironx import *
 from mplan_env import *
 from csplan import *
-import hironx_params
-import hironxsys
+import interface_wexpo
 
 ################################################################################
 #
@@ -22,9 +19,14 @@ import hironxsys
 # robot and planner.
 # Then get useful top-level functions operating on these objects
 # by calling setup_toplevel_extension().
+#
+################################################################################
 
-#rr = hironxsys.HiroNxSystem(nameserver, hironx_params.portdefs)
-rr = None
+real_robot = True
+if real_robot:
+    rr = interface_wexpo.MyHiroNxSystem(interface_wexpo.portdefs)
+else:
+    rr = None
 
 env = PlanningEnvironment()
 env.load_scene(scene_objects.table_scene())
@@ -41,10 +43,12 @@ toplevel_extension.setup_toplevel_extension(r,env,rr,pl)
 from toplevel_extension import *
 
 ################################################################################
+#
+# Setup a scene for the demonstration in the simulator
+#
+################################################################################
 
-#fsoffset = 59
 init_frames = {}
-
 
 tbltop = env.get_object('table top')
 tblheight = tbltop.where().vec[2] + tbltop.vbody.size[2]/2
@@ -68,13 +72,13 @@ def reset_parts_randomly():
             z = tblheight + p.vbody.size[2]/2
             c = 2*pi * random.random()
             f = FRAME(xyzabc=[x,y,z,0,0,c])
-            if not is_occupied(f, objs): 
+            if not is_occupied(f, objs):
                 p.locate(f)
                 break
 
 def init_palletizing_scene():
     global holeheight
-    
+
     tbl = env.get_object('table')
 
     def put_on_table(objdef, name, xyzabc):
@@ -114,18 +118,7 @@ def init_palletizing_scene():
         env.add_collidable_object(o)
 
 
-try:
-    hrhandrecog = ns.rtc_handles['rhand_cxt/AppRecog0.rtc'].outports['RecognitionResultOut']
-except:
-    warn('recognition module is not running in rhand')
-
-try:
-    hlhandrecog = ns.rtc_handles['lhand_cxt/AppRecog0.rtc'].outports['RecognitionResultOut']
-except:
-    warn('recognition module is not running in lhand')
-
-
-# quick version
+# fast version
 # tms = {'preapproach1': 0.4,
 #        'preapproach2': 1.0,
 #        'pick': 0.65,
@@ -133,114 +126,84 @@ except:
 #        'place': 0.55,
 #        'look_for': 0.5}
 
-# normal version
-tms = {'preapproach1': 1.2,
-       'preapproach2': 2.0,
-       'pick': 0.8,
-       'transport': 1.0,
-       'place': 0.8,
-       'pregrasp': 0.8,
-       'look_for': 0.65}
+# normal speed
+# tms = {'preapproach1': 1.2,
+#        'preapproach2': 2.0,
+#        'pick': 0.8,
+#        'transport': 1.0,
+#        'place': 0.8,
+#        'pregrasp': 0.8,
+#        'look_for': 0.7}
 
 # slow version
-# tms = {'preapproach1': 1.5,
-#        'preapproach2': 2.5,
-#        'pick': 1.3,
-#        'transport': 1.6,
-#        'place': 1.3,
-#        'pregrasp': 0.7,
-#        'look_for': 0.8}
+tms = {'preapproach1': 1.5,
+       'preapproach2': 2.5,
+       'pick': 1.3,
+       'transport': 1.6,
+       'place': 1.3,
+       'pregrasp': 0.7,
+       'look_for': 0.9}
 
 
-detectposs_dual = [[(180,-35),(180,150)],
-                   [(230,-35),(230,150)],
-                   [(280,-35),(280,150)]]
-
-pocketposs = [(107,-287),(27,-287),
-              (107,-377),(27,-377)]
+class RecognitionFailure(Exception):
+    pass
+class IKFailure(Exception):
+    pass
+class PlanningFailure(Exception):
+    pass
 
 
 ################################################################################
 # Recognition
 ################################################################################
 
-def detect_pose3d(scl=1.0, hand='right'):
-    def read_stable_result(hrecog):
-        lastpos = zeros(3)
-        lasttm = RTC.Time(sec=0, nsec=0)
-        while True:
-            pose3d_stamped = hrecog.read()
-            tm = pose3d_stamped.tm
-            pose3d = pose3d_stamped.data
+# Transform the frame of a target into the world frame
+# after filtering some outliers.
 
-            print tm.sec + tm.nsec*1e-9, ' ', pose3d.position.x, ' ', pose3d.position.y
-
-            if tm.sec + tm.nsec*1e-9 > lasttm.sec + lasttm.nsec*1e-9:
-                pos = array([pose3d.position.x, pose3d.position.y, pose3d.position.z])
-                if linalg.norm(pos-lastpos) < 5:
-                    break
-                elif linalg.norm(pos) > 1:
-                    lastpos = pos
-                    lasttm = tm
-            time.sleep(0.1)
-
-        return [pose3d.position.x, pose3d.position.y, pose3d.position.z,
-                pose3d.orientation.r, pose3d.orientation.p, pose3d.orientation.y]
-
-    if hand == 'right':
-        hrecog = hrhandrecog
-        parentlink = 'RARM_JOINT5_Link'
-        Th_cam = r.Trh_cam
-    else:
-        hrecog = hlhandrecog
-        parentlink = 'LARM_JOINT5_Link'
-        Th_cam = r.Tlh_cam
-
-    pose3d = read_stable_result(hrecog)
-    if pose3d[2] < 100.0:
+def detect(timeout=0, zmin=tblheight, zmax=tblheight+250,
+           constraint=None, sensor='rhandcam'):
+    a = rr.detect(sensor=sensor, timeout=timeout)
+    if a == None:
         return None
+    Tcam_obj = FRAME(mat=a[:,:3].tolist(), vec=a[:,3].tolist())
 
-    x,y,z,ax,ay,az = pose3d
-    axis =  array([ax,ay,az])
-    angle = linalg.norm(axis)
-
-    m = MATRIX(angle=angle, axis=VECTOR(vec=axis.tolist()))
-    Tcam_obj = FRAME(mat=m, vec=VECTOR(x,y,z))
+    # outlier removal in the camera frame
+    if Tcam_obj.vec[2] < 100.0:
+        return None
 
     print 'cam=>obj: ', Tcam_obj
 
+    # synchronize the model with the real robot pose
     q = rr.get_joint_angles()
     r.set_joint_angles(q)
-    Twld_cam = r.get_link(parentlink).where()*Th_cam
+    Twld_obj = r.get_sensor(sensor).where() * Tcam_obj
 
-    Twld_obj = Twld_cam * Tcam_obj
-
+    # align the z-axis of the target to the world z-axis
     m = array(Twld_obj.mat)
     a = cross(m[0:3,2], [0,0,1])
     m2 = MATRIX(angle=linalg.norm(a), axis=VECTOR(vec=a.tolist()))
     Twld_obj.mat = m2*Twld_obj.mat
 
-    return Twld_obj
+    print 'world=>obj: ', Twld_obj
+
+    # outlier removal in the world frame
+    if Twld_obj and Twld_obj.vec[2] > zmin and Twld_obj.vec[2] < zmax:
+        if constraint != None:
+            axis,thresh = constraint
+            if abs(dot(array(Twld_obj.mat)[0:2,0], axis)) > thresh:
+                return Twld_obj
+        else:
+            return Twld_obj
 
 
-def detect(timeout=0, zmin=tblheight, zmax=tblheight+250,
-           constraint=None, hand='right'):
-    start_tm = time.time()
-    while timeout == 0 or time.time() - start_tm < timeout:
-        f = detect_pose3d(hand=hand)
-        if f and f.vec[2] > zmin and f.vec[2] < zmax:
-            if constraint != None:
-                axis,thresh = constraint
-                if abs(dot(array(f.mat)[0:2,0], axis)) > thresh:
-                    return f
-            else:
-                return f
+#
+# observation planning (just go to fixed positions and try detection)
+#
 
-ff = FRAME(mat =[[0.4076635281311628, 0.9117882047120196, 0.049524918775149342],
-                 [0.9130990027233048, -0.40751129123937258, -0.013592598652415079],
-                 [0.007788392475929596, 0.050762360666655952, -0.99868039115734586]],
-           vec=[7.3129391387813669, 1.674851418810549, 200])
-
+view_distance = 328
+detectposs_dual = [[[230,-35],[230,150]], # x-y coords of each camera
+                   [[280,-35],[280,150]],
+                   [[330,-35],[330,150]]]
 
 def look_for():
     def already_detected(o, detected):
@@ -253,14 +216,14 @@ def look_for():
     detected = []
     for rpos,lpos in detectposs_dual:
         jts = 'larm'
-        fl = FRAME(xyzabc=[lpos[0], lpos[1], tblheight+fsoffset+290, 0, -pi/2,0])
+        fl = FRAME(xyzabc=[lpos[0], lpos[1], tblheight+view_distance, pi, 0, pi/2])*(-r.Tlh_cam)
         jts = 'rarm'
-        fr = FRAME(xyzabc=[rpos[0], rpos[1], tblheight+fsoffset+290, 0, -pi/2,0])
+        fr = FRAME(xyzabc=[rpos[0], rpos[1], tblheight+view_distance, pi, 0, -pi/2])*(-r.Trh_cam)
         move_lr(fl, fr, None, None, None, tms['look_for'])
         time.sleep(1.5) # this is bad
 
-        obj_fr = detect(hand='right', timeout=1.5)
-        obj_fl = detect(hand='left', timeout=1.5)
+        obj_fr = detect(sensor='rhandcam', timeout=1.5)
+        obj_fl = detect(sensor='lhandcam', timeout=1.5)
         if obj_fr:
             if not already_detected(obj_fr, detected):
                 detected.append(obj_fr)
@@ -279,9 +242,18 @@ def look_for():
 
     print '%d objects detected'%len(detected)
     if len(detected) < 4:
-        return False
+        raise RecognitionFailure()
     else:
         return True
+
+def pocket_detection_pose(n):
+    pocketpos = [(-30,45),(-110,45),
+                 (-30,-45),(-110,-45)]
+    x,y = pocketpos[n]
+    plt = env.get_object('pallete0')
+    fsoffset = 59
+    z = tblheight+fsoffset+240 - plt.where().vec[2]
+    return plt.where() * FRAME(xyzabc=[x,y,z,0,-pi/2,0])
 
 
 ################################################################################
@@ -359,7 +331,7 @@ def choose_and_pick():
                 if r.in_collision():
                     continue
 
-                # check collision of the trajectories                
+                # check collision of the trajectories
                 if pl.try_connect(q_start, q_goal, joints='torso_arms'):
                     warn('collision free')
                     sync(duration=tms['pick'])
@@ -406,7 +378,7 @@ def choose_and_pick():
         if r.in_collision():
             return False
 
-        # check collision of the trajectories                
+        # check collision of the trajectories
         if pl.try_connect(q_start, q_goal, joints='torso_arms'):
             warn('collision free')
             sync(duration=tms['pick'])
@@ -435,6 +407,7 @@ def choose_and_pick():
     else:
         warn('failed to pick two objects')
         return False
+
 
 def width2angle(width):
     th = asin(((width/2.0) - 15) / 42)
@@ -496,19 +469,11 @@ rwp = FRAME(xyzabc=[200,-110,1049,0,-pi/2,0])
 lwp = FRAME(xyzabc=[240,90,1049,0,-pi/2,0])
 
 
-def pocket_detection_pose(n):
-    pocketpos = [(-30,45),(-110,45),
-                 (-30,-45),(-110,-45)]
-    x,y = pocketpos[n]
-    plt = env.get_object('pallete0')
-    fsoffset = 59
-    z = tblheight+fsoffset+240 - plt.where().vec[2]
-    # z = tblheight+fsoffset+290 - plt.where().vec[2]
-    return plt.where() * FRAME(xyzabc=[x,y,z,0,-pi/2,0])
+graspduration = 0.5
 
 def move_lr(lframe, rframe, torsoangle, lhandangle, rhandangle, duration):
     q0 = r.get_joint_angles(joints='torso_arms')
-    
+
     if torsoangle != None:
         r.set_joint_angle(0, torsoangle)
     if lframe != None:
@@ -521,12 +486,14 @@ def move_lr(lframe, rframe, torsoangle, lhandangle, rhandangle, duration):
     q1 = r.get_joint_angles(joints='torso_arms')
     jts = 'torso_arms'
     traj = pl.make_plan(q0, q1, joints=jts)
-    exec_traj(traj, joints=jts)
+    exec_traj(traj, joints=jts, duration=duration)
 
     if lhandangle != None:
         r.set_joint_angles([lhandangle,-lhandangle,-lhandangle,lhandangle], joints='lhand')
     if rhandangle != None:
         r.set_joint_angles([rhandangle,-rhandangle,-rhandangle,rhandangle], joints='rhand')
+    sync(duration=graspduration)
+
 
 def move_lr2(sls, srs, torsoangle, duration, grabFlag=True):
     def plan_and_execute(q0, lsol, rsol, duration):
@@ -543,7 +510,7 @@ def move_lr2(sls, srs, torsoangle, duration, grabFlag=True):
         # sync()
 
     q0 = r.get_joint_angles(joints='torso_arms')
-    
+
     if torsoangle != None:
         r.set_joint_angle(0, torsoangle)
 
@@ -584,14 +551,14 @@ def move_lr2(sls, srs, torsoangle, duration, grabFlag=True):
         release(hand='right')
 
     execute(lasol, rasol, duration2)
-        
+
 def move(frame, torsoangle, handangle, duration, hand='right'):
     jts0 = 'rarm' if hand == 'right' else 'larm'
     if torsoangle != None:
         jts0 = 'torso_' + jts0
 
     q0 = r.get_joint_angles(joints=jts0)
-    
+
     if torsoangle != None:
         r.set_joint_angle(0, torsoangle)
     if frame != None:
@@ -609,7 +576,7 @@ def move(frame, torsoangle, handangle, duration, hand='right'):
 
 def move2(ss, torsoangle, duration, grabFlag=True, hand='right'):
     jts0 = 'rarm' if hand == 'right' else 'larm'
-    
+
     def plan_and_execute(q0, sol, duration):
         r.set_joint_angles(sol, joints=jts0)
         jts = 'torso_'+jts0
@@ -622,7 +589,7 @@ def move2(ss, torsoangle, duration, grabFlag=True, hand='right'):
         # sync()
 
     q0 = r.get_joint_angles(joints='torso_'+jts0)
-    
+
     if torsoangle != None:
         r.set_joint_angle(0, torsoangle)
 
@@ -654,7 +621,7 @@ def move2(ss, torsoangle, duration, grabFlag=True, hand='right'):
 
 def go_scan_pose():
     xr,yr = detectposs_dual[0][0]
-    fr = FRAME(xyzabc=[xr, yr, tblheight+350,0,-pi/2,0])
+    fr = FRAME(xyzabc=[xr, yr, tblheight+30,0,-pi/2,0])
     xl,yl = detectposs_dual[0][1]
     fl = FRAME(xyzabc=[xl, yl, tblheight+350,0,-pi/2,0])
     th = width2angle(80)
@@ -671,10 +638,6 @@ def prepare():
 
 # choose_and_pick := try: move_lr(candidates_for_lr()) repeat
 
-# Recognition primitive:
-#  detect(sensor)
-# Exception handling
-#  throw(message)
 
 # TODO:
 # collision checking
@@ -739,9 +702,9 @@ def demo(recognition=True):
     # recognize the pocket
     put_with_a_hand('P1', tms['place'], hand='right')
     prepare()
-    
+
 
 init_palletizing_scene()
 
-# if rr:
-#     rr.connect()
+if rr:
+    r.set_joint_angles(rr.get_joint_angles())
