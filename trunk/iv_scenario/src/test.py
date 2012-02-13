@@ -4,8 +4,6 @@
 # RTM nameserver is read from rtc.conf file in the current directory
 
 from ivenv import *
-ivpkgdir,nameserver = setup_ivenv()
-
 import scene_objects
 from hironx import *
 from mplan_env import *
