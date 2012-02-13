@@ -116,6 +116,7 @@ https://code.google.com/p/app-recog/
  \item OpenRTM-aist 1.0.0-RELEASE C++$BHG(B
  \item OpenCV 2.3
 \end{itemize}
+ OpenCV$B$N%P!<%8%g%s$KCm0U$7$F$/$@$5$$!%(B
 
 \subsubsection{$B%$%s%?%U%'!<%9(B}
 
@@ -214,7 +215,15 @@ CaptureCameraComp$B$r(BLoadPictureComp$B$KCV$-49$($?@\B3$H$J$k!%(B
 $B%m%02hA|$N;XDj$O!$(BLoadPictureComp$B%b%8%e!<%k$N(BLoadPicture.conf$B$G(B
 $B9T$&!%(BAppRecog$B%b%8%e!<%kIUB0$N2hA|(Bdata/parts4.jpg$B$rMQ$$$F3NG'$r9T$&$H$h(B
 $B$$!%(B
-$B>uBV6u4V$K$*$1$kC5:wHO0O$OJLES;XDj$,2DG=$G$"$k!%(B
+LoadPicture.conf$B$GFI$_9~$`2hA|$r;XDj$9$k$K$O!$(Brtc.conf$B$K(B
+\begin{verbatim}
+Processing Module.LoadPicture.config_file: LoadPicture.conf
+\end{verbatim}
+$B$r!$(BLoadPicture.conf$B$K(B
+\begin{verbatim}
+conf.default.string_file_name: parts4.jpg
+\end{verbatim}
+$B$H5-=R$9$k!%(Bparts4.jpg$B$OFI9~$_$?$$%U%!%$%k$NL>A0$r=q$/!%(B
 
 % \begin{figure}[tb]
 %  \begin{center}
@@ -325,7 +334,7 @@ Python$B%7%'%k>e$G%m%\%C%H$N;Q@*$rJQ99$7$?$j!$4D6-Cf$NJ*BN$r0\F0$5$;$?$j!$(B
  \end{center}
 \end{figure}
 
-\subsubsection{$B%$%s%?%U%'!<%9(B}
+% \subsubsection{$B%$%s%?%U%'!<%9(B}
 
 
 \subsection{HiroNXInterface}
@@ -342,26 +351,68 @@ HiroNX$BMQ@)8f%b%8%e!<%k$G$9!%(B
  % $ $B5/F0%9%/%j%W%H(B
  % IP/$B%[%9%HL>$N0c$$$O$I$3$rD>$;$P$h$$$+!)(B
 
-$B0J2<$N%3%^%s%I$G%G%b%W%m%0%i%`$r5/F0$7!$G'<14o$HDL?.$7G'<17k2L$r<hF@$G$-(B
+$B$3$3$+$i$O!$(BHiroNX$B<B5!$r;H$$$^$9!%(B
+$B$^$:!$(BHiroNXInterface$B@)8f%b%8%e!<%k$r5/F0!$(Bactivate$B!$@\B3$7!$MxMQ2DG=$J(B
+$B>uBV$K$7$^$9!J>\:Y$O(BHiroNXInterface$B$N%I%-%e%a%s%H$r;2>H$7$F$/$@$5$$!K!%(B
+HiroNXInterface$B%b%8%e!<%k$O5/F08e(BGUI$B>e$N!V(BRTC Status$B!W$,NP$K$J$C$?>uBV$G(B
+$B!V(BSet up Robot$B!W%\%?%s$r2!$7(BRTC$B$^$o$j$N=i4|2=$r9T$&I,MW$,$"$kE@$KCm0U$7(B
+$B$F$/$@$5$$!%(B
+$B<!$K!$(BHiroNX$BN><j$N<j@h%+%a%i$N%-%c%W%A%c5Z$S!$(BAppRecog$BG'<1%b%8%e!<%k$r5/(B
+$BF0$7$^$9!%:81&$GF1$8L>A0$N%3%s%]!<%M%s%H72$r5/F0$9$k$?$a!$JL!9$N(BRTC$BL>A0(B
+$B6u4V$K5/F0$7$^$9!%(B
+\begin{lstlisting}[label=src:branch]
+ $ cd iv_plan/scripts
+ $ ./run.sh 
+ $B$3$N%9%/%j%W%H$O(BROS$B$N%D!<%k$G$"$k(Brospack find$B$r;H$$$^$9(B
+ $B$b$7!$%3%s%]!<%M%s%H$,>e<j$/@\B3$*$h$S(Bactivate$B$5$l$J$$>l9g(B
+ $B$O!$(B./comcon.sh$B$*$h$S(B./comact.sh$B$r:FEY<B9T$7$F$/$@$5$$!%(B
+\end{lstlisting}
+$B%+%a%i$,G'<1$G$-$F$$$J$$2DG=@-$,$"$k>l9g$O!$(Bxawtv$B%3%^%s%I$J$I$G%+%a%i<+(B
+$BBN$,G'<1$5$l$F$$$k$+3NG'$7$F$/$@$5$$!%(B
+
+$BG'<14X78$N%b%8%e!<%k$rEPO?$9$k%M!<%`%5!<%P$O(Bscripts$B%G%#%l%/%H%j$N(B
+rtc\_left.conf$B$*$h$S(Brtc\_right.conf$B$G;XDj$7$^$9!%(B
+$B$^$?!$F0:n@8@.B&$+$i$3$l$i$N%b%8%e!<%k$K%"%/%;%9$9$kI,MW$,$"$j!$(B
+$B8!:w@h$N%M!<%`%5!<%P$O(BPython$B%W%m%0%i%`$r5/F0$9$k%G%#%l%/%H%j$K$"$k(B
+rtc.conf$B$+$i<hF@$7$^$9!%0J2<$N$h$&$K(Biv\_scenario$B%G%#%l%/%H%j$G(B
+python$B%W%m%0%i%`$r5/F0$9$k>l9g!$(Biv\_scenario/rtc.conf$B$,FI$_9~$^$l$^$9!%(B
+
+$B<!$K!$0J2<$N%3%^%s%I$G%G%b%W%m%0%i%`$r5/F0$7!$G'<14o$HDL?.$7G'<17k2L$r<hF@$G$-(B
 $B$k$3$H!$(BHiroNX$BK\BN$N%b%8%e!<%k$HDL?.$7!$4X@a3Q$N<hF@$*$h$S!$F0:n%3%^%s%I(B
 $B$NAw?.$r9T$J$&$3$H$,$G$-$k$3$H$r3NG'$7$^$9!%(B
-
 \begin{lstlisting}[label=src:branch]
  $ cd iv_scenario/src
- $ ipython demo_wexpo.py
 
  $B30It%b%8%e!<%k$H$NDL?.(B
- (AppRecog$B%b%8%e!<%k$r<B9T$7$F$*$/(B)
- >>> rr.detect(sensor='rhandcam') # $B1&<j%O%s%I%+%a%i$G$NG'<1(B
-
- $B0J2<$O!$(BHiroNX$B$N5/F0$,40N;$7!$(BHiroNX$BBNFb$N%b%8%e!<%k$HDL?.2DG=$J>uBV$G(B
- $B$"$k$H$9$k!%(B
- >>> detect(sensor='rhandcam') # $BG'<17k2L$r@$3&:BI8$KD>$7$?$b$N(B
- >>> rr.get_joint_angles() # $B<B5!$N4X@a3QEYNs(B
+ $ ipython interface_wexpo.py
+ >>> rr.get_joint_angles() # $B<B5!$N4X@a3QEYNs$r<hF@(B
  >>> r.prepare() # $B%7%_%e%l!<%?Fb$G;Q@*$rJQ99(B
- >>> sync() # $B<B5!$N;Q@*$r%7%_%e%l!<%?$K$"$o$;$k(B
+ >>> sync() # $B<B5!$N;Q@*$r%7%_%e%l!<%?$K$"$o$;$k(B($B<B5!$,F0$/$N$GCm0U(B)
+
+ >>> rr = MyHiroNxSystem(portdefs) # $B30It%b%8%e!<%k$H$NDL?.%$%s%?%U%'!<(B
+ $B%9%*%V%8%'%/%H$r:n@.(B
+
+ $BG'<1$G$-$k0LCV$KBP>]J*$rCV$$$F(B
+ >>> rr.detect(sensor='rhandcam') # $B1&<j%O%s%I%+%a%i$G$NG'<1(B
+ >>> rr.detect(sensor='lhandcam') # $B:8<j%O%s%I%+%a%i$G$NG'<1(B
+ ($BBP>]J*$rG'<1$G$-$k$^$G%V%m%C%/$7$^$9(B)
 \end{lstlisting}
 
+ $BG'<17k2L$N@$3&:BI8$X$NJQ49(B
+\begin{lstlisting}[label=src:branch]
+ $ ipython demo_wexpo.py # $BFbIt$G>e$N(Binterface_wexpo.py$B$rMxMQ$7$F$$$^$9!%(B
+ >>> detect(sensor='rhandcam')
+ >>> detect(sensor='lhandcam')
+
+ >>> f = detect(sensor='rhandcam')
+ >>> show_frame(f) # $BG'<17k2L$NI=<((B
+ # $B%7%_%e%l!<%?Fb$GG'<10LCV$KH"(BA0$B$r0\F0$5$;$k(B
+ >>> env.get_object('A0').locate(f) 
+
+ # $B:n6HBf>e$GN><j$rF0$+$7!$BP>]J*$r8!=P$9$k(B
+ # $B>e<j$/8!=P$G$-$l$P!$%7%_%e%l!<%?Fb$NH"(B4$B$D$,@5$7$$0LCV$K0\F0$9$k(B
+ >>> look_for()
+\end{lstlisting}
 
 % \subsection{$BF0:n@8@.$rF0:n7W2h%b%8%e!<%k$H$7$FJ,N%$9$k>l9g(B}
 
@@ -380,15 +431,16 @@ HiroNX$BMQ@)8f%b%8%e!<%k$G$9!%(B
 \section{$B%-%c%j%V%l!<%7%g%s(B}
 
 $B%m%\%C%H$N8DBN:9$r=$@5$9$k:n6H$G$"$k!%(B
-$B%G%U%)%k%HCM$O(BHiroNX16$B9f5!$N$b$N$G$"$j!$(B
+$B%G%U%)%k%HCM$O(BHiroNX14$B9f5!$N$b$N$G$"$j!$(B
 $B@:EY$r=P$9$K$O3F5!BN$4$H$K9T$&I,MW$,$"$k!%(B
 
 \subsection{$B%+%a%i%-%c%j%V%l!<%7%g%s(B}
 
 RT-middleware$B$N%3%s%]!<%M%s%H$G$b(BROS$B$N%N!<%I$G$b2?$G$b$h$$$N$G(B
 $BC14c%+%a%i$N%-%c%j%V%l!<%7%g%s$r9T$$!$(BCameraComp$B$,FI$_9~$a$k$h$&$K(B
-$B$9$k!%(B
-
+$B$9$k!%K\%7%9%F%`$K$*$$$F!$(Brun.sh$B%9%/%j%W%H$G(BRTC$B$r5/F0$9$k>l9g!$(B
+scripts$B%G%#%l%/%H%j$K$"$k(Bcamera\_left.yml$B$*$h$S(Bcamera\_right.yml$B$K$=$l$>(B
+$B$l$N%+%a%i$NFbIt%Q%i%a!<%?$r5-=R$9$k!%(B
 $B$=$N8e!$%(%C%8%Y!<%9Fs<!85BP>]J*G'<1%b%8%e!<%k$K$*$$$F!$BP>]J*$N0LCV!$5w(B
 $BN%$,@5$7$/=PNO$5$l$F$$$k$+$I$&$+3NG'$7$F$*$/$H$h$$!%(B
 
@@ -404,7 +456,7 @@ publish$B$5$l$?%a%C%;!<%8$r(Bpython$B%W%m%0%i%`$G<u?.$7$^$9!%(B
        $B$7$F(Bpublish
  \item checkerboard detection$B%N!<%I$G$=$l$i$r(Bsubscribe$B$7!$?dDj$7$?(Btf$B$,(Bpublish
 \end{itemize}
-$B$5$l$k>uBV$K$7$F$*$/I,MW$,$"$j$^$9!%(B
+$B$5$l$k>uBV$K$7$F$*$/I,MW$,$"$k!%(B
 
 \subsubsection{$B<j=g(B}
 
@@ -441,7 +493,10 @@ publish$B$5$l$?%a%C%;!<%8$r(Bpython$B%W%m%0%i%`$G<u?.$7$^$9!%(B
 
 \section{$BG'<1It$N%b%8%e!<%k5/F0$H@\B3(B}
 
-VisionPC$B$K$F!$(Brun.sh$B$r<B9T$9$k!%(B
+\begin{lstlisting}
+ $ cd iv_plan/scripts
+ $ ./run.sh -c
+\end{lstlisting}
 $B$3$l$K$h$j!$N><j$KBP1~$9$k%+%a%i!$G'<1%b%8%e!<%k!$(BHiroNXInterface$B@)8f%b(B
 $B%8%e!<%k$,5/F0!$@\B3$5$l!$$5$i$K3F%b%8%e!<%k$,(Bactivate$B$5$l$^$9!%(B
 HiroNXInterface$B%b%8%e!<%k$O5/F08e(BGUI$B>e$N!V(BRTC Status$B!W$,NP$K$J$C$?>uBV$G(B
@@ -449,7 +504,9 @@ HiroNXInterface$B%b%8%e!<%k$O5/F08e(BGUI$B>e$N!V(BRTC Status$B!W$,NP$K$J$C$
 $B$F$/$@$5$$!%(B
 
 $B$3$3$G!$(Brtc.conf,$B:81&%+%a%i$N:81&$N%+%a%i$,5U$K$J$C$F$$$J$$$+$I$&$+3NG'(B
-$B$7$F$/$@$5$$!%(B
+$B$7$F$/$@$5$$!%5U$K$J$C$F$$$k>l9g$O!$(BCaptureCameraLeft.conf$B$H(B
+CaptureCameraRight.conf$B$K5-=R$7$F$"$k(Bconf.default.int\_camera\_id$B$NHV9f$r(B
+$B5U$K$7$F!$(Brun.sh$B$r:F<B9T$7$F$/$@$5$$!%(B
 
 \section{$BF0:n@8@.%W%m%0%i%`$N5/F0(B(1$B$D$N(Bpython$B%W%m%;%9>e$G$N<B9T(B)}
 
