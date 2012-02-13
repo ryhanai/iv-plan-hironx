@@ -236,6 +236,12 @@ def detect(timeout=0, zmin=tblheight, zmax=tblheight+250,
             else:
                 return f
 
+ff = FRAME(mat =[[0.4076635281311628, 0.9117882047120196, 0.049524918775149342],
+                 [0.9130990027233048, -0.40751129123937258, -0.013592598652415079],
+                 [0.007788392475929596, 0.050762360666655952, -0.99868039115734586]],
+           vec=[7.3129391387813669, 1.674851418810549, 200])
+
+
 def look_for():
     def already_detected(o, detected):
         for p in detected:
@@ -246,14 +252,13 @@ def look_for():
     r.prepare(width=80)
     detected = []
     for rpos,lpos in detectposs_dual:
-        jts = 'rarm'
-        fr = FRAME(xyzabc=[rpos[0], rpos[1], tblheight+fsoffset+290, 0, -pi/2,0])
-        r.set_joint_angles(r.ik(fr, joints=jts)[0], joints=jts)
         jts = 'larm'
         fl = FRAME(xyzabc=[lpos[0], lpos[1], tblheight+fsoffset+290, 0, -pi/2,0])
-        r.set_joint_angles(r.ik(fl, joints=jts)[0], joints=jts)
-        sync(duration=tms['look_for'])
-        time.sleep(1.5) # this is aweful
+        jts = 'rarm'
+        fr = FRAME(xyzabc=[rpos[0], rpos[1], tblheight+fsoffset+290, 0, -pi/2,0])
+        move_lr(fl, fr, None, None, None, tms['look_for'])
+        time.sleep(1.5) # this is bad
+
         obj_fr = detect(hand='right', timeout=1.5)
         obj_fl = detect(hand='left', timeout=1.5)
         if obj_fr:
@@ -664,7 +669,6 @@ def prepare():
     move_lr(fl, fr, 0.0, width2angle(100), width2angle(100), tms['preapproach2'])
 
 
-# look_for := move_lr(detect_poss[0]); detect(); repeat
 # choose_and_pick := try: move_lr(candidates_for_lr()) repeat
 
 # Recognition primitive:
@@ -719,25 +723,20 @@ def demo(recognition=True):
     choose_and_pick() # pick_with_both_hands (if possible)
     move_lr(lwp, rwp, -0.3, None, None, tms['transport'])
     move_lr(pocket_detection_pose(0), pocket_detection_pose(3), -0.6, None, None, tms['transport'])
-
     # Here, recognize pockets on the pallet if necessary.
     # and adjust the locations of the pockets.
-
     put_with_both_hands('P0', 'P3', tms['place'])
 
     move_lr(lwp, rwp, 0.0, None, None, tms['pick'])
     choose_and_pick() # pick with a hand
     move_lr(lwp, rwp, -0.3, None, None, tms['transport'])
     move(pocket_detection_pose(2), None, None, tms['transport'], hand='right')
-
     # recognize the pocket
-
     put_with_a_hand('P2', tms['place'], hand='right')
+
     pass_left_to_right()
     move(pocket_detection_pose(1), -0.3, None, tms['transport'], hand='right')
-
     # recognize the pocket
-
     put_with_a_hand('P1', tms['place'], hand='right')
     prepare()
     

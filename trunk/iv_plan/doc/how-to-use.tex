@@ -101,12 +101,10 @@ HiroNX$B$N<j@h$K<h$jIU$1$i$l$?(BUSB$B%+%a%i$GBP>]J*$rG'<1$9$k$?$a$N%b%8%e!<%k
 
 \subsubsection{$B%@%&%s%m!<%I$H%3%s%Q%$%k(B}
 
-\begin{itemize}
- \item $B8=>u$G$O(Bgoogle code(SVN)$B$+$i3+H/HG$r%A%'%C%/%"%&%H(B
- \item $B$I$3$+$N%P!<%8%g%s$N(Btar$B$r:n$kM=Dj(B
-\end{itemize}
-
+https://code.google.com/p/app-recog/
+$B$+$i%@%&%s%m!<%I$7$^$9!%(B
 \begin{lstlisting}
+ $ tar xvfz AppRecog-0.1.0.tgz
  $ cd app-recog
  $ make
 \end{lstlisting}
@@ -159,11 +157,11 @@ HiroNX$B$N<j@h$K<h$jIU$1$i$l$?(BUSB$B%+%a%i$GBP>]J*$rG'<1$9$k$?$a$N%b%8%e!<%k
 % $B%5!<%S%9$K$h$kG'<1BP>]$N@Z$jBX$((B
 % $BG'<1%b%8%e!<%k$K$*$1$kBP>]J*%b%G%k$NDj5A$N;EJ}(B
 
-$B%b%G%k$H<B2hA|$N%^%C%A%s%0$O!$$O2hA|:BI87O$G9T$o$l$^$9!%8!=P$7$?0LCV!$;Q(B
+$B%b%G%k$H<B2hA|$N%^%C%A%s%0$O!$2hA|>e$G9T$o$l$^$9!%8!=P$7$?0LCV!$;Q(B
 $B@*!$%9%1!<%k$+$i%+%a%i%Q%i%a!<%?$rMQ$$$F!$%+%a%i:BI87O$K$*$1$kBP>]J*$N0L(B
 $BCV!$;Q@*$,7W;;$5$l$^$9!%(B
-$B$7$?$,$C$F!$2hA|:BI8$G$N(B$(x,y,\theta)$$B$NC5:wHO0O!$8!=P$NogCM$r%3%s%U%#%0(B
-$B%U%!%$%k(BAppRecog.conf$B$G;XDj$7$^$9!%(B
+$B2hA|:BI8$G$N(B$(x,y,\theta)$$B$NC5:wHO0O!$8!=P$NogCM$O!$(B
+$B%3%s%U%#%0%U%!%$%k(BAppRecog.conf$B$G;XDj$G$-$^$9!%(B
 $B$^$?!$%b%G%kDj5A%U%!%$%k$O(B./ModelFile$B$NCf$KCV$-!$%U%!%$%k$OD:E@$HJU$K$h$C(B
 $B$F9=@.$5$l$F$$$^$9!%(B
 
@@ -291,7 +289,8 @@ ikfast$B$K$h$j@8@.$5$l$?(BHIRO-NX$BMQ5U1?F03X7W;;$N%=!<%9$OF1:-$5$l$F$*$j!$(
  >>> demo() # $B%Q%:%kG[CV$r85$KLa$9$N$O(B reset_puzzle()
 
  $B%7%_%e%l!<%7%g%s$K$h$kItIJ$NH"5M$a(B
- >>> $BJQ99Cf(B
+ $ ipython demo_wexpo.py
+ >>> demo(False)
 \end{lstlisting}
 
 $B%&%#%s%I%&A`:n$O!$1&%I%i%C%0$G2sE>!$Cf%I%i%C%0$G%:!<%`$G$9!%(B
@@ -303,19 +302,19 @@ Python$B%7%'%k>e$G%m%\%C%H$N;Q@*$rJQ99$7$?$j!$4D6-Cf$NJ*BN$r0\F0$5$;$?$j!$(B
 $BF0:n7W2h$r9T$&>l9g$NA`:n$K4X$7$F$OIUO?$r;2>H$7$F$/$@$5$$!%(B
 
 $B30It(BRTC$B$H$NDL?.$K$O(BRtcHandle$B$rMxMQ$7$F$$$^$9!%(B
+
 (http://staff.aist.go.jp/t.suehiro/rtm/rtc\_handle.html)
 
-$B4pK\E*$K!$%m%\%C%H%/%i%9!$%m%\%C%H%$%s%9%?%s%9$4$H$N%+%9%?%^%$%:$O(B
-$B4{B8%/%i%9$r3HD%$9$k$3$H$G9T$$$^$9!%(B
-\begin{itemize}
- \item robot.py$B$+$i(Bhironx.py
- \item hironx\_params.py
-       $B8DBN:9$,$"$k3F<o(Btransform$B$H!$MxMQ$9$k30It%b%8%e!<%kDj5A(B
- \item $B4D6-%b%G%k$NDj5A(B \\
-       (python$B$N%G!<%?9=B$$GM?$($k!%(Bscene\_object.py)
- \item $BB>$N5!G=$H$7$F!$(BVRML$B$N%m!<%@!$%;%s%5<h$jIU$10LCV$N?dDj5!G=$,$"$j(B
-       $B$^$9(B.
-\end{itemize}
+% \begin{itemize}
+%  \item $B4pK\E*$K!$%m%\%C%H%/%i%9!$%m%\%C%H%$%s%9%?%s%9$4$H$N%+%9%?%^%$%:$O4{B8%/%i%9$r3HD%$9$k$3$H$G9T$$$^$9!%(B
+%  \item robot.py$B$+$i(Bhironx.py
+%  \item hironx\_params.py
+%        $B8DBN:9$,$"$k3F<o(Btransform$B$H!$MxMQ$9$k30It%b%8%e!<%kDj5A(B
+%  \item $B4D6-%b%G%k$NDj5A(B \\
+%        (python$B$N%G!<%?9=B$$GM?$($k!%(Bscene\_object.py)
+%  \item $BB>$N5!G=$H$7$F!$(BVRML$B$N%m!<%@!$%;%s%5<h$jIU$10LCV$N?dDj5!G=$,$"$j(B
+%        $B$^$9(B.
+% \end{itemize}
 
 
 \begin{figure}[tb]
@@ -338,19 +337,18 @@ HiroNX$BMQ@)8f%b%8%e!<%k$G$9!%(B
 $B>\:Y$K$D$$$F$O!$3+H/85$G$"$k;:6H5;=QAm9g8&5f=j$N%I%-%e%a%s%H$r;2>H$7$F$/(B
 $B$@$5$$!%(B
 
-\subsection{$BF0:n@8@.It$NF0:n3NG'(B}
+\subsection{$BF0:n@8@.It$NF0:n3NG'(B($BBPOC4D6-$K$*$1$kF0:n@8@.(B)}
 
  % $ $B5/F0%9%/%j%W%H(B
  % IP/$B%[%9%HL>$N0c$$$O$I$3$rD>$;$P$h$$$+!)(B
 
-$B0J2<$N%3%^%s%I$G%G%b%W%m%0%i%`$r5/F0$7$^$9!%(B
+$B0J2<$N%3%^%s%I$G%G%b%W%m%0%i%`$r5/F0$7!$G'<14o$HDL?.$7G'<17k2L$r<hF@$G$-(B
+$B$k$3$H!$(BHiroNX$BK\BN$N%b%8%e!<%k$HDL?.$7!$4X@a3Q$N<hF@$*$h$S!$F0:n%3%^%s%I(B
+$B$NAw?.$r9T$J$&$3$H$,$G$-$k$3$H$r3NG'$7$^$9!%(B
 
 \begin{lstlisting}[label=src:branch]
  $ cd iv_scenario/src
  $ ipython demo_wexpo.py
-
- $B%7%_%e%l!<%7%g%s$G$N%G%bF0:n$N<B9T(B
- >>> demo(False)
 
  $B30It%b%8%e!<%k$H$NDL?.(B
  (AppRecog$B%b%8%e!<%k$r<B9T$7$F$*$/(B)
@@ -365,13 +363,12 @@ HiroNX$BMQ@)8f%b%8%e!<%k$G$9!%(B
 \end{lstlisting}
 
 
-\subsection{$BF0:n@8@.$rBPOC4D6-$G9T$&>l9g(B}
+% \subsection{$BF0:n@8@.$rF0:n7W2h%b%8%e!<%k$H$7$FJ,N%$9$k>l9g(B}
 
-\subsection{$BF0:n@8@.$rF0:n7W2h%b%8%e!<%k$H$7$FJ,N%$9$k>l9g(B}
+% $B%7%_%e%l!<%7%g%s4D6-(B
+% $B30It%b%8%e!<%k$H$NDL?.(B
+% $BF0:n%3%^%s%IAw?.!$>uBVFI$_9~$_(B
 
-$B%7%_%e%l!<%7%g%s4D6-(B
-$B30It%b%8%e!<%k$H$NDL?.(B
-$BF0:n%3%^%s%IAw?.!$>uBVFI$_9~$_(B
 
 \chapter{$B=`Hw(B}
 
@@ -474,32 +471,14 @@ HiroNXInterface$B%b%8%e!<%k$O5/F08e(BGUI$B>e$N!V(BRTC Status$B!W$,NP$K$J$C$
 $B%U%l!<%`$d%m%\%C%H!$4D6-Cf$NJ*BNA`:nEy$r(Bpython$B>e$G9T$&J}K!$K$D$$$F@bL@$7(B
 $B$^$9!%(B
 
-$B0J2<$N>pJs$O8E$$$b$N$G!$99?7M=Dj$G$9!%(B
 
 \begin{verbatim}
-
-# 0, $B$O$8$a$K(B
-
-$ roscd MotionPlan/src
-$ ipython demo.py
-
 
 # 1, python$B$r;H$&(B
 
 dir(r) # $B4X?t$d%a%=%C%I$N0lMw(B
 r. [TAB] # $B%a%=%C%IL>Ey$NJd4V!J(Bipython$B$N5!G=!K(B
 help(r) # $B0z?t$d@bL@(B
-
-# $B$H$j$"$($:%G%b(B
-
-putbox() # $BH"$rG'<1$7$FDO$_!"CV$-D>$9(B
-putbox(name='box1')
-demo()
-
-demo2() # $B:8<j$G$N%"%W%m!<%A(B
-
-qs = gen_traj() # $B<j@h$G(Bsin$B%+!<%V$rIA$/$?$a$N4X@a3Q50F;$r:n$k(B
-play_traj(qs) # $B:n$C$?50F;$r<B9T$9$k(B
 
 # $B%3%^%s%I%i%$%s(B
 # Ctrl+c
