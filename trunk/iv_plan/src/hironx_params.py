@@ -59,8 +59,8 @@ params = {
 
 portdefs = {'controller' :
             RTCServicePortInfo(target = 'VisionPC.host_cxt/HiroNXProvider0.rtc',
-                               port = 'HiroNXProvider0.HIRO',
-                               service = 'motion'),
+                               service = 'HiroNXProvider0.HIRO',
+                               port = 'motion'),
             'jointstat' :
             RTCDataPortInfo(target = 'RobotHardware0.rtc',
                             port = 'jointDatOut')
