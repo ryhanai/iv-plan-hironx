@@ -1,0 +1,107 @@
+TODO:
+
+ 編集済ファイル：
+  calibration(とりあえずROSがないと使えないのでそのまま)
+  - hiro_calib.py, hiro_calib2.py
+
+- 共通
+ - ivenv.py, invutils.py
+
+- ライセンス上問題がない形に整理
+ - rtc-handleはapache licenseと書く
+ - PQPは商用利用できない
+ - VPythonにライセンス上問題があるものがある
+
+- ロボット，環境モデル定義ファイルの整理
+- ロボットクラス共通情報
+ - robot.py => hironx.py
+   モデルをHRP4等の他のロボットでも利用できるように一般化
+
+- ユーザによるロボット個体差定義情報
+ - hironx_params.py, pa10_params.py
+
+- ユーザによるInterface定義
+ - hironxsys.py: 
+   外部モジュールとのインタフェース定義のベースクラス
+   システムにより提供（ただし，ロボット依存）
+ - 拡張版はexamplesへ移動：hironxsys_plus.py, hironxsys_hand_ar.py
+
+
+ 基本実装方針：
+  オブジェクト指向によるモジュール化，継承によるカスタマイズ
+  srcディレクトリにある基底クラスを，各ロボット，センサ構成，使いたいRTC/ROSモジュール用に
+  カスタマイズするクラスをユーザが記述して利用する
+  カスタマイズしたクラスは，ユーザ個人の作業ディレクトリに置く．
+
+
+- debug levelの設定
+
+
+- デモプログラムの完全分離 （両手干渉チェックデモの確認）
+ - demo_wexpo.py, demo_wexpo2.py
+ - workingのいくつかのファイルは再構成してdemoにした方が良さそう
+
+ - 書き方を最近の流儀に揃える
+ - プランナのデモを増やす
+
+ - demo0.py => 単純な動作
+ - hanoi0.py => きれいに書きなおす必要あり
+ - discrete_puzzle.py => とりあえずそのまま
+ - pick_piece.py => 実機の認識器との接続
+ - pick_box.py => 他と重複する機能なので削除
+ - puzzle.py => ○
+ - recognition_sample.py
+ - robot_if_sample.py
+ - sample_handcam.py
+ - sample_kinect.py => Kieu君のコード
+ - sample_tray.py => 双腕
+ - samplepet.py
+ - sampleplan.py
+
+- プランナと干渉チェック(grab/releaseをスマートにする)まわり
+
+ 動作確認，テスト
+  rtc接続確認,動作生成，座標変換RTCのテスト 
+   ArmPlanComp.py, CoordTransComp.py
+  国際ロボット展デモ動作確認
+  自動テストのためのコードを作成
+
+
+- ホスト名，アドレス，接続先RTC,ポート名を分離 
+- システム起動スクリプトをiv_plan中へ移動させる
+
+
+将来：
+
+- hand-eye calibrationの改良(bug fix)
+- OpenHRPと接続
+- OpenRAVE(ゼミデモ)を整理
+- OpenVGRと接続した動作生成
+- HRP4のモデルロード
+
+
+=====
+
+* SequencePlayerProxy
+ - ./seq_service_socket.py hiro014
+  (VisionPCのaddress)
+
+- 認識側
+ - iv-pkg-unreleased/HandRcg/script/run.sh
+                                   /rtc.conf
+                                   RTCTREE_NAMESERVERS=hiro014:2809
+
+- calibarionファイル（左右で異なるのでmi_matchを修正）
+
+- rtshellでRTCの接続に失敗する問題(要調査)
+- 認識器が固まる問題(hiroのソフトウェアをバージョンアップしたら直った？)
+- 1394とUSBを同時につないだとき、0,1,2=>1394, -1=>USBを開けた
+  - 仕様では-1=>ANY, 0,1,2,...=>0番,1番,2番,...な気が...
+
+* USBカメラの設定
+- udevadm info -a -p `udevadm info -q path -n /dev/video0`
+
+# ID eb1a:7770 eMPIA Technology, Inc.  RHAND
+SUBSYSTEMS=="usb",ATTRS{serial}=="0000:00:1d.7",SYMLINK="video0" 
+# ID eb1a:7770 eMPIA Technology, Inc.  LHAND
+SUBSYSTEMS=="usb",ATTRS{serial}=="0000:03:00.2",SYMLINK="video1" 
