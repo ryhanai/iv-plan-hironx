@@ -54,32 +54,37 @@
 
 本サービスは，工場での部品整理をイメージしたものである．
 具体的には手先のカメラを用いて作業台上の部品を認識し,
-両手で箱に整理して入れる機能を実現する．
+両手で箱に整理して入れる機能を実現します．
 手を動かすことで複数の対象物を認識，両手の干渉を考慮して
-同時にアプローチできる対象物を選択する．
+同時にアプローチできる対象物を選択します．
 
- \section{全体のモジュール構成}
-
- 以下に，本システムで利用するモジュールの一覧を示す．
-\begin{itemize}
- \item app-recog
- \item CameraComp
- \item LoadPictureComp
- \item iv\_plan\_hironx
- \item HiroNXInterface
-\end{itemize}
-ファイルシステム上の場所は必ずしも重要ではないが，
-ディレクトリ構成は揃えておくと
-本ドキュメントとあわせて理解しやすい．
-
-\begin{figure}[htb]
+\begin{figure}[tbh]
  \begin{center}
-  \includegraphics[width=0.8\linewidth]{figure/system.png}
+  \includegraphics[width=1.0\linewidth]{figure/system.png}
   \caption{サービスイメージ}
   \label{fig:system}
  \end{center}
 \end{figure}
-\begin{figure}[htb]
+
+ \section{全体のモジュール構成}
+
+ 以下に，本システムで利用するモジュールの一覧を示します．
+ これらを入手し，実行可能な環境を整えてください．
+\begin{itemize}
+ \item app-recog
+ \item CameraComp
+ \item (LoadPictureComp)
+ \item iv\_plan\_hironx
+ \item HiroNXInterface
+\end{itemize}
+ファイルシステム上の場所は必ずしも重要ではないですが，
+１つのディレクトリにこれらを置いておくと，本ドキュメントとあわせて理解し
+やすいです．これらのモジュールは，1台の計算機上で実行しても，動作生成部
+を別の計算機で実行してもどちらでも構いません．
+認識部は通信負荷を考えるとカメラがつながっているホスト上で実行することを
+推奨します．
+
+\begin{figure}[tbh]
  \begin{center}
   \includegraphics[width=1.0\linewidth]{figure/rtc_diagram.png}
   \caption{全体のモジュール構成}
@@ -95,6 +100,7 @@
 http://openrtm.org/openrtm/ja/project/NEDO\_Intelligent\_PRJ\_HiroAccPrj\_5002
 
 HiroNXの手先に取り付けられたUSBカメラで対象物を認識するために利用します．
+両手先のカメラそれぞれでカメラモジュールとともに実行します．
 使い方はモジュール付属のドキュメントを参照してください．
 
 \subsection{カメラ共通I/F準拠の画像キャプチャモジュール(CameraComp)}
@@ -121,54 +127,141 @@ HiroNX用制御モジュールです．
 詳細については，開発元である産業技術総合研究所のドキュメントを参照してく
 ださい．
 
-\subsection{動作生成部の動作確認(対話環境における動作生成)}
 
- % $ 起動スクリプト
- % IP/ホスト名の違いはどこを直せばよいか？
+\chapter{準備}
 
-ここからは，HiroNX実機を使います．
-まず，HiroNXInterface制御モジュールを起動，activate，接続し，利用可能な
-状態にします（詳細はHiroNXInterfaceのドキュメントを参照してください）．
+必要に応じてデモ環境，ロボットごとに以下の作業を行います．
+
+\section{力センサの有無，テーブルの高さ}
+
+手首に力センサがある場合とない場合で，ロードするモデルを変更する必
+要があります．サンプルプログラムは，力センサがある場合に手首のリンク長を変更，円筒形状
+を挿入したものです．力センサがない場合は，
+\verb|HiroNX|インスタンスを生成するときに，オプション\verb|forcesensors=False|を指定します．
+
+また，シミュレータ内シーンはiv\_plan/src/scene\_objects.pyで定義された
+Pythonのデータ構造を解釈して生成されます．
+デフォルトで高さ700[mm]の東大仕様テーブル(table\_scene())と
+高さ735[mm]のAIST仕様テーブル(table\_scene\_aist())が用意されています．
+それ以外のシーンを作成したい場合は，scene\_objects.pyを参考に，シーン記述
+を作成し，env.load\_scene()で環境にロードしてください．
+
+\section{キャリブレーション}
+
+ロボットの個体差を修正する作業です．カメラの内部パラメータおよび，ロボッ
+トのリンクに対するカメラの取り付け位置を計算します．
+デフォルト値はHiroNX14号機のものであり，精度を出すには各機体ごとに行う必要があります．
+
+\subsection{カメラのキャリブレーション}
+
+RT-middlewareのコンポーネントでもROSのノードでもよいので単眼カメラのキャ
+リブレーションを行い，CameraCompが読み込めるようにします．本システムにお
+いて，run.shスクリプトでRTCを起動する場合，scriptsディレクトリにある
+camera\_left.ymlおよびcamera\_right.ymlにそれぞれのカメラの内部パラメー
+タを記述します．
+その後，エッジベース二次元対象物認識モジュールにおいて，対象物の位置，距
+離が正しく出力されているかどうか確認しておいてください．
+キャリブレーションを行なうときは，以下の関数を実行して手先カメラを正面に
+向ける(\figref{fig:camcalib_pose})と作業が容易になります．
+
+\begin{lstlisting}
+ $ ipython
+ >>> from hironx_calib import *
+ >>> handcam_calib_pose()
+ >>> sync()
+\end{lstlisting}
+
+\begin{figure}[tbh]
+ \begin{center}
+  \includegraphics[width=0.5\linewidth]{figure/camcalib_pose.png}
+  \caption{カメラキャリブレーション用の姿勢}
+  \label{fig:camcalib_pose}
+ \end{center}
+\end{figure}
+
+\subsection{カメラ取り付け位置のキャリブレーション}
+
+次に，カメラの取り付け位置を計算します．
+キャリブレーションプログラムは，学習データとしてロボットの各姿勢における
+チェッカーボードの姿勢を入力とします(\figref{fig:handeye_calib})．チェッ
+カーボードの認識にはROSのcheckerboard\_detectionノードを使用し，tfとして
+publishされたチェッカーボードの姿勢をpythonプログラムで受信します．具体
+的な手順は，付録に記載します．
+\begin{figure}[tbh]
+ \begin{center}
+  \includegraphics[width=0.8\linewidth]{figure/handeye_calib.png}
+  \caption{手先を動かしたチェッカーボードの検出}
+  \label{fig:handeye_calib}
+ \end{center}
+\end{figure}
+
+\chapter{デモの実行}
+
+\section{制御系モジュールの起動と接続}
+
+\begin{lstlisting}
+ $ cd iv_plan/scripts
+ $ ./run-hironx-interface.sh
+\end{lstlisting}
+これにより，両手に対応するカメラ，認識モジュール，HiroNXInterface制御モ
+ジュールが起動，接続され，さらに各モジュールがactivateされます．
 HiroNXInterfaceモジュールは起動後GUI上の「RTC Status」が緑になった状態で
-「Set up Robot」ボタンを押しRTCまわりの初期化を行う必要がある点に注意し
-てください．
+「Set up Robot」ボタンを押し，RTCまわりの初期化を行う必要がある点に注意し
+てください．起動したGUIから以下を実行しておきます．
+\begin{enumerate}
+ \item ジョイントキャリブレーション
+ \item 初期姿勢へ移行
+ \item 指のサーボオン　(ついでに開閉動作確認)
+\end{enumerate}
+
+\section{認識系モジュールの起動と接続}
+
 次に，HiroNX両手の手先カメラのキャプチャ及び，AppRecog認識モジュールを起
 動します．左右で同じ名前のコンポーネント群を起動するため，別々のRTC名前
 空間に起動します．
-\begin{lstlisting}[label=src:branch]
- $ cd iv_plan/scripts
- $ ./run.sh 
- このスクリプトはROSのツールであるrospack findを使います
- もし，コンポーネントが上手く接続およびactivateされない場合
- は，./comcon.shおよび./comact.shを再度実行してください．
+\begin{lstlisting}
+ $ ./run.sh
 \end{lstlisting}
-カメラが認識できていない可能性がある場合は，xawtvコマンドなどでカメラ自
-体が認識されているか確認してください．
+ここで，左右のカメラが逆になっていないかどうか確認してください．
+逆になっている場合は，CaptureCameraLeft.confと
+CaptureCameraRight.confに記述してあるconf.default.int\_camera\_idの番号を
+逆にして，run.shを再実行してください．
+左右それぞれのモジュール群は起動した端末でCtrl+cを押すことで終了します．
 
+iv\_plan/scriptsにあるスクリプトは，ローカルのファイルシステム非依存な方
+法でモジュールの場所を検出するため，ROSのコマンドであるrospackを使います．
+rospackを利用できない場合は，適宜，スクリプトを編集するか同等の機能を実
+現するコマンドに置き換えてください．
+もし，コンポーネントが上手く接続およびactivateされない場合は，
+./comcon.shおよび./comact.shを再度実行してみてください．
+
+カメラが認識できていない可能性がある場合には，xawtvコマンドなどでカメラ自
+体が認識されているか確認してください．
 認識関係のモジュールを登録するネームサーバはscriptsディレクトリの
 rtc\_left.confおよびrtc\_right.confで指定します．
 
+\section{動作生成系モジュールの起動とモジュール間通信の確認}
 
-次に，以下のコマンドでデモプログラムを起動し，認識器と通信し認識結果を取得でき
-ること，HiroNX本体のモジュールと通信し，関節角の取得および，動作コマンド
-の送信を行なうことができることを確認します．
+以下のコマンドでデモプログラムを起動し，
+\begin{itemize}
+ \item HiroNX本体のモジュールと通信し，関節角度の取得および，動作コマンド
+       の送信を行なうことができること
+ \item 認識器と通信し認識結果を取得できること
+\end{itemize}
+を確認します.
 \begin{lstlisting}[label=src:branch]
  $ cd iv_scenario/src
  $ ipython demo_wexpo.py
 
- 外部モジュールとの通信
- >>> rr = MyHiroNxSystem(portdefs) # 外部モジュールとの通信インタフェー
- スオブジェクトを作成
+ >>> rr.get_joint_angles() # 実機の関節角度を取得
+ >>> r.prepare()           # シミュレータのモデルの姿勢を変更
+ >>> sync()                # 実機をモデルにあわせる(実機が動くので注意)
 
- 認識できる位置に対象物を置いて
+ 図???のように，認識できる位置に対象物を置いて
  >>> rr.detect(sensor='rhandcam') # 右手ハンドカメラでの認識
  >>> rr.detect(sensor='lhandcam') # 左手ハンドカメラでの認識
- (対象物を認識できるまでブロックします)
-\end{lstlisting}
 
- 認識結果の世界座標への変換
-\begin{lstlisting}[label=src:branch]
- $ ipython demo_wexpo.py # 内部で上のinterface_wexpo.pyを利用しています．
+ 認識した後，その結果を世界座標への変換する
  >>> detect(sensor='rhandcam')
  >>> detect(sensor='lhandcam')
 
@@ -176,130 +269,117 @@ rtc\_left.confおよびrtc\_right.confで指定します．
  >>> show_frame(f) # 認識結果の表示
  # シミュレータ内で認識位置に箱A0を移動させる
  >>> env.get_object('A0').locate(f) 
+\end{lstlisting}
+モジュールと通信できない場合は，iv\_scenario/srcにある
+rtc.confで正しくネームサーバが指定されているか，ま
+た，iv\_scenario/interface\_wexpo.pyに書かれている各モジュールのパスが正
+しいかどうか確認してください．
 
- # 作業台上で両手を動かし，対象物を検出する
- # 上手く検出できれば，シミュレータ内の箱4つが正しい位置に移動する
+\section{デモの実行}
+
+\figref{fig:four_parts_on_the_table}のように作業台に対象物を4つ並べ，
+ 作業台上で両手を動かし，対象物を検出できるかどうかを確認してみます．
+
+\begin{lstlisting}
  >>> look_for()
 \end{lstlisting}
+ 上手く検出できれば，シミュレータ内の箱4つが正しい位置に移動します
+ (\figref{fig:look_for}(a))．
+ (b)では1つ，(c)では2つ認識に失敗しています．
+ 上手く検出されないときは，画像中で対象物が正しく認識されているかチェッ
+ クしてください．
 
-% \subsection{動作生成を動作計画モジュールとして分離する場合}
+ 検出時の初期位置へロボットの姿勢を持っていきたいときには,
+以下のコマンドを実行します．
+\begin{lstlisting}
+ >>> go_scan_pose()
+\end{lstlisting}
 
-% シミュレーション環境
-% 外部モジュールとの通信
-% 動作コマンド送信，状態読み込み
+\begin{figure}[tbh]
+ \begin{center}
+  \includegraphics[width=0.45\linewidth]{figure/four_parts_on_the_table.jpg}
+  \caption{４つの部品を並べた状態}
+  \label{fig:four_parts_on_the_table}
+ \end{center}
+\end{figure}
+\begin{figure}[tbh]
+ \begin{center}
+  \includegraphics[width=1.0\linewidth]{figure/look_for.png}
+  \caption{作業台上の対象物認識結果}
+  \label{fig:look_for}
+ \end{center}
+\end{figure}
+
+ これで準備が整ったので，実際にデモを実行します．
+ \begin{lstlisting}
+  >>> demo()
+ \end{lstlisting}
+ 作業台をスキャンし，対象物を4つ検出した後，
+ 最初は両手で，残りの２つは適宜持ち替えを行なって箱に配置します．
+ 対象物を4つ検出できなかったときは，動作には入りません．
+
+ % 外部モジュールとの通信
+ % >>> rr = MyHiroNxSystem(portdefs) # 外部モジュールとの通信インタフェー
+ % スオブジェクトを作成
 
 
-\chapter{準備}
+\newpage
 
-必要に応じて行うロボットごとに以下の作業を行う．
+\appendix
+\chapter{キャリブレーションメモ}
 
-\section{モデルファイルの修正（力センサありとなし）}
+checkerboard\_detectionおよび，camera\_calibrationパッケージを用意してく
+ださい．ROSノード起動用のlaunchファイルセットのパッケージSense.tgzを使います．
 
-例えば手首に力センサがある場合とない場合で，ロードするモデルを変更する必
-要があります．
-サンプルプログラムは，力センサがある場合に手首のリンク長を変更，円筒形状
-を挿入したものです．力センサがない場合は，
-\verb|HiroNX|インスタンスを生成するときに，オプション
-\verb|forcesensor=False|を指定します．
+\section{カメラキャリブレーションの手順}
 
-\section{キャリブレーション}
+\begin{verbatim}
+$ roslaunch Sense rhand.launch
+$ rosrun camera_calibration cameracalibrator.py --size 7x10 --square
+		0.025 image:=/rhand/usb_cam/image_raw
+Sense/launch/rhand.launchの内部パラメータを更新する
+$ roslaunch Sense lhand.launch
+$ rosrun camera_calibration cameracalibrator.py --size 7x10 --square
+		0.025 image:=/lhand/usb_cam/image_raw
+Sense/launch/lhand.launchの内部パラメータを更新する
+\end{verbatim}
 
-ロボットの個体差を修正する作業です．デフォルト値はHiroNX14号機のものであ
-り，精度を出すには各機体ごとに行う必要があります．
+\section{カメラ取り付け位置キャリブレーションの手順}
 
-\subsection{カメラキャリブレーション}
-
-RT-middlewareのコンポーネントでもROSのノードでも何でもよいので
-単眼カメラのキャリブレーションを行い，CameraCompが読み込めるように
-します．本システムにおいて，run.shスクリプトでRTCを起動する場合，
-scriptsディレクトリにあるcamera\_left.ymlおよびcamera\_right.ymlにそれぞ
-れのカメラの内部パラメータを記述します．
-その後，エッジベース二次元対象物認識モジュールにおいて，対象物の位置，距
-離が正しく出力されているかどうか確認しておいてください．
-
-\subsection{カメラ取り付け位置のキャリブレーション}
-
-チェッカーボードの認識にROSのノードを使用しています．
-キャリブレーションプログラムは，学習データとしてロボットの各姿勢における
-チェッカーボードの姿勢を入力とします．チェッカーボードの姿勢はtfとして
-publishされたメッセージをpythonプログラムで受信します．
-しがって，準備として，
-\begin{itemize}
+\begin{enumerate}
  \item ROSのカメラノードにより画像および上記カメラパラメータがトピックと
-       してpublish
- \item checkerboard detectionノードでそれらをsubscribeし，推定したtfがpublish
-\end{itemize}
-される状態にしておきます．
+       してpublishされ，checkerboard detectionノードでそれらをsubscribe
+       し，推定したtfがpublishされるようにします． \\
+       \verb|$ roslaunch Sense rhand\_checkerboard.launch|
+ \item 机の上にチェッカーボードを置きます
+ \item 手を動かして学習データを取ります．
+       \verb|$ cd iv_scenario/src|\\
+       \verb|$ ipython|\\
+       \verb|>>> from hironx_calib import *|\\
+       \verb|>>> rr.connect()|\\
+       \verb|>>> res = record_data(sensor='rhandcam')|\\
+       すべての姿勢で，チェッカーボードが視野に収まり，
+       安定して認識できていることを確認します(\figref{fig:handcalib_checkerboard})．
+ \item 手首リンクからカメラへの座標変換を計算します． \\
+       \verb|>>> f = calibrate(res, link='RARM_JOINT5_Link', tf0=r.Trh_cam)|
+ \item 結果を確認します． \\
+       \verb|>>> play_data(res, link='RARM_JOINT5_Link', tf=f)|
+ \item 問題なければhironx\_params.pyのTrh\_camを更新します．
+ \item 左手カメラについても同様に行います．
+\end{enumerate}
 
-\subsubsection{手順}
-
-\begin{lstlisting}
- 1, 机の上にチェッカーボードを置く
-
- 2, 首を動かして学習データをとる
- $ ipython hironx_calib.py
- >>> res = record_data()  
- # 手先を動かして画像とそのときの関節角度値を取得する.
- # すべての姿勢でチェッカーボードが視野に入り，
- # 安定して認識できているかどうかを確認する．
-
- 3, 頭リンクからkinectカメラへのtransformを計算する
- >>> f = calibrate(res, height=960.0)
-
- 4, transformの書き換え
- >>> r.Thd_kinectrgb = f
-
- 5, 確認（正しい位置でキャリブボードのフレームが止まっていれば成功）
- >>> play_data(res)
-
- 6, デフォルト値の更新
- hironx_params.pyのThd_kinectdepthを書き換える
-\end{lstlisting}
-
-\begin{itemize}
- \item 上のコマンドは頭部kinectの場合なので，ハンドカメラの場合に変更する
- \item 原理について
-\end{itemize}
-
-\chapter{デモの実行}
-
-\section{認識部のモジュール起動と接続}
-
-\begin{lstlisting}
- $ cd iv_plan/scripts
- $ ./run-hironx-interface.sh
- $ ./run.sh
-\end{lstlisting}
-これにより，両手に対応するカメラ，認識モジュール，HiroNXInterface制御モ
-ジュールが起動，接続され，さらに各モジュールがactivateされます．
-HiroNXInterfaceモジュールは起動後GUI上の「RTC Status」が緑になった状態で
-「Set up Robot」ボタンを押しRTCまわりの初期化を行う必要がある点に注意し
-てください．
-
-ここで，rtc.conf,左右カメラの左右のカメラが逆になっていないかどうか確認
-してください．逆になっている場合は，CaptureCameraLeft.confと
-CaptureCameraRight.confに記述してあるconf.default.int\_camera\_idの番号を
-逆にして，run.shを再実行してください．
-
-\section{動作生成プログラムの起動(1つのpythonプロセス上での実行)}
-
-\begin{itemize}
- \item テーブル上に対象物を4つ配置し，
-       look\_for()関数を実行します．
-       手先を動かして机上の対象物を認識テストをします．
- \item このとき，画像中で対象物が正しく認識されているか，認識結果がシミュ
-       レータ中に正しく表示されているかどうかを確認します．
- \item これで準備が整ったので，実際にデモを実行します．
-       demo()
-       実行後，ロボットはテーブルをスキャンし，対象物を認識，
-       最初は両手で，残りの２つは適宜持ち替えを行なって箱に配置します．
-\end{itemize}
+\begin{figure}[tbh]
+ \begin{center}
+  \includegraphics[width=0.6\linewidth]{figure/handcalib_checkerboard.png}
+  \caption{checkerboard detector}
+  \label{fig:handcalib_checkerboard}
+ \end{center}
+\end{figure}
 
 
 % \addcontentsline{toc}{chapter}{参考文献}
 % \markboth{参考文献}{参考文献}
 % \bibliographystyle{junsrt}
 % \bibliography{p2009}
-
 
 \end{document}
