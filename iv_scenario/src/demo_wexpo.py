@@ -122,7 +122,7 @@ def init_palletizing_scene():
 # tms = {'preapproach1': 0.4,
 #        'preapproach2': 1.0,
 #        'pick': 0.65,
-#        'transport': 0.6,
+#        'transport': 0.8,
 #        'place': 0.55,
 #        'look_for': 0.5}
 
@@ -130,7 +130,7 @@ def init_palletizing_scene():
 # tms = {'preapproach1': 1.2,
 #        'preapproach2': 2.0,
 #        'pick': 0.8,
-#        'transport': 1.0,
+#        'transport': 1.2,
 #        'place': 0.8,
 #        'pregrasp': 0.8,
 #        'look_for': 0.7}
@@ -139,7 +139,7 @@ def init_palletizing_scene():
 tms = {'preapproach1': 1.5,
        'preapproach2': 2.5,
        'pick': 1.3,
-       'transport': 1.6,
+       'transport': 1.7,
        'place': 1.3,
        'pregrasp': 0.7,
        'look_for': 0.9}
@@ -152,7 +152,7 @@ tms = {'preapproach1': 1.5,
 # Transform the frame of a target into the world frame
 # after filtering some outliers.
 
-def detect(timeout=0, zmin=tblheight, zmax=tblheight+250,
+def detect(timeout=1.5, zmin=tblheight, zmax=tblheight+250,
            constraint=None, sensor='rhandcam'):
     a = rr.detect(sensor=sensor, timeout=timeout)
     if a == None:
@@ -197,6 +197,23 @@ detectposs_dual = [[[230,-35],[230,150]], # x-y coords of each camera
                    [[280,-35],[280,150]],
                    [[330,-35],[330,150]]]
 
+def go_scan_pose():
+    rpos,lpos = detectposs_dual[0]
+    jts = 'larm'
+    fl = FRAME(xyzabc=[lpos[0], lpos[1], tblheight+view_distance, pi, 0, pi/2])*(-r.Tlh_cam)
+    jts = 'rarm'
+    fr = FRAME(xyzabc=[rpos[0], rpos[1], tblheight+view_distance, pi, 0, -pi/2])*(-r.Trh_cam)
+    th = width2angle(100)
+    move_lr(fl, fr, None, None, None, tms['preapproach2'])
+
+def go_prepare_pose():
+    q0 = r.get_joint_angles()
+    r.prepare(width=100)
+    fl = r.fk(arm='left')
+    fr = r.fk(arm='right')
+    r.set_joint_angles(q0)
+    move_lr(fl, fr, 0.0, width2angle(100), width2angle(100), tms['preapproach2'])
+
 def look_for():
     def already_detected(o, detected):
         for p in detected:
@@ -204,15 +221,17 @@ def look_for():
                 return True
         return False
 
-    r.prepare(width=80)
+    go_scan_pose()
+
     detected = []
-    for rpos,lpos in detectposs_dual:
-        jts = 'larm'
-        fl = FRAME(xyzabc=[lpos[0], lpos[1], tblheight+view_distance, pi, 0, pi/2])*(-r.Tlh_cam)
-        jts = 'rarm'
-        fr = FRAME(xyzabc=[rpos[0], rpos[1], tblheight+view_distance, pi, 0, -pi/2])*(-r.Trh_cam)
-        move_lr(fl, fr, None, None, None, tms['look_for'])
-        time.sleep(1.5) # this is bad
+    for i,(rpos,lpos) in enumerate(detectposs_dual):
+        if i != 0:
+            jts = 'larm'
+            fl = FRAME(xyzabc=[lpos[0], lpos[1], tblheight+view_distance, pi, 0, pi/2])*(-r.Tlh_cam)
+            jts = 'rarm'
+            fr = FRAME(xyzabc=[rpos[0], rpos[1], tblheight+view_distance, pi, 0, -pi/2])*(-r.Trh_cam)
+            move_lr(fl, fr, None, None, None, tms['look_for'])
+            time.sleep(1.5) # this is bad
 
         obj_fr = detect(sensor='rhandcam', timeout=1.5)
         obj_fl = detect(sensor='lhandcam', timeout=1.5)
@@ -247,22 +266,6 @@ def pocket_detection_pose(n):
     z = tblheight+fsoffset+240 - plt.where().vec[2]
     return plt.where() * FRAME(xyzabc=[x,y,z,0,-pi/2,0])
 
-def go_scan_pose():
-    rpos,lpos = detectposs_dual[0]
-    jts = 'larm'
-    fl = FRAME(xyzabc=[lpos[0], lpos[1], tblheight+view_distance, pi, 0, pi/2])*(-r.Tlh_cam)
-    jts = 'rarm'
-    fr = FRAME(xyzabc=[rpos[0], rpos[1], tblheight+view_distance, pi, 0, -pi/2])*(-r.Trh_cam)
-    th = width2angle(80)
-    move_lr(fl, fr, None, None, None, tms['preapproach2'])
-
-def go_prepare_pose():
-    q0 = r.get_joint_angles()
-    r.prepare()
-    fl = r.fk(arm='left')
-    fr = r.fk(arm='right')
-    r.set_joint_angles(q0)
-    move_lr(fl, fr, 0.0, width2angle(100), width2angle(100), tms['preapproach2'])
 
 ################################################################################
 # Motion Generation
@@ -347,10 +350,14 @@ def choose_and_pick():
                     r.set_joint_angles(lgsol, joints='larm')
                     sync(duration=tms['pregrasp'])
 
-                    for w in [75,60,50,44,39,34]:
-                        r.grasp(w, hand='right')
-                        r.grasp(w, hand='left')
-                        sync(duration=0.1)
+                    # for w in [75,60,50,44,39,34]:
+                    #     r.grasp(w, hand='right')
+                    #     r.grasp(w, hand='left')
+                    #     sync(duration=0.1)
+
+                    r.grasp2(width2angle(38), joints='rhand')
+                    r.grasp2(width2angle(38), joints='lhand')
+                    sync(duration=0.5)
 
                     grab(hand='right')
                     grab(hand='left')
@@ -394,10 +401,14 @@ def choose_and_pick():
             r.set_joint_angles(lgsol, joints='larm')
             sync(duration=tms['pregrasp'])
 
-            for rw,lw in zip([75,60,50,44,39,34],[75,65,55,50,46,43]):
-                r.grasp(rw, hand='right')
-                r.grasp(lw, hand='left')
-                sync(duration=0.1)
+            # for rw,lw in zip([75,60,50,44,39,34],[75,65,55,50,46,43]):
+            #     r.grasp(rw, hand='right')
+            #     r.grasp(lw, hand='left')
+            #     sync(duration=0.1)
+
+            r.grasp2(width2angle(38), joints='rhand')
+            r.grasp2(width2angle(48), joints='lhand')
+            sync(duration=0.5)
 
             grab(hand='right')
             grab(hand='left')
@@ -416,11 +427,6 @@ def choose_and_pick():
         warn('failed to pick two objects')
         return False
 
-
-def width2angle(width):
-    th = asin(((width/2.0) - 15) / 42)
-    # js = [th, -th, -th, th]
-    return th
 
 def grasp_plan(o, long_side=False, hand='right', inner_offset=3):
     appvec_length = 40
@@ -503,7 +509,7 @@ def pass_left_to_right(torsoangle=-0.3, T=FRAME(xyzabc=[240, -10, 1050, -pi/2, 0
     Tef_left = T*FRAME(xyzabc=[0,0,0,0,0,pi/6])
     Tef_right = Tef_left*FRAME(xyzabc=[0,0,0,pi,0,0])*FRAME(xyzabc=[0,0,0,0,0,pi/2])
     Tef_right1 = Tef_right*FRAME(xyzabc=[0,0,50,0,0,0])
-    move_lr(Tef_left*(-r.Tlwrist_ef), Tef_right1*(-r.Trwrist_ef), torsoangle, width2angle(100), None, tms['pick'])
+    move_lr(Tef_left*(-r.Tlwrist_ef), Tef_right1*(-r.Trwrist_ef), torsoangle, None, width2angle(100), tms['pick'])
     move(Tef_right*(-r.Trwrist_ef), torsoangle, width2angle(38), tms['pick'], hand='right')
     release(hand='left')
     move(None, torsoangle, width2angle(80), 0.5, hand='left')
@@ -525,7 +531,7 @@ def demo(recognition=True):
     # and adjust the locations of the pockets.
     put_with_both_hands('P0', 'P3', tms['place'])
 
-    move_lr(lwp, rwp, 0.0, None, None, tms['pick'])
+    move_lr(lwp, rwp, 0.0, None, None, tms['transport'])
     choose_and_pick() # pick with a hand
     move_lr(lwp, rwp, -0.3, None, None, tms['transport'])
     move(pocket_detection_pose(2), None, None, tms['transport'], hand='right')
