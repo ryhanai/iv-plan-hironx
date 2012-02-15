@@ -14,7 +14,7 @@ import hironxsys
 
 real_robot = False
 if real_robot:
-    rr = hironxsys.HiroNxSystem(nameserver, hironx_params.portdefs)
+    rr = hironxsys.HiroNxSystem(hironx_params.portdefs)
 else:
     rr = None
 
