@@ -19,7 +19,7 @@ class WrlLoader():
 
     def load(self, wrldir, mainfile='main.wrl'):
         self.wrldir = wrldir
-        ast = parse_wrl(wrldir+'/'+'main.wrl', 'toplevel')
+        ast = parse_wrl(wrldir+'/'+mainfile, 'toplevel')
 
         humanoid_nodes = filter(lambda x: x['type'] == 'Humanoid', ast)
         if len(humanoid_nodes) != 1:
@@ -141,7 +141,7 @@ class WrlLoader():
                 children += self.eval_inline(child)
             elif child['type'] == 'Transform':
                 children += self.eval_transform(child)
-                
+
         return children
 
     def eval_joint_node(self, jnt, wenv):
@@ -154,7 +154,7 @@ class WrlLoader():
         trans = jnt['translation']
         if not trans:
             trans = [0,0,0]
-        rot = jnt['rotation']            
+        rot = jnt['rotation']
         if not rot:
             rot = [0,0,1,0]
         jaxis = VECTOR(vec=jaxis)
