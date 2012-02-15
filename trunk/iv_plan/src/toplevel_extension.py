@@ -23,8 +23,11 @@ def objtype(obj):
 def setup_toplevel_extension(r, env, rr=None, pl=None):
     global sync, sync_main, affix, unfix, move_arm_plan, move_arm
     global move_arm2, go_prepare_pose
+    global move, move2, move_lr, move_lr2
     global show_frame, show_traj, show_tree, exec_traj
     global obj_in_hand, grab, release
+
+    graspduration = 0.5
 
     def sync_main_(duration=4.0, joints='all', wait=True, waitkey=False):
         '''synchronize the real robot with the model in "duration" [sec]'''
@@ -148,6 +151,156 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
             return False
     go_prepare_pose = go_prepare_pose_
 
+    def move_lr_(lframe, rframe, torsoangle, lhandangle, rhandangle, duration):
+        q0 = r.get_joint_angles(joints='torso_arms')
+
+        if torsoangle != None:
+            r.set_joint_angle(0, torsoangle)
+        if lframe != None:
+            jts = 'larm'
+            r.set_joint_angles(r.ik(lframe, joints=jts)[0], joints=jts)
+        if rframe != None:
+            jts = 'rarm'
+            r.set_joint_angles(r.ik(rframe, joints=jts)[0], joints=jts)
+
+        q1 = r.get_joint_angles(joints='torso_arms')
+        jts = 'torso_arms'
+        traj = pl.make_plan(q0, q1, joints=jts)
+        exec_traj(traj, joints=jts, duration=duration)
+
+        if lhandangle != None:
+            r.set_joint_angles([lhandangle,-lhandangle,-lhandangle,lhandangle], joints='lhand')
+        if rhandangle != None:
+            r.set_joint_angles([rhandangle,-rhandangle,-rhandangle,rhandangle], joints='rhand')
+        sync(duration=graspduration)
+    move_lr = move_lr_
+
+    def move_lr2_(sls, srs, torsoangle, duration, grabFlag=True):
+        def plan_and_execute(q0, lsol, rsol, duration):
+            r.set_joint_angles(lasol, joints='larm')
+            r.set_joint_angles(rasol, joints='rarm')
+            q1 = r.get_joint_angles(joints='torso_arms')
+            jts = 'torso_arms'
+            traj = pl.make_plan(q0, q1, joints=jts)
+            exec_traj(traj, joints=jts)
+
+        def execute(lsol, rsol, duration):
+            r.set_joint_angles(lsol, joints='larm')
+            r.set_joint_angles(rsol, joints='rarm')
+            # sync()
+
+        q0 = r.get_joint_angles(joints='torso_arms')
+
+        if torsoangle != None:
+            r.set_joint_angle(0, torsoangle)
+
+        jts = 'larm'
+        for sl in sls:
+            try:
+                afrm,gfrm,handangle = sl
+                lasol = r.ik(afrm, joints=jts)[0]
+                lgsol = r.ik(gfrm, joints=jts)[0]
+                langle = handangle
+                break
+            except:
+                continue
+        jts = 'rarm'
+        for sr in srs:
+            try:
+                afrm,gfrm,handangle = sr
+                rasol = r.ik(afrm, joints=jts)[0]
+                rgsol = r.ik(gfrm, joints=jts)[0]
+                rangle = handangle
+                break
+            except:
+                continue
+
+        duration2 = 1.0 # time taken to move between  approach frame to grasp frame
+        plan_and_execute(q0, lasol, rasol, duration)
+        execute(lgsol, rgsol, duration2)
+
+        r.set_joint_angles([langle,-langle,-langle,langle], joints='lhand')
+        r.set_joint_angles([rangle,-rangle,-rangle,rangle], joints='rhand')
+        sync(joints='all', duration=0.5)
+
+        if grabFlag:
+            grab(hand='left')
+            grab(hand='right')
+        else:
+            release(hand='left')
+            release(hand='right')
+
+        execute(lasol, rasol, duration2)
+    move_lr2 = move_lr2_
+
+    def move_(frame, torsoangle, handangle, duration, hand='right'):
+        jts0 = 'rarm' if hand == 'right' else 'larm'
+        if torsoangle != None:
+            jts0 = 'torso_' + jts0
+
+        q0 = r.get_joint_angles(joints=jts0)
+
+        if torsoangle != None:
+            r.set_joint_angle(0, torsoangle)
+        if frame != None:
+            jts = 'rarm' if hand == 'right' else 'larm'
+            r.set_joint_angles(r.ik(frame, joints=jts)[0], joints=jts)
+
+        q1 = r.get_joint_angles(joints=jts0)
+        traj = pl.make_plan(q0, q1, joints=jts0)
+        exec_traj(traj, joints=jts0)
+
+        if handangle != None:
+            jts = 'rhand' if hand == 'right' else 'lhand'
+            r.set_joint_angles([handangle,-handangle,-handangle,handangle], joints=jts)
+            sync(joints=jts, duration=0.5)
+    move = move_
+
+    def move2_(ss, torsoangle, duration, grabFlag=True, hand='right'):
+        jts0 = 'rarm' if hand == 'right' else 'larm'
+
+        def plan_and_execute(q0, sol, duration):
+            r.set_joint_angles(sol, joints=jts0)
+            jts = 'torso_'+jts0
+            q1 = r.get_joint_angles(joints=jts)
+            traj = pl.make_plan(q0, q1, joints=jts)
+            exec_traj(traj, joints=jts)
+
+        def execute(sol, duration):
+            r.set_joint_angles(sol, joints=jts0)
+            # sync()
+
+        q0 = r.get_joint_angles(joints='torso_'+jts0)
+
+        if torsoangle != None:
+            r.set_joint_angle(0, torsoangle)
+
+        for s in ss:
+            try:
+                afrm,gfrm,handangle = s
+                asol = r.ik(afrm, joints=jts0)[0]
+                gsol = r.ik(gfrm, joints=jts0)[0]
+                angle = handangle
+                break
+            except:
+                continue
+
+        duration2 = 1.0 # time taken to move between  approach frame to grasp frame
+        plan_and_execute(q0, asol, duration)
+        execute(gsol, duration2)
+
+        handjts = 'rhand' if hand == 'right' else 'lhand'
+        r.set_joint_angles([angle,-angle,-angle,angle], joints=handjts)
+        # sync()
+
+        if grabFlag:
+            grab(hand=hand)
+        else:
+            release(hand=hand)
+
+        execute(asol, duration2)
+    move2 = move2_
+
     def show_frame_(frm, name='frame0'):
         env.delete_object(name)
         bx = visual.box(length=10, height=10, width=10, color=(1,0,1))
@@ -174,6 +327,10 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
         show_traj(pl.T_init, name='traj0')
         show_traj(pl.T_goal, name='traj1')
     show_tree = show_tree_
+
+    # Trajectory execution:
+    #  Currently just send the last waypoint to the controller,
+    #  because smooth execution of a multi-waypoints trajectory.
 
     def exec_traj_(sts, joints='rarm', name='traj0', duration=4.0):
         if rr == None:

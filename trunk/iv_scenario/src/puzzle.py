@@ -21,7 +21,7 @@ else:
 env = PlanningEnvironment()
 env.load_scene(scene_objects.table_scene())
 
-r = HiroNx(ivenv.ivpkgdir+'/iv_plan/externals/models/HIRONX_110822/')
+r = HiroNx(ivenv.ivpkgdir+'/iv_plan/externals/models/HIRONX_110822/', forcesensors=True)
 env.insert_robot(r)
 r.go_pos(-150, 0, 0)
 r.prepare()
@@ -78,7 +78,7 @@ def setup_puzzle_scene():
     # brown piece
     env.insert_object(generate_piece('brown', (0.545, 0.27, 0.075),
                                      [(0,0,0,0,0,0),(l,0,0,0,0,0),(l,l,0,0,0,0),(0,l,0,0,0,0)]),
-                      FRAME(xyzabc=[-60,-260,z,0,0,-1.0]), tbl)
+                      FRAME(xyzabc=[-90,-230,z,0,0,-1.0]), tbl)
     # yellow piece
     env.insert_object(generate_piece('yellow', (1.0, 1.0, 0.0),
                                      [(0,0,0,0,0,0),(0,l,0,0,0,0),(0,2*l,0,0,0,0),(l,0,0,0,0,0)]),
