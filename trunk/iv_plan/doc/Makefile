@@ -1,4 +1,4 @@
-TARG_NAME = how-to-use
+TARG_NAME = irexdemo
 OS=$(shell /bin/uname | sed s/-.*//)
 TEX=platex
 
