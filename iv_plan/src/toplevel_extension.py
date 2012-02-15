@@ -16,6 +16,7 @@ def objtype(obj):
     else:
         return 0
 
+
 #
 # Top-level utility functions,
 # which is dependent on r, rr, pl, env.
@@ -169,10 +170,11 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
         exec_traj(traj, joints=jts, duration=duration)
 
         if lhandangle != None:
-            r.set_joint_angles([lhandangle,-lhandangle,-lhandangle,lhandangle], joints='lhand')
+            r.grasp2(lhandangle, joints='lhand')
         if rhandangle != None:
-            r.set_joint_angles([rhandangle,-rhandangle,-rhandangle,rhandangle], joints='rhand')
-        sync(duration=graspduration)
+            r.grasp2(rhandangle, joints='rhand')
+        if lhandangle != None or rhandangle != None:
+            sync(duration=graspduration)
     move_lr = move_lr_
 
     def move_lr2_(sls, srs, torsoangle, duration, grabFlag=True):
@@ -182,12 +184,12 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
             q1 = r.get_joint_angles(joints='torso_arms')
             jts = 'torso_arms'
             traj = pl.make_plan(q0, q1, joints=jts)
-            exec_traj(traj, joints=jts)
+            exec_traj(traj, joints=jts, duration=duration)
 
         def execute(lsol, rsol, duration):
             r.set_joint_angles(lsol, joints='larm')
             r.set_joint_angles(rsol, joints='rarm')
-            # sync()
+            sync(duration=duration)
 
         q0 = r.get_joint_angles(joints='torso_arms')
 
@@ -215,13 +217,13 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
             except:
                 continue
 
-        duration2 = 1.0 # time taken to move between  approach frame to grasp frame
+        duration2 = 1.0 # time taken to move between approach frame to grasp frame
         plan_and_execute(q0, lasol, rasol, duration)
         execute(lgsol, rgsol, duration2)
 
-        r.set_joint_angles([langle,-langle,-langle,langle], joints='lhand')
-        r.set_joint_angles([rangle,-rangle,-rangle,rangle], joints='rhand')
-        sync(joints='all', duration=0.5)
+        r.grasp2(langle, joints='lhand')
+        r.grasp2(rangle, joints='rhand')
+        sync(joints='all', duration=graspduration)
 
         if grabFlag:
             grab(hand='left')
@@ -248,12 +250,12 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
 
         q1 = r.get_joint_angles(joints=jts0)
         traj = pl.make_plan(q0, q1, joints=jts0)
-        exec_traj(traj, joints=jts0)
+        exec_traj(traj, joints=jts0, duration=duration)
 
         if handangle != None:
             jts = 'rhand' if hand == 'right' else 'lhand'
-            r.set_joint_angles([handangle,-handangle,-handangle,handangle], joints=jts)
-            sync(joints=jts, duration=0.5)
+            r.grasp2(handangle, joints=jts)
+            sync(joints=jts, duration=graspduration)
     move = move_
 
     def move2_(ss, torsoangle, duration, grabFlag=True, hand='right'):
@@ -264,11 +266,11 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
             jts = 'torso_'+jts0
             q1 = r.get_joint_angles(joints=jts)
             traj = pl.make_plan(q0, q1, joints=jts)
-            exec_traj(traj, joints=jts)
+            exec_traj(traj, joints=jts, duration=duration)
 
         def execute(sol, duration):
             r.set_joint_angles(sol, joints=jts0)
-            # sync()
+            sync(duration=duration)
 
         q0 = r.get_joint_angles(joints='torso_'+jts0)
 
@@ -290,8 +292,8 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
         execute(gsol, duration2)
 
         handjts = 'rhand' if hand == 'right' else 'lhand'
-        r.set_joint_angles([angle,-angle,-angle,angle], joints=handjts)
-        # sync()
+        r.grasp2(angle, joints=handjts)
+        sync(duration=graspduration)
 
         if grabFlag:
             grab(hand=hand)

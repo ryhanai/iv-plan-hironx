@@ -1,11 +1,76 @@
 # -*- coding: utf-8 -*-
 # Estimation of link=>sensor transforms needs ROS
 
-from set_env import *
-from demo_common import *
+from ivenv import *
+import scene_objects
+from hironx import *
+from mplan_env import *
+from csplan import *
+
+import hironx_params
+import hironxsys
+
 import time
-from tfpy import *
 from scipy.optimize import leastsq
+
+# This package requires ROS
+use_ros = True
+if use_ros:
+    import roslib; roslib.load_manifest('iv_plan')
+    import rospy
+    import tf
+    import geometry_msgs.msg
+    from tf.transformations import *
+    from tfpy import *
+    #from sensor_msgs.msg import JointState
+    #from ar_pose.msg import ARMarkers
+
+
+# Extend outer module interface to listen to "tf"
+class MyHiroNxSystem(hironxsys.HiroNxSystem):
+    def __init__(self, portdefs):
+        self.joint_states = zeros(23)
+        self.portdefs = portdefs
+
+    def connect(self):
+        hironxsys.HiroNxSystem.connect(self)
+        if use_ros:
+            rospy.init_node('hironx_calib')
+            self.listener = tf.TransformListener()
+
+    def get_tf(self, from_frm='/leye', to_frm='/checkerboard'):
+        tfs = {}
+        try:
+            now = rospy.Time.now()
+            self.listener.waitForTransform(from_frm, to_frm,
+                                           now, rospy.Duration(3.0))
+            return self.listener.lookupTransform(from_frm, to_frm, rospy.Time(0))
+        except (tf.LookupException, tf.ConnectivityException, tf.Exception):
+            return None
+
+
+real_robot = True
+if real_robot:
+    rr = MyHiroNxSystem(hironx_params.portdefs)
+else:
+    rr = None
+
+env = PlanningEnvironment()
+env.load_scene(scene_objects.table_scene())
+
+r = HiroNx(ivenv.ivpkgdir+'/iv_plan/externals/models/HIRONX_110822/', forcesensors=True)
+env.insert_robot(r)
+r.go_pos(-150, 0, 0)
+r.prepare()
+
+pl = CSPlanner(env)
+
+import toplevel_extension
+toplevel_extension.setup_toplevel_extension(r,env,rr,pl)
+from toplevel_extension import *
+
+################################################################################
+
 
 # hand camera calibration pose
 def handcam_calib_pose():
@@ -34,16 +99,16 @@ rhand_angles1 = [
     [270,-320,height,0,-pi/2,-pi/8],
     [270,-200,height,0,-pi/2,0],
     [270,-80,height,0,-pi/2,pi/8],
-    [180,-200,height-20,0,-pi/2-pi/8,0],
-    [380,-200,height-40,0,-pi/2+pi/8,0]
+    [180,-200,height-20,0,-pi/2-pi/16,0],
+    [380,-200,height-40,0,-pi/2+pi/16,0]
     ]
 
 lhand_angles1 = [
     [270,320,height,0,-pi/2,pi/8],
     [270,200,height,0,-pi/2,0],
     [270,80,height,0,-pi/2,-pi/8],
-    [180,200,height-20,0,-pi/2-pi/8,0],
-    [380,200,height-40,0,-pi/2+pi/8,0]
+    [180,200,height-20,0,-pi/2-pi/16,0],
+    [380,200,height-40,0,-pi/2+pi/16,0]
     ]
 
 
@@ -54,7 +119,7 @@ def one_shot(sensor='kinect'):
         Twld_hd = r.get_link('HEAD_JOINT1_Link').where()
         show_frame(Twld_hd * r.Thd_kinectrgb * Tsen_tgt)
         return r.get_joint_angles(), Tsen_tgt
-    elif sensor == 'rhand_cam':
+    elif sensor == 'rhandcam':
         tf = rr.get_tf('/base_link', '/checkerboard')
         (trans, rot) = tf
         Tsen_tgt = FRAME(mat=MATRIX(mat=quaternion_matrix(rot)[0:3,0:3].tolist()),
@@ -63,7 +128,7 @@ def one_shot(sensor='kinect'):
         Twld_rh = r.get_link('RARM_JOINT5_Link').where()
         show_frame(Twld_rh * r.Trh_cam * Tsen_tgt)
         return r.get_joint_angles(), Tsen_tgt
-    elif sensor == 'lhand_cam':
+    elif sensor == 'lhandcam':
         tf = rr.get_tf('/base_link', '/checkerboard')
         (trans, rot) = tf
         Tsen_tgt = FRAME(mat=MATRIX(mat=quaternion_matrix(rot)[0:3,0:3].tolist()),
@@ -82,16 +147,17 @@ def record_data(sensor='kinect', waitTime=2.0):
             sync()
             time.sleep(waitTime)
             res.append(one_shot(sensor))
-    elif sensor == 'rhand_cam':
+    elif sensor == 'rhandcam':
         r.prepare()
         sync()
         for v in rhand_angles1:
+            jts = 'rarm'
             f = FRAME(xyzabc=v)
-            r.set_arm_joint_angles(r.ik(f)[0])
+            r.set_joint_angles(r.ik(f)[0], joints=jts)
             sync()
             time.sleep(waitTime)
             res.append(one_shot(sensor))
-    elif sensor == 'lhand_cam':
+    elif sensor == 'lhandcam':
         r.prepare()
         sync()
         for v in lhand_angles1:

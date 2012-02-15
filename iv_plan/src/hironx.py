@@ -6,6 +6,16 @@ from robot import *
 import libik_hiro as ikfast
 import hironx_params
 
+def width2angle(width):
+    th = asin(((width/2.0) - 15) / 42)
+    # js = [th, -th, -th, th]
+    return th
+
+def grasppose(angle):
+    dangle = 4*pi/180
+    return [(angle-dangle),-angle,-(angle-dangle),angle]
+
+
 class HiroNx(VRobot):
     def __init__(self,
                  wrldir,
@@ -172,26 +182,26 @@ class HiroNx(VRobot):
     #     else:
     #         return self.get_joint_angles()[9:15]            
 
-    def get_hand_joint_angles(self, hand='right'):
-        rhand = self.check_right_or_left(hand)
+    # def get_hand_joint_angles(self, hand='right'):
+    #     rhand = self.check_right_or_left(hand)
 
-        if rhand:
-            return self.get_joint_angles()[15:19]
-        else:
-            return self.get_joint_angles()[19:23]
+    #     if rhand:
+    #         return self.get_joint_angles()[15:19]
+    #     else:
+    #         return self.get_joint_angles()[19:23]
 
-    def set_hand_joint_angles(self, angles, hand='right'):
-        rhand = self.check_right_or_left(hand)
-        if len(angles) != 4:
-            print "the length of joint angles is wrong"
-            return
+    # def set_hand_joint_angles(self, angles, hand='right'):
+    #     rhand = self.check_right_or_left(hand)
+    #     if len(angles) != 4:
+    #         print "the length of joint angles is wrong"
+    #         return
         
-        js = self.get_joint_angles()
-        if rhand:
-            js[15:19] = angles
-        else:
-            js[19:23] = angles
-        self.set_joint_angles(js)
+    #     js = self.get_joint_angles()
+    #     if rhand:
+    #         js[15:19] = angles
+    #     else:
+    #         js[19:23] = angles
+    #     self.set_joint_angles(js)
 
     def init_clink_pairs(self):
         blacklist = [(0,2),(0,3),(0,4),(0,5),(0,9),(0,10),(0,11),
@@ -391,7 +401,11 @@ class HiroNx(VRobot):
         else:
             return False
 
-    def grasp(self, width, affixobj=False, hand='right'):
+    def grasp(self, width, hand='right'):
+        jts = hand[0] + 'hand'
         th = asin(((width/2.0) - 15) / 42)
         js = [th, -th, -th, th]
-        self.set_hand_joint_angles(js, hand=hand)
+        self.set_joint_angles(js, joints=jts)
+
+    def grasp2(self, angle, joints='rhand'):
+        self.set_joint_angles(grasppose(angle), joints=joints)
