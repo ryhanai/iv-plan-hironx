@@ -3,14 +3,16 @@
 # Parameters dependent on each robot instance should be defined in hironx_params.py
 
 from robot import *
-import hironx_params 
+import libik_hiro as ikfast
+import hironx_params
 
 class HiroNx(VRobot):
     def __init__(self,
                  wrldir,
                  scale = 1000.0,
                  name = 'HIRO-NX',
-                 portdefs = []):
+                 forcesensors=True
+                 ):
 
         # predefined poses
         self.poses = {
@@ -30,7 +32,7 @@ class HiroNx(VRobot):
                          0.8, -0.1, -0.8, 0.1,
                          0.8, -0.1, -0.8, 0.1]
             }
-        
+
         self.hand_poses = {
             'open' : array([0.6, -0.1, -0.6, 0.1]),
             'open2' : array([0.8, -0.1, -0.8, 0.1]),
@@ -43,10 +45,17 @@ class HiroNx(VRobot):
         for k,v in hironx_params.params.items():
             setattr(self, k, v)
 
-        # deprecated, for compatibility
-        self.Twrist_ef = self.Trwrist_ef 
+        if not forcesensors:
+            self.Tikoffset.vec[0] -= 59
 
-        VRobot.__init__(self, wrldir, scale, name)
+        # deprecated, for compatibility
+        self.Twrist_ef = self.Trwrist_ef
+
+        if forcesensors:
+            mainfile = 'main.wrl'
+        else:
+            mainfile = 'main_no_force_sensors.wrl'
+        VRobot.__init__(self, wrldir, mainfile, scale, name)
 
         # safe(soft) joint limits
         for i,lims in enumerate([deg2rad(x) for x in [(-90,90),(-70,70),(-20,70),
@@ -267,10 +276,10 @@ class HiroNx(VRobot):
         m = MATRIX(mat=rot)
         v = VECTOR(vec=[scl*x for x in trans])
         return FRAME(mat=m, vec=v)
-    
+
     def fk(self, arm='right', scl=1e+3):
         rarm = self.check_right_or_left(arm)
-        
+
         if rarm:
             ths = self.get_joint_angles()[3:9]
             f = self.fk_fast_rarm(ths)

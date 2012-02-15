@@ -11,7 +11,6 @@ from viewer import *
 import wrl_loader
 
 from pqp_if import *
-import libik_hiro as ikfast
 
 def get_AABB(vs, padding=0.0):
     xlb = ylb = zlb = inf
@@ -194,12 +193,12 @@ def in_collision_pair_parts(obj1, obj2, cache):
 
 
 class VRobot(JointObject):
-    def __init__(self, wrldir, scale, robotname):
+    def __init__(self, wrldir, mainfile, scale, robotname):
         JointObject.__init__(self, 0, robotname, [0,0,1], FRAME())
         # self.wrldir = os.getcwd() + re.sub('[^\/]*$', '', wrlfile)
         # print ('wrl directory = ' + self.wrldir)
         loader = wrl_loader.WrlLoader()
-        name, joints, links = loader.load(wrldir)
+        name, joints, links = loader.load(wrldir, mainfile=mainfile)
 
         self.joints = joints
         self.links = links
@@ -259,7 +258,7 @@ class VRobot(JointObject):
 
         if check_collision:
             th_old = self.get_joint_angle(id)
-        
+
         if flush:
             self.refresh()
 
