@@ -51,8 +51,8 @@ params = {
 
     'Thd_kinectdepth' : FRAME(xyzabc=[-28.74092948502755, 1.6231065841821675, 202.52593003532405, -pi/2,pi/2,0])*FRAME(xyzabc=[0,0,0,0.05,0,0]),
 
-    'Trwrist_ef' : FRAME(xyzabc=[-99,-4,0,0,pi/2,0]),
-    'Tlwrist_ef' : FRAME(xyzabc=[-99,0,0,0,pi/2,0]),
+    'Trwrist_ef' : FRAME(xyzabc=[-97,-4,0,0,pi/2,0]),
+    'Tlwrist_ef' : FRAME(xyzabc=[-97,0,0,0,pi/2,0]),
     'Tikoffset' : FRAME(xyzabc=[-50+59,0,0,0,-pi/2,0])
     }
 
