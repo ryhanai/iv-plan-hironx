@@ -424,7 +424,14 @@ colors = {
 
 def colored_print(msg, color):
     print '%s%s%s'%(colors[color], msg, colors['clear'])
-    
+
 def warn(msg):
     print '%s%s%s'%(colors['red'], msg, colors['clear'])
 
+
+class RecognitionFailure(Exception):
+    pass
+class IKFailure(Exception):
+    pass
+class PlanningFailure(Exception):
+    pass

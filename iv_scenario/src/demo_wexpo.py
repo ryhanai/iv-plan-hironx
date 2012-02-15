@@ -22,7 +22,7 @@ import interface_wexpo
 #
 ################################################################################
 
-real_robot = True
+real_robot = False
 if real_robot:
     rr = interface_wexpo.MyHiroNxSystem(interface_wexpo.portdefs)
 else:
@@ -31,7 +31,7 @@ else:
 env = PlanningEnvironment()
 env.load_scene(scene_objects.table_scene())
 
-r = HiroNx(ivenv.ivpkgdir+'/iv_plan/externals/models/HIRONX_110822/')
+r = HiroNx(ivenv.ivpkgdir+'/iv_plan/externals/models/HIRONX_110822/', forcesensors=True)
 env.insert_robot(r)
 r.go_pos(-150, 0, 0)
 r.prepare()
@@ -145,14 +145,6 @@ tms = {'preapproach1': 1.5,
        'look_for': 0.9}
 
 
-class RecognitionFailure(Exception):
-    pass
-class IKFailure(Exception):
-    pass
-class PlanningFailure(Exception):
-    pass
-
-
 ################################################################################
 # Recognition
 ################################################################################
@@ -255,6 +247,22 @@ def pocket_detection_pose(n):
     z = tblheight+fsoffset+240 - plt.where().vec[2]
     return plt.where() * FRAME(xyzabc=[x,y,z,0,-pi/2,0])
 
+def go_scan_pose():
+    rpos,lpos = detectposs_dual[0]
+    jts = 'larm'
+    fl = FRAME(xyzabc=[lpos[0], lpos[1], tblheight+view_distance, pi, 0, pi/2])*(-r.Tlh_cam)
+    jts = 'rarm'
+    fr = FRAME(xyzabc=[rpos[0], rpos[1], tblheight+view_distance, pi, 0, -pi/2])*(-r.Trh_cam)
+    th = width2angle(80)
+    move_lr(fl, fr, None, None, None, tms['preapproach2'])
+
+def go_prepare_pose():
+    q0 = r.get_joint_angles()
+    r.prepare()
+    fl = r.fk(arm='left')
+    fr = r.fk(arm='right')
+    r.set_joint_angles(q0)
+    move_lr(fl, fr, 0.0, width2angle(100), width2angle(100), tms['preapproach2'])
 
 ################################################################################
 # Motion Generation
@@ -469,188 +477,15 @@ rwp = FRAME(xyzabc=[200,-110,1049,0,-pi/2,0])
 lwp = FRAME(xyzabc=[240,90,1049,0,-pi/2,0])
 
 
-graspduration = 0.5
-
-def move_lr(lframe, rframe, torsoangle, lhandangle, rhandangle, duration):
-    q0 = r.get_joint_angles(joints='torso_arms')
-
-    if torsoangle != None:
-        r.set_joint_angle(0, torsoangle)
-    if lframe != None:
-        jts = 'larm'
-        r.set_joint_angles(r.ik(lframe, joints=jts)[0], joints=jts)
-    if rframe != None:
-        jts = 'rarm'
-        r.set_joint_angles(r.ik(rframe, joints=jts)[0], joints=jts)
-
-    q1 = r.get_joint_angles(joints='torso_arms')
-    jts = 'torso_arms'
-    traj = pl.make_plan(q0, q1, joints=jts)
-    exec_traj(traj, joints=jts, duration=duration)
-
-    if lhandangle != None:
-        r.set_joint_angles([lhandangle,-lhandangle,-lhandangle,lhandangle], joints='lhand')
-    if rhandangle != None:
-        r.set_joint_angles([rhandangle,-rhandangle,-rhandangle,rhandangle], joints='rhand')
-    sync(duration=graspduration)
-
-
-def move_lr2(sls, srs, torsoangle, duration, grabFlag=True):
-    def plan_and_execute(q0, lsol, rsol, duration):
-        r.set_joint_angles(lasol, joints='larm')
-        r.set_joint_angles(rasol, joints='rarm')
-        q1 = r.get_joint_angles(joints='torso_arms')
-        jts = 'torso_arms'
-        traj = pl.make_plan(q0, q1, joints=jts)
-        exec_traj(traj, joints=jts)
-
-    def execute(lsol, rsol, duration):
-        r.set_joint_angles(lsol, joints='larm')
-        r.set_joint_angles(rsol, joints='rarm')
-        # sync()
-
-    q0 = r.get_joint_angles(joints='torso_arms')
-
-    if torsoangle != None:
-        r.set_joint_angle(0, torsoangle)
-
-    jts = 'larm'
-    for sl in sls:
-        try:
-            afrm,gfrm,handangle = sl
-            lasol = r.ik(afrm, joints=jts)[0]
-            lgsol = r.ik(gfrm, joints=jts)[0]
-            langle = handangle
-            break
-        except:
-            continue
-    jts = 'rarm'
-    for sr in srs:
-        try:
-            afrm,gfrm,handangle = sr
-            rasol = r.ik(afrm, joints=jts)[0]
-            rgsol = r.ik(gfrm, joints=jts)[0]
-            rangle = handangle
-            break
-        except:
-            continue
-
-    duration2 = 1.0 # time taken to move between  approach frame to grasp frame
-    plan_and_execute(q0, lasol, rasol, duration)
-    execute(lgsol, rgsol, duration2)
-
-    r.set_joint_angles([langle,-langle,-langle,langle], joints='lhand')
-    r.set_joint_angles([rangle,-rangle,-rangle,rangle], joints='rhand')
-    sync(joints='all', duration=0.5)
-
-    if grabFlag:
-        grab(hand='left')
-        grab(hand='right')
-    else:
-        release(hand='left')
-        release(hand='right')
-
-    execute(lasol, rasol, duration2)
-
-def move(frame, torsoangle, handangle, duration, hand='right'):
-    jts0 = 'rarm' if hand == 'right' else 'larm'
-    if torsoangle != None:
-        jts0 = 'torso_' + jts0
-
-    q0 = r.get_joint_angles(joints=jts0)
-
-    if torsoangle != None:
-        r.set_joint_angle(0, torsoangle)
-    if frame != None:
-        jts = 'rarm' if hand == 'right' else 'larm'
-        r.set_joint_angles(r.ik(frame, joints=jts)[0], joints=jts)
-
-    q1 = r.get_joint_angles(joints=jts0)
-    traj = pl.make_plan(q0, q1, joints=jts0)
-    exec_traj(traj, joints=jts0)
-
-    if handangle != None:
-        jts = 'rhand' if hand == 'right' else 'lhand'
-        r.set_joint_angles([handangle,-handangle,-handangle,handangle], joints=jts)
-        sync(joints=jts, duration=0.5)
-
-def move2(ss, torsoangle, duration, grabFlag=True, hand='right'):
-    jts0 = 'rarm' if hand == 'right' else 'larm'
-
-    def plan_and_execute(q0, sol, duration):
-        r.set_joint_angles(sol, joints=jts0)
-        jts = 'torso_'+jts0
-        q1 = r.get_joint_angles(joints=jts)
-        traj = pl.make_plan(q0, q1, joints=jts)
-        exec_traj(traj, joints=jts)
-
-    def execute(sol, duration):
-        r.set_joint_angles(sol, joints=jts0)
-        # sync()
-
-    q0 = r.get_joint_angles(joints='torso_'+jts0)
-
-    if torsoangle != None:
-        r.set_joint_angle(0, torsoangle)
-
-    for s in ss:
-        try:
-            afrm,gfrm,handangle = s
-            asol = r.ik(afrm, joints=jts0)[0]
-            gsol = r.ik(gfrm, joints=jts0)[0]
-            angle = handangle
-            break
-        except:
-            continue
-
-    duration2 = 1.0 # time taken to move between  approach frame to grasp frame
-    plan_and_execute(q0, asol, duration)
-    execute(gsol, duration2)
-
-    handjts = 'rhand' if hand == 'right' else 'lhand'
-    r.set_joint_angles([angle,-angle,-angle,angle], joints=handjts)
-    # sync()
-
-    if grabFlag:
-        grab(hand=hand)
-    else:
-        release(hand=hand)
-
-    execute(asol, duration2)
-
-
-def go_scan_pose():
-    xr,yr = detectposs_dual[0][0]
-    fr = FRAME(xyzabc=[xr, yr, tblheight+30,0,-pi/2,0])
-    xl,yl = detectposs_dual[0][1]
-    fl = FRAME(xyzabc=[xl, yl, tblheight+350,0,-pi/2,0])
-    th = width2angle(80)
-    move_lr(fl, fr, 0.0, th, th, tms['preapproach2'])
-
-def prepare():
-    q0 = r.get_joint_angles()
-    r.prepare()
-    fl = r.fk(arm='left')
-    fr = r.fk(arm='right')
-    r.set_joint_angles(q0)
-    move_lr(fl, fr, 0.0, width2angle(100), width2angle(100), tms['preapproach2'])
-
-
 # choose_and_pick := try: move_lr(candidates_for_lr()) repeat
 
 
 # TODO:
 # collision checking
-# trajectory execution
-#  Currently just send the last waypoint to the controller,
-#  because smooth execution of a multi-waypoints trajectory.
-
-# move_lr throws exception (IK failure)
-# look_for() throws exception (detection failure)
+# move operations should throw exception (when IKFailure etc.)
 # choose_and_pick() throws exception (IK failure or planning failure)
-#  break down choose_and_pick() into two, dual-arm version and single-arm version
 
-# interface, parameter description
+# Motion primitive definitions
 
 def put_with_both_hands(lplace, rplace, duration):
     P0 = env.get_object(lplace)
@@ -701,7 +536,7 @@ def demo(recognition=True):
     move(pocket_detection_pose(1), -0.3, None, tms['transport'], hand='right')
     # recognize the pocket
     put_with_a_hand('P1', tms['place'], hand='right')
-    prepare()
+    go_prepare_pose()
 
 
 init_palletizing_scene()

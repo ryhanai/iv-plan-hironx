@@ -21,7 +21,7 @@ else:
 env = PlanningEnvironment()
 env.load_scene(scene_objects.table_scene())
 
-r = HiroNx(ivenv.ivpkgdir+'/iv_plan/externals/models/HIRONX_110822/')
+r = HiroNx(ivenv.ivpkgdir+'/iv_plan/externals/models/HIRONX_110822/', forcesensors=False)
 env.insert_robot(r)
 r.go_pos(-150, 0, 0)
 r.prepare()
