@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROBOTNAME=localhost
+ROBOTNAME=hiro014
 RTCTREE_NAMESERVERS=$ROBOTNAME:2809
 TERMOPT=--window-with-profile="Default"
 
@@ -25,8 +25,8 @@ fi
 gnome-terminal -t "AppRecogRight" -e ./comup_right.sh --geometry 80x24+0+530 $TERMOPT &
 gnome-terminal -t "AppRecogLeft" -e ./comup_left.sh --geometry 80x24+0+530 $TERMOPT
 
-./comwait.sh lhand_cxt AppRecog0.rtc
-./comwait.sh rhand_cxt AppRecog0.rtc
+./comwait2.sh lhand_cxt AppRecog0.rtc
+./comwait2.sh rhand_cxt AppRecog0.rtc
 
 ./comcon.sh
 ./comact.sh
