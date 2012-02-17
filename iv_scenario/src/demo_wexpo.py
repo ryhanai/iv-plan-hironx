@@ -22,7 +22,7 @@ import interface_wexpo
 #
 ################################################################################
 
-real_robot = False
+real_robot = True
 if real_robot:
     rr = interface_wexpo.MyHiroNxSystem(interface_wexpo.portdefs)
 else:
@@ -31,7 +31,7 @@ else:
 env = PlanningEnvironment()
 env.load_scene(scene_objects.table_scene())
 
-r = HiroNx(ivenv.ivpkgdir+'/iv_plan/externals/models/HIRONX_110822/', forcesensors=True)
+r = HiroNx(ivenv.ivpkgdir+'/iv_plan/externals/models/HIRONX_110822/', forcesensors=False)
 env.insert_robot(r)
 r.go_pos(-150, 0, 0)
 r.prepare()
@@ -193,9 +193,9 @@ def detect(timeout=1.5, zmin=tblheight, zmax=tblheight+250,
 #
 
 view_distance = 328
-detectposs_dual = [[[230,-35],[230,150]], # x-y coords of each camera
-                   [[280,-35],[280,150]],
-                   [[330,-35],[330,150]]]
+detectposs_dual = [[[190,-20],[190,165]], # x-y coords of each camera
+                   [[240,-20],[240,165]],
+                   [[290,-20],[290,165]]]
 
 def go_scan_pose():
     rpos,lpos = detectposs_dual[0]
@@ -234,7 +234,8 @@ def look_for():
             time.sleep(1.5) # this is bad
 
         obj_fr = detect(sensor='rhandcam', timeout=1.5)
-        obj_fl = detect(sensor='lhandcam', timeout=1.5)
+        #obj_fl = detect(sensor='lhandcam', timeout=1.5)
+	obj_fl = None
         if obj_fr:
             if not already_detected(obj_fr, detected):
                 detected.append(obj_fr)
@@ -252,10 +253,10 @@ def look_for():
         env.get_object('A'+str(i)).locate(FRAME(xyzabc=[500,-800,tblheight+16,0,0,0]))
 
     print '%d objects detected'%len(detected)
-    if len(detected) < 4:
+    if len(detected) < 2:
         raise RecognitionFailure()
     else:
-        return True
+        return detected
 
 def pocket_detection_pose(n):
     pocketpos = [(-30,45),(-110,45),
@@ -271,7 +272,7 @@ def pocket_detection_pose(n):
 # Motion Generation
 ################################################################################
 
-def choose_objs(n=0):
+def choose_objs():
     def aux(o1, o2):
         x = o1.where()
         y = o2.where()
@@ -279,18 +280,22 @@ def choose_objs(n=0):
 
     objs = [o for o in env.get_objects('^A') if o.where().vec[1] > -100]
 
-    if n == 0:
-        objs.sort(cmp=aux)
-        return objs[-1],objs[0]
-    else:
-        objs.sort(cmp=aux)
-        o0 = objs[1]; o1 = objs[2]
-        if o0.where().vec[1] < o1.where().vec[1]:
-            return o0,o1
-        else:
-            return o1,o0
+    objs.sort(cmp=aux)
+    return objs[-1],objs[0]
 
-    return None
+def choose_and_pick_simple(n=0):
+    robj,lobj = choose_objs()
+
+    if n == 0:
+        long_side = False
+    else:
+        long_side = True
+
+    # sl1 := (afrm,gfrm,aangle,gangle)
+    sl1, sl2 = grasp_plan(lobj, hand='left', long_side=long_side)
+    sr1, sr2 = grasp_plan(robj, hand='right')
+    move_lr2([sl1, sl2], [sr1, sr2], None, tms['pick'], True)
+        
 
 def try_IK(o, jts='rarm', long_side=False):
     s1, s2 = grasp_plan(o, long_side=long_side)
@@ -428,22 +433,22 @@ def choose_and_pick():
         return False
 
 
-def grasp_plan(o, long_side=False, hand='right', inner_offset=3):
+def grasp_plan(o, long_side=False, hand='right'):
     appvec_length = 40
     objfrm = o.where()
 
     if long_side:
         objfrm = objfrm * FRAME(xyzabc=[0,0,0,0,0,pi/2])
-        gwidth = o.vbody.size[0] - inner_offset
+        gwidth = o.vbody.size[0]
     else:
-        gwidth = o.vbody.size[1] - inner_offset
+        gwidth = o.vbody.size[1]
 
     if hand == 'right':
         Twrist_ef = r.Trwrist_ef
     else:
         Twrist_ef = r.Tlwrist_ef
 
-    awidth = gwidth + 35
+    awidth = gwidth + 40
     aangle = width2angle(awidth)
     gangle = width2angle(gwidth)
 
@@ -508,11 +513,11 @@ def put_with_a_hand(place, duration, hand='right'):
 def pass_left_to_right(torsoangle=-0.3, T=FRAME(xyzabc=[240, -10, 1050, -pi/2, 0, 0])):
     Tef_left = T*FRAME(xyzabc=[0,0,0,0,0,pi/6])
     Tef_right = Tef_left*FRAME(xyzabc=[0,0,0,pi,0,0])*FRAME(xyzabc=[0,0,0,0,0,pi/2])
-    Tef_right1 = Tef_right*FRAME(xyzabc=[0,0,50,0,0,0])
+    Tef_right1 = Tef_right*FRAME(xyzabc=[0,0,55,0,0,0])
     move_lr(Tef_left*(-r.Tlwrist_ef), Tef_right1*(-r.Trwrist_ef), torsoangle, None, width2angle(100), tms['pick'])
     move(Tef_right*(-r.Trwrist_ef), torsoangle, width2angle(38), tms['pick'], hand='right')
     release(hand='left')
-    move(None, torsoangle, width2angle(80), 0.5, hand='left')
+    move(None, None, width2angle(80), 0.5, hand='left')
     grab(hand='right')
     move(Tef_right1*(-r.Trwrist_ef), torsoangle, None, tms['pick'], hand='right')
 
@@ -524,7 +529,8 @@ def demo(recognition=True):
     else:
         go_scan_pose()
 
-    choose_and_pick() # pick_with_both_hands (if possible)
+    #choose_and_pick() # pick_with_both_hands (if possible)
+    choose_and_pick_simple(0)
     move_lr(lwp, rwp, -0.3, None, None, tms['transport'])
     move_lr(pocket_detection_pose(0), pocket_detection_pose(3), -0.6, None, None, tms['transport'])
     # Here, recognize pockets on the pallet if necessary.
@@ -532,7 +538,8 @@ def demo(recognition=True):
     put_with_both_hands('P0', 'P3', tms['place'])
 
     move_lr(lwp, rwp, 0.0, None, None, tms['transport'])
-    choose_and_pick() # pick with a hand
+    #choose_and_pick() # pick with a hand
+    choose_and_pick_simple(1)
     move_lr(lwp, rwp, -0.3, None, None, tms['transport'])
     move(pocket_detection_pose(2), None, None, tms['transport'], hand='right')
     # recognize the pocket
