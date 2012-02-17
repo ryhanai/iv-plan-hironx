@@ -85,7 +85,7 @@ class MyServiceProvider(OpenRTM_aist.DataFlowComponentBase):
     self.addPort(self._myServicePort)
 
 
-    self._result = _GlobalIDL.TimedRecognitionResult(RTC.Time(0,0),[1,2,3])
+    self._result = RTC.TimedDoubleSeq(RTC.Time(0,0),[1,2,3])
     self._resultOut = OpenRTM_aist.OutPort("RecognitionResult", self._result)
     self.addOutPort("RecognitionResult", self._resultOut)
 
