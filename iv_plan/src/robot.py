@@ -12,7 +12,7 @@ import wrl_loader
 
 from pqp_if import *
 
-def get_AABB(vs, padding=0.0):
+def get_AABB(vs, padding=2.0):
     xlb = ylb = zlb = inf
     xub = yub = zub = -inf
 
@@ -103,7 +103,7 @@ def gen_collision_body(obj):
     def gen_cbody(obj):
         return gen_cbody_from_AABB(get_AABB(obj))
 
-    def gen_cbody_link(l, simple=False):
+    def gen_cbody_link(l, simple=True):
         pts = []
         for tf,shp in l.shapes:
             invmat = -tf.mat
@@ -204,7 +204,8 @@ class VRobot(JointObject):
         self.links = links
         self.link = LinkObject(self, name='BASE_Link')
         self.links.insert(0, self.link)
-        joints[0].parent.affix(self, FRAME(vec=VECTOR(vec=[0,0,800])))
+        #joints[0].parent.affix(self, FRAME(vec=VECTOR(vec=[0,0,800])))
+        joints[0].parent.affix(self, FRAME(vec=VECTOR(vec=[0,0,785])))
 
         self.gen_link_collision_body()
         self.cobj_pairs = []
