@@ -194,29 +194,76 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
         q0 = r.get_joint_angles(joints='torso_arms')
 
         if torsoangle != None:
+            cur_th = r.get_joint_angle(0)
             r.set_joint_angle(0, torsoangle)
 
-        jts = 'larm'
-        for sl in sls:
-            try:
-                afrm,gfrm,handangle = sl
-                lasol = r.ik(afrm, joints=jts)[0]
-                lgsol = r.ik(gfrm, joints=jts)[0]
-                langle = handangle
-                break
-            except:
-                continue
-        jts = 'rarm'
-        for sr in srs:
-            try:
-                afrm,gfrm,handangle = sr
-                rasol = r.ik(afrm, joints=jts)[0]
-                rgsol = r.ik(gfrm, joints=jts)[0]
-                rangle = handangle
-                break
-            except:
-                continue
+        if grabFlag == True:
+            jts = 'larm'
+            langle = None
+            for sl in sls:
+                try:
+                    afrm,gfrm,alangle,handangle = sl
+                    lasol = r.ik(afrm, joints=jts)[0]
+                    lgsol = r.ik(gfrm, joints=jts)[0]
+                    langle = handangle
+                    break
+                except:
+                    continue
+            if langle == None:
+                raise IKFailure()
+            r.grasp2(alangle, joints='lhand')
 
+            jts = 'rarm'
+            rangle = None
+            for sr in srs:
+                try:
+                    afrm,gfrm,arangle,handangle = sr
+                    rasol = r.ik(afrm, joints=jts)[0]
+                    rgsol = r.ik(gfrm, joints=jts)[0]
+                    rangle = handangle
+                    break
+                except:
+                    continue
+            if rangle == None:
+                raise IKFailure()
+                
+            if torsoangle != None:
+                r.set_joint_angle(0, cur_th)
+            r.grasp2(arangle, joints='rhand')
+            sync(duration=graspduration)
+            if torsoangle != None:
+                r.set_joint_angle(0, torsoangle)
+                
+        else:
+            jts = 'larm'
+            langle = None
+            for sl in sls:
+                langle = None
+                try:
+                    afrm,gfrm,handangle = sl
+                    lasol = r.ik(afrm, joints=jts)[0]
+                    lgsol = r.ik(gfrm, joints=jts)[0]
+                    langle = handangle
+                    break
+                except:
+                    continue
+            if langle == None:
+                raise IKFailure()
+                
+            jts = 'rarm'
+            rangle = None
+            for sr in srs:
+                try:
+                    afrm,gfrm,handangle = sr
+                    rasol = r.ik(afrm, joints=jts)[0]
+                    rgsol = r.ik(gfrm, joints=jts)[0]
+                    rangle = handangle
+                    break
+                except:
+                    continue
+            if rangle == None:
+                raise IKFailure()
+            
         duration2 = 1.0 # time taken to move between approach frame to grasp frame
         plan_and_execute(q0, lasol, rasol, duration)
         execute(lgsol, rgsol, duration2)
@@ -240,17 +287,18 @@ def setup_toplevel_extension(r, env, rr=None, pl=None):
         if torsoangle != None:
             jts0 = 'torso_' + jts0
 
-        q0 = r.get_joint_angles(joints=jts0)
+        if frame != None or torsoangle != None:
+            q0 = r.get_joint_angles(joints=jts0)
 
-        if torsoangle != None:
-            r.set_joint_angle(0, torsoangle)
-        if frame != None:
-            jts = 'rarm' if hand == 'right' else 'larm'
-            r.set_joint_angles(r.ik(frame, joints=jts)[0], joints=jts)
+            if torsoangle != None:
+                r.set_joint_angle(0, torsoangle)
+            if frame != None:
+                jts = 'rarm' if hand == 'right' else 'larm'
+                r.set_joint_angles(r.ik(frame, joints=jts)[0], joints=jts)
 
-        q1 = r.get_joint_angles(joints=jts0)
-        traj = pl.make_plan(q0, q1, joints=jts0)
-        exec_traj(traj, joints=jts0, duration=duration)
+            q1 = r.get_joint_angles(joints=jts0)
+            traj = pl.make_plan(q0, q1, joints=jts0)
+            exec_traj(traj, joints=jts0, duration=duration)
 
         if handangle != None:
             jts = 'rhand' if hand == 'right' else 'lhand'
