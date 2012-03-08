@@ -193,7 +193,7 @@ def in_collision_pair_parts(obj1, obj2, cache):
 
 
 class VRobot(JointObject):
-    def __init__(self, wrldir, mainfile, scale, robotname):
+    def __init__(self, wrldir, mainfile, scale, robotname, base2waist=FRAME(vec=VECTOR(vec=[0,0,800]))):
         JointObject.__init__(self, 0, robotname, [0,0,1], FRAME())
         # self.wrldir = os.getcwd() + re.sub('[^\/]*$', '', wrlfile)
         # print ('wrl directory = ' + self.wrldir)
@@ -204,8 +204,7 @@ class VRobot(JointObject):
         self.links = links
         self.link = LinkObject(self, name='BASE_Link')
         self.links.insert(0, self.link)
-        #joints[0].parent.affix(self, FRAME(vec=VECTOR(vec=[0,0,800])))
-        joints[0].parent.affix(self, FRAME(vec=VECTOR(vec=[0,0,785])))
+        joints[0].parent.affix(self, base2waist)
 
         self.gen_link_collision_body()
         self.cobj_pairs = []
