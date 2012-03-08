@@ -22,7 +22,7 @@ import interface_wexpo
 #
 ################################################################################
 
-real_robot = True
+real_robot = False
 if real_robot:
     rr = interface_wexpo.MyHiroNxSystem(interface_wexpo.portdefs)
 else:
