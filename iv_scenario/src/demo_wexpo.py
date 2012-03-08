@@ -31,7 +31,7 @@ else:
 env = PlanningEnvironment()
 env.load_scene(scene_objects.table_scene())
 
-r = HiroNx(ivenv.ivpkgdir+'/iv_plan/externals/models/HIRONX_110822/', forcesensors=False)
+r = HiroNx(ivenv.ivpkgdir+'/iv_plan/externals/models/HIRONX_110822/', forcesensors=True)
 env.insert_robot(r)
 r.go_pos(-150, 0, 0)
 r.prepare()
@@ -234,8 +234,7 @@ def look_for():
             time.sleep(1.5) # this is bad
 
         obj_fr = detect(sensor='rhandcam', timeout=1.5)
-        #obj_fl = detect(sensor='lhandcam', timeout=1.5)
-	obj_fl = None
+        obj_fl = detect(sensor='lhandcam', timeout=1.5)
         if obj_fr:
             if not already_detected(obj_fr, detected):
                 detected.append(obj_fr)
@@ -253,7 +252,7 @@ def look_for():
         env.get_object('A'+str(i)).locate(FRAME(xyzabc=[500,-800,tblheight+16,0,0,0]))
 
     print '%d objects detected'%len(detected)
-    if len(detected) < 2:
+    if len(detected) < 4:
         raise RecognitionFailure()
     else:
         return detected
@@ -513,7 +512,7 @@ def put_with_a_hand(place, duration, hand='right'):
 def pass_left_to_right(torsoangle=-0.3, T=FRAME(xyzabc=[240, -10, 1050, -pi/2, 0, 0])):
     Tef_left = T*FRAME(xyzabc=[0,0,0,0,0,pi/6])
     Tef_right = Tef_left*FRAME(xyzabc=[0,0,0,pi,0,0])*FRAME(xyzabc=[0,0,0,0,0,pi/2])
-    Tef_right1 = Tef_right*FRAME(xyzabc=[0,0,55,0,0,0])
+    Tef_right1 = Tef_right*FRAME(xyzabc=[0,0,65,0,0,0])
     move_lr(Tef_left*(-r.Tlwrist_ef), Tef_right1*(-r.Trwrist_ef), torsoangle, None, width2angle(100), tms['pick'])
     move(Tef_right*(-r.Trwrist_ef), torsoangle, width2angle(38), tms['pick'], hand='right')
     release(hand='left')
