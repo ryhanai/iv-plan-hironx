@@ -43,6 +43,9 @@ class HiroNxSystem:
         self.read_joint_state()
         return self.joint_states
 
+    def wait(self):
+        self.motionsvc.ref.closeGripper()
+
     def send_goal(self, joint_angles, duration, wait=True):
         if joint_angles[0].__class__ == list:
             q = self.get_joint_angles()
@@ -62,6 +65,8 @@ class HiroNxSystem:
         joint_angles = [rad2deg(x) for x in joint_angles]+[0]
         print joint_angles
         self.motionsvc.ref.movePTPJointAbsSeq([joint_angles], [duration])
+        if wait:
+            self.wait()
 
     def send_trajectory(self, ps, duration=2.0, arm='right'):
         traj = []
