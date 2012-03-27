@@ -138,8 +138,8 @@ def init_palletizing_scene():
 # slow version
 tms = {'preapproach1': 1.5,
        'preapproach2': 2.5,
-       'pick': 1.3,
-       'transport': 1.7,
+       'pick': 1.5,
+       'transport': 1.8,
        'place': 1.3,
        'pregrasp': 0.7,
        'look_for': 0.9}
@@ -294,7 +294,7 @@ def choose_and_pick_simple(n=0):
     sl1, sl2 = grasp_plan(lobj, hand='left', long_side=long_side)
     sr1, sr2 = grasp_plan(robj, hand='right')
     move_lr2([sl1, sl2], [sr1, sr2], None, tms['pick'], True)
-        
+
 
 def try_IK(o, jts='rarm', long_side=False):
     s1, s2 = grasp_plan(o, long_side=long_side)
@@ -513,7 +513,7 @@ def pass_left_to_right(torsoangle=-0.3, T=FRAME(xyzabc=[240, -10, 1050, -pi/2, 0
     Tef_left = T*FRAME(xyzabc=[0,0,0,0,0,pi/6])
     Tef_right = Tef_left*FRAME(xyzabc=[0,0,0,pi,0,0])*FRAME(xyzabc=[0,0,0,0,0,pi/2])
     Tef_right1 = Tef_right*FRAME(xyzabc=[0,0,65,0,0,0])
-    move_lr(Tef_left*(-r.Tlwrist_ef), Tef_right1*(-r.Trwrist_ef), torsoangle, None, width2angle(100), tms['pick'])
+    move_lr(Tef_left*(-r.Tlwrist_ef), Tef_right1*(-r.Trwrist_ef), torsoangle, None, width2angle(100), tms['transport'])
     move(Tef_right*(-r.Trwrist_ef), torsoangle, width2angle(38), tms['pick'], hand='right')
     release(hand='left')
     move(None, None, width2angle(80), 0.5, hand='left')
