@@ -1,5 +1,5 @@
 IDLC = `rtm-config --idlc`
-IDL_INCDIR = `rtm-config --prefix`/include/rtm/idl
+IDL_INCDIR = `rtm-config --prefix`/include/openrtm-1.1/rtm/idl
 IDLS = JointDataTypes.idl RobotHardwareService.idl \
 	SequencePlayerService.idl ForceSensor.idl \
 	HIROController.idl HiroNX.idl \
