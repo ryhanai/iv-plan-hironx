@@ -44,7 +44,8 @@ class HiroNxSystem:
         return self.joint_states
 
     def wait(self):
-        self.motionsvc.ref.closeGripper()
+        print "wait() was called, but this method is dammy"
+        #self.motionsvc.ref.closeGripper()
 
     def send_goal(self, joint_angles, duration, wait=True):
         if joint_angles[0].__class__ == list:
