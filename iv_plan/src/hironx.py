@@ -5,6 +5,7 @@
 from robot import *
 import libik_hiro as ikfast
 import hironx_params
+import copy as traditional_copy
 
 def width2angle(width):
     th = asin(((width/2.0) - 15) / 42)
@@ -113,6 +114,8 @@ class HiroNx(VRobot):
             js = self.joints[15:19]
         elif joints == 'lhand':
             js = self.joints[19:23]
+        elif joints == 'head':
+            js = self.joints[1:3]
         else:
             js = self.joints
         return [j.angle for j in js]
@@ -132,6 +135,8 @@ class HiroNx(VRobot):
             js = self.joints[15:19]
         elif joints == 'lhand':
             js = self.joints[19:23]
+        elif joints == 'head':
+            js = self.joints[1:3]
         else:
             js = self.joints
 
@@ -312,7 +317,7 @@ class HiroNx(VRobot):
         efframe = efframe*self.Tikoffset ###
         return ikfast.ik(efframe.mat, [scl * x for x in efframe.vec])
 
-    def ik(self, frms, joints='rarm', scl=1e-3):
+    def ik(self, frms, joints='rarm', scl=1e-3, flush=True):
         def reverse_frame(frm):
             x,y,z = frm.vec
             a,b,c = frm.mat.abc()
@@ -334,8 +339,11 @@ class HiroNx(VRobot):
             waist_yaw_samples = linspace(-1.0, 1.0, 11)
             sols = []
             for th in waist_yaw_samples:
-                self.set_joint_angle(0, th)
+                # 20120526
                 Twc = self.links[2].where()
+                Twc.mat = MATRIX(Twc.mat, angle=th, axis=Twc.mat.row(2))
+                # self.set_joint_angle(0, th, flush=flush)
+                # Twc = self.links[2].where()
                 frms2 = [(-Twc)*frm for frm in frms]
                 if not rarm:
                     frms2 = map(reverse_frame, frms2)
@@ -349,7 +357,7 @@ class HiroNx(VRobot):
                     for i in [0,3,5]:
                         sol[1][i] = -sol[1][i]
 
-            self.set_joint_angle(0, th_orig) # restore the waist yaw angle
+            self.set_joint_angle(0, th_orig, flush=flush) # restore the waist yaw angle
 
             sols3 = []
             for th,avec in sols2:
@@ -409,3 +417,29 @@ class HiroNx(VRobot):
 
     def grasp2(self, angle, joints='rhand'):
         self.set_joint_angles(grasppose(angle), joints=joints)
+
+    # target frame
+    def lookat(self, tf, flush=True, torso_angle=None):
+        if flush==False and torso_angle == None:
+            print "lookat(): set torso_angle if you do not use flushing."
+            return ;
+        else:
+            self.refresh()
+        #
+        hf = self.get_link("HEAD_JOINT1_Link").where()
+        v = tf.vec - hf.vec
+        angles = self.get_joint_angles()
+        if flush==False and angles == None:        
+            torso_angle = angles[0]
+        angles[1] =  math.atan2(v[1],v[0]) - torso_angle # subtract torso angle
+        angles[2] = -math.atan2(v[2],v[0])
+        #
+        if flush == True:
+            self.set_joint_angles(angles)
+        #
+        return angles[1:3]
+
+    def lookat_hand(self,hand="right", flush=True, tang=None):
+        lname = "RARM_JOINT5_Link" if hand[0]=="r" else "LARM_JOINT5_Link"
+        return self.lookat(self.get_link(lname).where(), flush=flush, torso_angle=tang)
+ 
