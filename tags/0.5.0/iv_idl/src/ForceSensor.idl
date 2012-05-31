@@ -1,0 +1,23 @@
+interface FS{
+  typedef double DoubleArray [6];
+  typedef short ShortArray [6];
+
+  short Get_Wrench(inout DoubleArray Force);
+  short Get_DigitalWrench(inout DoubleArray Force);
+
+  short Reset_Peak();
+  short Get_MaxPeak(inout DoubleArray Force);
+  short Get_MinPeak(inout DoubleArray Force);
+
+  short Set_Offset();
+  short Get_Offset(inout DoubleArray Offset);
+
+  short Set_Fullscale(inout ShortArray Force);
+  short Get_Fullscale(inout DoubleArray Force);
+
+  short Set_Filter(inout short num);
+  short Get_Filter(inout short num);
+
+  short Set_ToolCoordinate(inout DoubleArray Tool);
+  short Get_ToolCoordinate(inout DoubleArray Tool);
+};

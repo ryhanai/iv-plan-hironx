@@ -1,0 +1,10 @@
+#include <ExtendedDataTypes.idl>
+
+interface CoordTransService
+{
+  typedef sequence<double> DblSequence;
+
+  DblSequence Query(in string sensor, in DblSequence recogframe,
+		    in DblSequence robotframe, in DblSequence jointangles);
+
+};

@@ -1,0 +1,113 @@
+#include <ExtendedDataTypes.idl>
+
+interface ArmMotionService
+{
+    /**
+     * @brief All the FRAMEs are sent by encoding to DblSequence, since there are troubles when passing composite data such as RTC::Pose3D
+     */
+    typedef sequence<double> DblSequence;
+
+    /**
+     * @brief main APIs that conform to Interface drawn up by the Work WG
+     * @param goal a destination of the wrist link frame
+     * @param handWidth hand angles are adjusted to realize this width, after the arm reached the given destination. When this value is negative, the adjustment of the gripper is skiiped.
+     * @param joints joints used to move the arm. Values allowd are 'rarm' | 'larm' | 'torso_rarm' | 'torso_larm'
+     * @param checkCollision if the value is True, the destination is directly sent to the controller. if False, the planner searches a trajectory connecting the current configuration and a configuration that achieves the given hand pose.
+     * @param duration time taken to reach the goal. this is used only when checkCollision is False.
+     */
+    boolean MoveArm(in DblSequence goal, in double handWidth,
+		    in string joints, in boolean checkCollision, in double duration);
+
+    /**
+     * @brief This function takes an approach frame and a grasp frame at one time. Then only when the both poses can be realized, it moves the arm.
+     * @param approachFrame
+     * @param graspFrame
+     * @param handWidth
+     * @param joints
+     */
+    boolean MoveArm2(in DblSequence approachFrame, in DblSequence graspFrame, in double handWidth,
+		     in string joints);
+
+    /**
+     * @param hand 'right' | 'left'
+     */
+    boolean Grab(in string hand);
+
+    /**
+     * @param hand 'right' | 'left'
+     */
+    boolean Release(in string hand);
+
+    /**
+     * Additional APIs
+     */
+
+    /**
+     * @brief Move the body by giving a goal configuration
+     * @param goalConfiguration
+     * @param joints 'rarm' | 'larm' | 'torso_rarm' | 'torso_larm' | 'all' all includes hands and heads (23 DoF)
+     */
+    boolean Move(in DblSequence goalConfiguration, in string joints);
+
+    /**
+     * @brief Move an arm. The destination is specified relatively from the current pose
+     * @param relativeTransform
+     * @param handWidth
+     * @param joints 'rarm' | 'larm' | 'torso_rarm' | 'torso_larm'
+     * @param checkCollision
+     * @param duration
+     */
+    boolean MoveArmRelative(in DblSequence relativeTransform, in double handWidth,
+			    in string joints, in boolean checkCollision, in double duration);
+
+    boolean GoPreparePose();
+
+    /**
+     * @param joints 'rarm' | 'larm' | 'torso_rarm' | 'torso_larm' | 'all'
+     */
+    DblSequence GetJointAngles(in string joints);
+
+    /**
+     * @param joints 'rarm' | 'larm'
+     */
+    DblSequence Fk(in string joints);
+
+    /**
+     * @param frame
+     * @param joints 'rarm' | 'larm' | 'torso_rarm' | 'torso_larm'
+     */
+    DblSequence Ik(in DblSequence frame, in string joints);
+
+    /**
+     * @brief Add an object in the planning environment
+     * @param name
+     * @param objectType
+     * @param worldFrame
+     */
+    void AddObject(in string name, in long objectType, in DblSequence worldFrame);
+
+    /**
+     * @brief Delete an object in the planning environment
+     */
+    void DeleteObject(in string name);
+
+    void ResetWorld();
+
+    // struct GraspPlanResult {
+    // 	RTC::Pose3D aframe;
+    // 	RTC::Pose3D gframe;
+    // 	double width;
+    // };
+    // RTC::Pose3D Test(); // <= This doesn't work...
+
+
+    /**
+     * @brief Functions below are only for easy tests in a closed environment
+     */
+    DblSequence GraspPlan(in long objectType, in DblSequence objectFrame, in boolean longSide);
+    DblSequence RequestNext(in DblSequence approachFrame, in DblSequence graspFrame, in double handWidth);
+    DblSequence PlacePlan(in long objectType, in DblSequence placeFrame);
+    DblSequence RecognizeParts(in long objectType);
+    DblSequence RecognizePocket(in long objectType);
+
+};

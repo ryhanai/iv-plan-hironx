@@ -1,0 +1,16 @@
+ipython:
+  ubuntu: ipython
+numpy:
+  ubuntu: python-numpy
+scipy:
+  ubuntu: python-scipy
+ply:
+  ubuntu: python-ply
+boost-python:
+  ubuntu: libboost-python-dev
+boost-signal:
+  ubuntu: libboost-signals1.40.0
+gtkglextmm:
+  ubuntu: libgtkglextmm-x11-1.2-0
+glademm:
+  ubuntu: libglademm-2.4-dev

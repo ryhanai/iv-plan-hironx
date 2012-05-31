@@ -1,0 +1,16 @@
+# -*- Makefile -*-
+
+PACKAGES = ../iv_idl ../iv_scenario ../rmrc_geo_model ../rtc_handle
+DIRS = $(PACKAGES) externals src 
+
+.PHONY: all
+
+all:
+	for dir in $(DIRS); do \
+		$(MAKE) -C $$dir ;\
+	done
+
+clean:
+	for dir in $(DIRS); do \
+		$(MAKE) -C $$dir clean ;\
+	done

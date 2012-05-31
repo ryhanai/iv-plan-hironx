@@ -1,0 +1,13 @@
+<package>
+  <description brief="toplevel task description and RTC management
+  using rtc_handle"></description>
+  <author>Ryo Hanai</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+
+  <depend package="rtc_handle"/>
+  <depend package="iv_idl"/>
+  <depend package="iv_plan"/>
+</package>

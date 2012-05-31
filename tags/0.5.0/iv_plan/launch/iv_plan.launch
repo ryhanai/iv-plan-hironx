@@ -1,0 +1,26 @@
+<!-- -*- mode: XML -*- -->
+
+<launch>
+
+  <arg name="nameserver" default="localhost"/>
+  <arg name="openrtm_args" value='-o "corba.nameservers:$(arg nameserver):2809"'/>
+
+  <env name="IV_PLAN_ROOT" value="$(find iv_plan)"/>
+
+  <group ns="hiro">
+
+    <param name="model_directory" type="string"
+	   value="$(find iv_plan)/externals/models/HIRO_110603/"/>
+
+    <!-- <node pkg="iv_plan" type="demo.py" name="iv_plan_demo" output="screen"/> -->
+
+    <node pkg="iv_bridges" type="joint_state_publisher.py"
+	  name="joint_state_publisher" output="screen"
+	  args="$(arg openrtm_args)"/>
+
+    <!-- <node pkg="iv_plan" type="MPlanComp.py" name="MPlanComp"/> -->
+
+  </group>
+
+</launch>
+

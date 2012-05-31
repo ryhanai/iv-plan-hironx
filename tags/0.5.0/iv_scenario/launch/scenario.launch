@@ -1,0 +1,50 @@
+<!-- -*- mode: XML -*- -->
+
+<launch>
+
+  <group ns="hiro">
+
+    <param name="rtm_nameserver" type="string" value="hiro014:2809"/>
+    <!-- <param name="rtm_nameserver" type="string" value="localhost:2809"/> -->
+
+    <!-- <node pkg="Scenario" type="ConsoleIn.py" name="console_in" -->
+    <!-- 	  args="-f $(find MotionPlan)/conf/rtc.localhost.conf"/> -->
+    <!-- <node pkg="Scenario" type="ConsoleOut.py" name="console_out" -->
+    <!-- 	  args="-f $(find MotionPlan)/conf/rtc.localhost.conf"/> -->
+    <node pkg="Scenario" type="MyServiceProvider.py" name="myservice_provider"
+    	  args="-f $(find MotionPlan)/conf/rtc.conf"/>
+    <!-- <node pkg="Scenario" type="MyServiceConsumer.py" name="myservice_consumer" -->
+    <!-- 	  args="-f $(find MotionPlan)/conf/rtc.localhost.conf"/> -->
+
+    <!-- <node pkg="MotionPlan" type="robot_state_viewer.py" name="robot_state_viewer"/> -->
+
+    <!-- <node pkg="MotionPlan" type="MotionPlanComp.py" name="motion_planner" -->
+    <!-- 	  args="-f $(find MotionPlan)/conf/rtc.localhost.conf"/> -->
+
+    <!-- <param name="model_directory" type="string" -->
+    <!-- 	   value="$(find MotionPlan)/externals/models/HIRO_110219/"/> -->
+
+    <!-- <node pkg="JointStatePublisher" type="joint_state_publisher.py" -->
+    <!-- 	  name="joint_state_publisher" args="-f $(find
+    MotionPlan)/conf/rtc.conf"/> -->
+
+    <!-- <machine name="c1" address="hiro014" ros-root="$(env ROS_ROOT)" -->
+    <!-- 	     ros-package-path="$(env ROS_PACKAGE_PATH)" default="true"/> -->
+    <!-- <node pkg="SequencePlayerService" type="seq_service_socket.py" -->
+    <!-- 	     name="seq_service_socket" machine="c1"/> -->
+
+    <!-- SDL node when we use SDL -->
+    <!-- <node pkg="Scenario" type="scenario.py" name="scenario"/> -->
+
+  </group>
+
+  <!-- <node pkg="rviz" type="rviz" name="rviz" args="-d $(find
+  HiroCapture)/conf/checkerboard.vcg"/> -->
+
+  <group ns="hiro">
+
+
+  </group>
+
+
+</launch>

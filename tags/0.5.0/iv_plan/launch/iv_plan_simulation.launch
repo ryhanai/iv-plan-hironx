@@ -1,0 +1,19 @@
+<!-- -*- mode: XML -*- -->
+
+<launch>
+
+  <env name="IV_PLAN_ROOT" value="$(find iv_plan)"/>
+
+  <group ns="hiro">
+
+    <param name="model_directory" type="string"
+	   value="$(find iv_plan)/externals/models/HIRO_110603/"/>
+
+    <node pkg="iv_plan" type="demo.py" name="iv_plan_demo" output="screen"/>
+
+    <param name="rtm_nameserver" type="string" value="localhost"/>
+    <node pkg="iv_plan" type="MPlanComp.py" name="MPlanComp"/>
+
+  </group>
+
+</launch>
