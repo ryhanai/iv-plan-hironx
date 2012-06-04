@@ -101,7 +101,18 @@ def gen_collision_body(obj):
         return pts
 
     def gen_cbody(obj):
-        return gen_cbody_from_AABB(get_AABB(obj))
+        if obj.vbody.__class__ == visual.extrusion:
+            fcs = obj.vbody.get_faces()[0]
+            fcs = fcs.reshape((fcs.size/3/3, 3, 3))
+            b = cpqp.PQP_Model()
+            b.BeginModel(8)
+            for i,(p1,p2,p3) in enumerate(fcs):
+                b.AddTri(p1,p2,p3,i)
+            b.EndModel()
+            b.MemUsage(1)
+            return b
+        else:
+            return gen_cbody_from_AABB(get_AABB(obj))
 
     def gen_cbody_link(l, simple=True):
         pts = []
