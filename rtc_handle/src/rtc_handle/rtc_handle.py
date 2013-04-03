@@ -268,6 +268,14 @@ class RtcService(Port) :
             elif itf.polarity == RTC.REQUIRED :
                 self.required[itf.instance_name] = CorbaClient(itf)
 
+def strip_data_class(data_class_str) :
+    tmp = data_class_str.split(':')
+    if len(tmp) == 1 :
+        return data_class_str
+    else :
+        tmp = tmp[1].split('/')
+        return tmp[1]
+
 class RtcInport(Port) :
     def __init__(self, profile, nv_dict=None, handle=None) :
         Port.__init__(self, profile, nv_dict, handle)
@@ -278,10 +286,12 @@ class RtcInport(Port) :
         self.ref = self.con.prop_dict['dataport.corba_cdr.inport_ref']
 
         print 'Inport type: '+self.prop['dataport.data_type']
+        tmp = strip_data_class(self.prop['dataport.data_type'])
+
         for m in default_modules:
             try:
-                self.data_class = eval(m+'.' + self.prop['dataport.data_type'])
-                self.data_tc = eval(m+'._tc_' + self.prop['dataport.data_type'])
+                self.data_class = eval(m+'.' + tmp)
+                self.data_tc = eval(m+'._tc_' + tmp)
                 return
             except:
                 pass
@@ -311,10 +321,12 @@ class RtcOutport(Port) :
            self.ref=None
 
         print 'Outport type: '+self.prop['dataport.data_type']
+        tmp = strip_data_class(self.prop['dataport.data_type'])
+
         for m in default_modules:
             try:
-                self.data_class = eval(m+'.'+self.prop['dataport.data_type'])
-                self.data_tc = eval(m+'._tc_' + self.prop['dataport.data_type'])
+                self.data_class = eval(m+'.'+tmp)
+                self.data_tc = eval(m+'._tc_' + tmp)
                 return
             except:
                 pass
