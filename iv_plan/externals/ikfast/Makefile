@@ -11,7 +11,7 @@ ik_hiro: hironx_ikfast42.Transform6D.3_4_5_6_7_8.cpp
 	g++ -lstdc++ -llapack -o $@ $< -O2
 
 $(LIBIK_HIRO): hironx_ikfast42.Transform6D.3_4_5_6_7_8.cpp
-	g++ -fPIC -llapack -lstdc++ -lboost_python -I/usr/include/python2.6 \
+	g++ -fPIC -llapack -lstdc++ -lboost_python -I/usr/include/python2.7 \
 	-DIKFAST_NO_MAIN -shared -Wl,-soname,$@ -o $@ $<
 
 fk_hiro: fk_hiro.cpp hironx_ikfast42.Transform6D.3_4_5_6_7_8.cpp
