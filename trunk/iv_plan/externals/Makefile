@@ -9,9 +9,9 @@ VPYTHON_DIR = visual-$(VPYTHON_VER)_release
 VPYTHON_ACV_DIR = http://vpython.org/contents/download
 VPYTHON_ACV = visual-$(VPYTHON_VER)_release.tar.bz2
 
-POLYGON_VER = 2.0.4
+POLYGON_VER = 2.0.5
 POLYGON_DIR = Polygon-$(POLYGON_VER)
-POLYGON_ACV_DIR = https://github.com/jraedler/Polygon2/downloads
+POLYGON_ACV_DIR = https://bitbucket.org/jraedler/polygon2/downloads
 POLYGON_ACV = Polygon-$(POLYGON_VER).zip
 
 FONTTOOLS_VER = 2.3
