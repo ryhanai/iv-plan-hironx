@@ -14,7 +14,7 @@ $(LIB_DIR)/$(CPQP_LIB): $(CPQP_OBJ)
 	g++ -shared -g -o $@ $^ -lboost_python -lPQP -L$(PQP_DIR)/lib
 
 $(CPQP_OBJ): $(CPQP_SRC)
-	g++ $(CFLAGS) -c $< -fPIC -I/usr/include/python2.6 -I$(PQP_DIR)/include
+	g++ $(CFLAGS) -c $< -fPIC -I/usr/include/python2.7 -I$(PQP_DIR)/include
 
 clean: clean_objs clean_pyim
 	rm -f *~ *.log
