@@ -19,6 +19,7 @@
 #include <assert.h>
 #include <vector>
 #include <float.h>
+#include <stdio.h>
 
 #define IK2PI  6.28318530717959
 #define IKPI  3.14159265358979

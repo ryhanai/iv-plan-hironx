@@ -15,7 +15,7 @@ default_modules = ['RTC', 'Img', 'OpenHRP']
 import Img
 #
 
-from CorbaNaming import *
+from OpenRTM_aist.CorbaNaming import *
 import SDOPackage
 
 # class RtmEnv :

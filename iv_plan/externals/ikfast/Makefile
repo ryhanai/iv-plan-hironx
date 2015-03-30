@@ -8,7 +8,7 @@ ik_pa10: ik_pa10.cpp
 	g++ -o $@ $< -O2
 
 ik_hiro: hironx_ikfast42.Transform6D.3_4_5_6_7_8.cpp
-	g++ -lstdc++ -llapack -o $@ $< -O2
+	g++ -o $@ $< -O2 -llapack -lstdc++
 
 $(LIBIK_HIRO): hironx_ikfast42.Transform6D.3_4_5_6_7_8.cpp
 	g++ -fPIC -I/usr/include/python2.7 \
